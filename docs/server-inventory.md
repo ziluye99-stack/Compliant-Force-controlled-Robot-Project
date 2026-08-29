@@ -37,11 +37,12 @@ environments were inspected but not modified.
 
 On 2026-08-29, the GitHub branch `codex/research-proposal-contract` was fetched
 into `/home/gbu/research/worktrees/codex-research-proposal-contract` without
-changing the main checkout. With
-`/home/gbu/miniforge3/envs/compliant-force-robot/bin/python`, commit `2794c9f`
-passed `src.experiment --config configs/sim.yaml --dry-run` and a 100-step
-`src.mujoco_smoke` run. The dry-run recorded MuJoCo 3.12.0, Python 3.11.16,
-the platform-neutral interface, and no Slurm job ID.
+changing the main checkout. The worktree is currently clean at commit
+`5bf3e8e`. With
+`/home/gbu/miniforge3/envs/compliant-force-robot/bin/python`, the current
+commit passed `src.experiment --config configs/sim.yaml --dry-run` and a
+100-step `src.mujoco_smoke` run. The dry-run recorded MuJoCo 3.12.0, Python
+3.11.16, the platform-neutral interface, and no Slurm job ID.
 
 ## Other software found
 
