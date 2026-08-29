@@ -20,8 +20,9 @@ Every proposal should contain:
 6. Go/no-go rules for moving from literature to simulation, training, transfer,
    and supervised hardware.
 
-Start from [`template.md`](template.md). The current platform-neutral example is
-[`two-rate-residual-contact.md`](two-rate-residual-contact.md).
+Start from [`template.md`](template.md). The project-level decomposition is
+[`project-master-plan.md`](project-master-plan.md); the current platform-neutral
+experiment example is [`two-rate-residual-contact.md`](two-rate-residual-contact.md).
 
 ## Review order
 

@@ -55,6 +55,8 @@ portal-access rules, and paper note template are in
 [`docs/literature/README.md`](docs/literature/README.md).
 中文总览、阶段门禁、服务器分工和常用 Codex 请求见
 [`docs/科研总览.md`](docs/科研总览.md)。
+项目级实验拆分和 MuJoCo 首个基准草案见
+[`docs/proposals/project-master-plan.md`](docs/proposals/project-master-plan.md)。
 The concrete school-portal download and Codex handoff checklist is in
 [`docs/literature/portal-intake.md`](docs/literature/portal-intake.md).
 
