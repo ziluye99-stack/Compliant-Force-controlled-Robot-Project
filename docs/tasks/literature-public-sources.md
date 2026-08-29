@@ -41,8 +41,8 @@ full text is verified.
 
 ## Completion note
 
-- Git commit: pending
-- Test output: pending
+- Git commit: `f959909` (`Add public literature source adapters`)
+- Test output: `87 passed`; public four-source verification returned five records while preserving two source errors
 - Artifact path: transient discovery JSON under `/tmp`; no PDF or credential enters Git
 - Known limitations: Public adapters do not replace WoS/SCI indexing or CNKI/万方 full-text verification
 - Follow-up task: Select and download one authorized paper for each Chinese research axis
