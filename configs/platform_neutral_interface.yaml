@@ -1,0 +1,77 @@
+interface:
+  name: platform-neutral-contact-force-v1
+  status: platform-neutral
+  units: SI
+  simulator: mujoco
+
+frames:
+  world: world
+  base: pending-platform-selection
+  tool: tcp
+  force_measurement: world
+  convention: right-handed
+
+timing:
+  simulator_step_s: 0.002
+  fast_controller_hz: 500
+  policy_hz: 20
+  observation_latency_budget_s: 0.01
+  action_hold_steps: 25
+
+observations:
+  - name: contact_force_n
+    shape: [2]
+    unit: N
+    source: simulated_contact_wrench
+  - name: contact_force_target_n
+    shape: [2]
+    unit: N
+    source: experiment_config
+  - name: generalized_velocity
+    shape: [2]
+    unit: rad/s_or_m/s
+    source: mujoco_qvel
+  - name: controller_integral_error
+    shape: [2]
+    unit: N*s
+    source: fast_controller_state
+
+actions:
+  interface: bounded_generalized_force
+  shape: [2]
+  unit: N
+  range: [-30.0, 30.0]
+  invalid_action: hold_last_safe_command
+
+limits:
+  total_contact_force_n: 40.0
+  penetration_m: 0.001
+  command_rate_n_per_s: pending-platform-selection
+  joint_position: pending-platform-selection
+  joint_velocity: pending-platform-selection
+  emergency_stop: pending-hardware-procedure
+  watchdog: pending-hardware-procedure
+
+parameter_map:
+  - parameter: contact_friction
+    value_or_range: [0.6, 0.6]
+    source: synthetic_fixture
+    status: fixed-for-baseline
+  - parameter: contact_solref
+    value_or_range: [0.01, 1.0]
+    source: synthetic_fixture
+    status: fixed-for-baseline
+  - parameter: body_mass_and_inertia
+    value_or_range: pending
+    source: selected-platform-CAD-or-identification
+    status: pending-platform-selection
+  - parameter: force_sensor_bias_and_noise
+    value_or_range: pending
+    source: hardware-calibration
+    status: pending-hardware
+
+safety:
+  allowed_stage: simulation-only
+  hardware_commands_enabled: false
+  operator_required: pending-hardware-procedure
+  rollback_reference: pending-hardware-procedure

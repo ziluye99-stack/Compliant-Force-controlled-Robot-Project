@@ -44,6 +44,11 @@ with `scripts/setup-server-env.sh` after an intentional environment change.
 The current platform-neutral dual-contact MuJoCo fixture is documented in
 [`docs/experiments/dual-contact-force-control.md`](docs/experiments/dual-contact-force-control.md).
 
+The versioned platform-neutral system interface is in
+[`configs/platform_neutral_interface.yaml`](configs/platform_neutral_interface.yaml);
+its required fields and hardware gate are described in
+[`docs/system-interface-template.md`](docs/system-interface-template.md).
+
 The project north star and branch-entry rule are in
 [`docs/PROJECT_VISION.md`](docs/PROJECT_VISION.md). The literature source map,
 portal-access rules, and paper note template are in
