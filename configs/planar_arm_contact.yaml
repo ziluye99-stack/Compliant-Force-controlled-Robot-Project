@@ -1,0 +1,16 @@
+defaults:
+  - contact_force
+
+experiment:
+  name: planar-arm-contact-force
+
+task:
+  name: planar-two-link-contact
+  target_normal_force_n: 5.0
+  target_tangential_force_n: 1.0
+  steps: 2000
+  seed: 42
+
+contact:
+  friction_coefficient: 0.5
+  torque_limit_nm: 20.0

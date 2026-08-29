@@ -21,6 +21,7 @@ earlier gate. Each item should become a focused branch using
 - [x] Add a controlled sensor-noise and dynamics-mismatch evaluation
 - [x] Add a controlled actuator-delay evaluation
 - [x] Add a normal/tangential contact scene with a friction-regime test
+- [x] Connect contact force control to a platform-neutral two-link arm model
 
 ## Stage 2: Data and learning
 
@@ -53,7 +54,7 @@ earlier gate. Each item should become a focused branch using
 
 ## Current next decision
 
-The next research decision is to connect the tangential contact contract to a
-multi-DOF end-effector or arm model, then collect calibrated force/torque data
-for sim-to-real parameter identification. Robot-specific implementation
-remains blocked until the robot and sensor specifications are supplied.
+The next research decision is to identify contact and actuator parameters from
+measured force/torque data, then replay those measurements through the planar
+arm contract. Robot-specific implementation remains blocked until the robot and
+sensor specifications are supplied.
