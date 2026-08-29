@@ -81,6 +81,10 @@ CNKI content:
 Use [`portal-intake.md`](portal-intake.md) for the exact query axes, download
 location, SHA-256 handoff, and note-creation command.
 
+The prioritized set of papers and CNKI/万方 search targets is maintained in
+[`portal-reading-queue.md`](portal-reading-queue.md). It is a download queue,
+not evidence; each selected row still needs a verified PDF and paper note.
+
 1. Open the portal app or its library link and complete login yourself. Codex
    must not receive or store the portal password, cookies, or one-time codes.
 2. Search by DOI first, then exact title and author. Confirm venue, year, and
