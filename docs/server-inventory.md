@@ -9,6 +9,7 @@ Inventory date: 2026-08-29
 - OS: Ubuntu 24.04.4 LTS
 - Kernel: `7.0.0-30-generic`
 - Project path: `/home/gbu/research/Compliant-Force-controlled-Robot-Project`
+- Branch worktrees: `/home/gbu/research/worktrees/codex-<task-name>`
 
 ## GPUs and CUDA
 
@@ -31,6 +32,16 @@ so they can use the GPUs without a system-wide toolkit.
 
 The project environment contains MuJoCo, NumPy, PyYAML, and pytest. Existing
 environments were inspected but not modified.
+
+## Verified branch execution
+
+On 2026-08-29, the GitHub branch `codex/research-proposal-contract` was fetched
+into `/home/gbu/research/worktrees/codex-research-proposal-contract` without
+changing the main checkout. With
+`/home/gbu/miniforge3/envs/compliant-force-robot/bin/python`, commit `2794c9f`
+passed `src.experiment --config configs/sim.yaml --dry-run` and a 100-step
+`src.mujoco_smoke` run. The dry-run recorded MuJoCo 3.12.0, Python 3.11.16,
+the platform-neutral interface, and no Slurm job ID.
 
 ## Other software found
 

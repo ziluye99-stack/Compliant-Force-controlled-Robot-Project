@@ -68,9 +68,40 @@ consuming server GPU time.
 
 ## 4. Run simulation on the server
 
-Connect with VS Code Remote-SSH or `ssh research-gpu`. The server project uses
-`/home/gbu/miniforge3/envs/compliant-force-robot` for the common MuJoCo
-environment. Run `bash scripts/preflight.sh server` first.
+Connect with VS Code Remote-SSH or `ssh research-gpu`. Keep the server's main
+checkout stable and use a branch-specific worktree under the `gbu` home:
+
+```bash
+ssh research-gpu
+repo=/home/gbu/research/Compliant-Force-controlled-Robot-Project
+wt=/home/gbu/research/worktrees/codex-<task-name>
+cd "$repo"
+git fetch origin <branch-name>
+git worktree add "$wt" origin/<branch-name>
+cd "$wt"
+```
+
+If the worktree already exists, update it only after checking it is clean:
+
+```bash
+git status --short --branch
+git pull --ff-only
+```
+
+The common user-space environment is
+`/home/gbu/miniforge3/envs/compliant-force-robot`. From the worktree root,
+validate the exact commit and configuration before running a simulation:
+
+```bash
+git log -1 --oneline
+/home/gbu/miniforge3/envs/compliant-force-robot/bin/python \
+  -m src.experiment --config configs/sim.yaml --dry-run
+/home/gbu/miniforge3/envs/compliant-force-robot/bin/python \
+  -m src.mujoco_smoke --steps 100
+```
+
+Run `bash scripts/preflight.sh server` only when a scheduler is available; on
+the current shared workstation it intentionally reports `slurm=unavailable`.
 
 This host currently has no verified Slurm scheduler. Until the lab provides an
 approved scheduler or reservation procedure, do not run long jobs or occupy a
