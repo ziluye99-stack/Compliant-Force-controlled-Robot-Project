@@ -41,6 +41,11 @@ gates are documented in [`docs/workflow.md`](docs/workflow.md). The baseline
 server dependency snapshot is kept in `environment.lock.txt`; regenerate it
 with `scripts/setup-server-env.sh` after an intentional environment change.
 
+The project north star and branch-entry rule are in
+[`docs/PROJECT_VISION.md`](docs/PROJECT_VISION.md). The literature source map,
+portal-access rules, and paper note template are in
+[`docs/literature/README.md`](docs/literature/README.md).
+
 ## Server policy
 
 The project uses only the `gbu` user space on the shared server. Jobs must request their resources through Slurm. The scripts refuse to submit without explicit account, partition, GPU, CPU, memory, and time settings.

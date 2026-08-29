@@ -6,11 +6,21 @@
 - Never commit credentials, private keys, raw data, checkpoints, videos, or generated experiment artifacts.
 - Server workloads must use Slurm allocation commands. Do not train on login nodes, use `sudo`, change shared system dependencies, target GPUs manually, or terminate processes owned by other users.
 
+## Project direction
+
+- Before creating a branch or starting a substantial task, read `docs/PROJECT_VISION.md`.
+- The task description must state which project priority and stage gate it advances, plus the expected verification command or artifact.
+- MuJoCo is the primary simulator until a documented platform decision changes it.
+
 ## Reproducibility
 
 - Every experiment starts from a YAML config and records its Git commit, random seed, Python package snapshot, Slurm job ID, and artifact path.
 - Keep source code, configs, documentation, and Slurm templates in Git. Keep large artifacts in the server artifact directory and synchronize verified copies to the research drive.
 - Run `scripts/preflight.sh` before submitting a job and `scripts/sync-results.sh --dry-run <run-id>` before copying results locally.
+
+Literature notes follow `docs/literature/README.md` and
+`docs/literature/paper-note-template.md`. PDFs, portal exports, and raw datasets
+remain outside Git.
 
 ## Commands
 
