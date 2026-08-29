@@ -37,8 +37,8 @@ friction estimator, and replay safety gate.
 
 ## Completion note
 
-- Git commit: `04160df` (this task branch)
-- Test output: `18 passed`; synthetic identification and replay safety checks returned `valid: true` and `safe_to_replay: true`
+- Git commit: `e682836` (this task branch)
+- Test output: `22 passed`; the sliding fixture identified friction `0.457` for configured `0.5` and returned `within_tolerance: true`
 - Artifact path: Synthetic output only; real logs remain outside Git
-- Known limitations: No real sensor calibration; the current trace is mostly sticking contact and is not sufficient for friction calibration
-- Follow-up task: Add a dedicated sliding excitation, then compare identified and configured friction parameters before real-log replay
+- Known limitations: No real sensor calibration; the planar-arm trace is mostly sticking contact and is not sufficient for friction calibration
+- Follow-up task: Compare the sliding calibration against measured hardware logs, then calibrate MuJoCo parameters before real-log replay

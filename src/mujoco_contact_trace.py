@@ -21,6 +21,20 @@ from .contact_data import (
 from .planar_arm_contact import _contact_forces, _make_system
 
 
+SLIDING_CALIBRATION_XML = """
+<mujoco model="sliding-sphere-calibration">
+  <option timestep="0.002" gravity="0 0 0"/>
+  <worldbody>
+    <geom name="calibration_plane" type="plane" size="5 5 0.01" friction="0.5 0.01 0.001"/>
+    <body name="calibration_sphere" pos="0 0 0.06">
+      <freejoint/>
+      <geom name="calibration_contact" type="sphere" size="0.05" mass="1" friction="0.5 0.01 0.001"/>
+    </body>
+  </worldbody>
+</mujoco>
+"""
+
+
 def _git_revision() -> str:
     result = subprocess.run(
         ["git", "rev-parse", "HEAD"],
@@ -159,6 +173,105 @@ def export_trace(
     }
 
 
+def run_sliding_calibration_trace(
+    *,
+    steps: int = 1200,
+    pre_contact_steps: int = 100,
+    normal_force_n: float = 5.0,
+    tangential_excitation_n: float = 8.0,
+    friction_coefficient: float = 0.5,
+    seed: int = 42,
+    episode_id: int = 0,
+) -> list[ContactSample]:
+    """Generate a dedicated sliding calibration trace.
+
+    A free sphere makes the excitation independently observable: the applied
+    tangential force exceeds the configured Coulomb limit, so the contact
+    wrench reaches a sliding regime instead of silently estimating friction
+    from sticking data.
+    """
+    if steps < 10 or pre_contact_steps < 0 or pre_contact_steps >= steps:
+        raise ValueError("steps must be at least 10 and pre_contact_steps must be in [0, steps)")
+    if normal_force_n <= 0 or tangential_excitation_n <= 0 or friction_coefficient <= 0:
+        raise ValueError("normal force, tangential excitation, and friction must be positive")
+    model = mujoco.MjModel.from_xml_string(SLIDING_CALIBRATION_XML)
+    model.geom_friction[:, 0] = friction_coefficient
+    data = mujoco.MjData(model)
+    body_id = model.body("calibration_sphere").id
+    dt = model.opt.timestep
+    samples: list[ContactSample] = []
+    for step in range(steps):
+        active = step >= pre_contact_steps
+        applied_normal = normal_force_n if active else 0.0
+        applied_tangent = tangential_excitation_n if active else 0.0
+        data.xfrc_applied[body_id, :] = [applied_tangent, 0.0, -applied_normal, 0.0, 0.0, 0.0]
+        normal_force, tangential_force = _contact_forces(model, data)
+        slip_speed = abs(float(data.qvel[0])) if active else 0.0
+        samples.append(ContactSample(
+            timestamp_s=float(data.time),
+            episode_id=episode_id,
+            qpos_0_rad=float(data.qpos[0]),
+            qpos_1_rad=float(data.qpos[2]),
+            qvel_0_rad_s=float(data.qvel[0]),
+            qvel_1_rad_s=float(data.qvel[2]),
+            commanded_normal_force_n=float(applied_normal),
+            commanded_tangential_force_n=float(applied_tangent),
+            measured_normal_force_n=float(normal_force),
+            measured_tangential_force_n=float(tangential_force),
+            slip_speed_m_s=slip_speed,
+            contact=bool(normal_force > 1e-6),
+        ))
+        mujoco.mj_step(model, data)
+    return samples
+
+
+def export_sliding_calibration_trace(
+    path: Path,
+    *,
+    steps: int = 1200,
+    pre_contact_steps: int = 100,
+    normal_force_n: float = 5.0,
+    tangential_excitation_n: float = 8.0,
+    friction_coefficient: float = 0.5,
+    seed: int = 42,
+    episode_id: int = 0,
+) -> dict[str, object]:
+    samples = run_sliding_calibration_trace(
+        steps=steps,
+        pre_contact_steps=pre_contact_steps,
+        normal_force_n=normal_force_n,
+        tangential_excitation_n=tangential_excitation_n,
+        friction_coefficient=friction_coefficient,
+        seed=seed,
+        episode_id=episode_id,
+    )
+    metadata = {
+        "source": "mujoco",
+        "model": "sliding-sphere-calibration",
+        "git_commit": _git_revision(),
+        "seed": seed,
+        "units": {"force": "N", "position": "m", "velocity": "m/s"},
+        "state_contract": "qpos_0/qvel_0 are x; qpos_1/qvel_1 are z for this calibration model",
+        "friction_coefficient_configured": friction_coefficient,
+        "normal_force_configured_n": normal_force_n,
+        "tangential_excitation_configured_n": tangential_excitation_n,
+    }
+    write_contact_log(path, samples, metadata)
+    identification = identify_parameters(samples, slip_threshold_m_s=0.01)
+    replay = replay_safety_check(samples)
+    comparison = compare_identification_to_config(
+        identification,
+        configured_friction_coefficient=friction_coefficient,
+    )
+    return {
+        "path": str(path),
+        "sample_count": len(samples),
+        "identification": asdict(identification),
+        "replay": asdict(replay),
+        "comparison": asdict(comparison),
+    }
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--out", type=Path, required=True)
@@ -169,19 +282,33 @@ def main() -> None:
     parser.add_argument("--friction", type=float, default=0.5)
     parser.add_argument("--sensor-bias", type=float, default=0.0)
     parser.add_argument("--sensor-noise-std", type=float, default=0.0)
+    parser.add_argument("--sliding-excitation", type=float, default=8.0)
     parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument("--sliding-calibration", action="store_true")
     args = parser.parse_args()
-    print(json.dumps(export_trace(
-        args.out,
-        steps=args.steps,
-        pre_contact_steps=args.pre_contact_steps,
-        target_normal_force_n=args.target_normal,
-        target_tangential_force_n=args.target_tangential,
-        friction_coefficient=args.friction,
-        sensor_bias_n=args.sensor_bias,
-        sensor_noise_std_n=args.sensor_noise_std,
-        seed=args.seed,
-    ), indent=2))
+    if args.sliding_calibration:
+        report = export_sliding_calibration_trace(
+            args.out,
+            steps=args.steps,
+            pre_contact_steps=args.pre_contact_steps,
+            normal_force_n=args.target_normal,
+            tangential_excitation_n=args.sliding_excitation,
+            friction_coefficient=args.friction,
+            seed=args.seed,
+        )
+    else:
+        report = export_trace(
+            args.out,
+            steps=args.steps,
+            pre_contact_steps=args.pre_contact_steps,
+            target_normal_force_n=args.target_normal,
+            target_tangential_force_n=args.target_tangential,
+            friction_coefficient=args.friction,
+            sensor_bias_n=args.sensor_bias,
+            sensor_noise_std_n=args.sensor_noise_std,
+            seed=args.seed,
+        )
+    print(json.dumps(report, indent=2))
 
 
 if __name__ == "__main__":

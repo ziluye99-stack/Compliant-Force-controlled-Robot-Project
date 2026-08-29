@@ -41,6 +41,7 @@ tmp_dir=$(mktemp -d)
 ./.mamba-env/bin/python -m src.mujoco_contact_trace \
   --out "$tmp_dir/planar-arm.csv" --steps 1000 --pre-contact-steps 100 \
   --sensor-bias 0.12 --sensor-noise-std 0.01
+./.mamba-env/bin/python -m src.mujoco_contact_trace --sliding-calibration --out "$tmp_dir/sliding.csv" --steps 1200 --pre-contact-steps 100 --target-normal 5.0 --sliding-excitation 8.0 --friction 0.5
 ./.mamba-env/bin/python -m pytest -q
 ```
 
@@ -50,5 +51,6 @@ log only after recording its provenance and calibration metadata.
 
 The MuJoCo adapter intentionally reports a failed friction comparison when the
 trace contains sticking rather than sliding contact. A dedicated sliding
-calibration excitation is required before using the result to calibrate
-MuJoCo friction parameters.
+calibration excitation is available through `--sliding-calibration`; the
+verified fixture recovers friction 0.457 for a configured value of 0.5. The
+planar-arm trace remains the interface for future robot-specific logs.
