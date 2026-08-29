@@ -177,3 +177,21 @@ the evidence boundary:
 The second command is the literature stage gate. It requires a non-empty
 technical note, a non-`metadata-only` evidence status, and a matching SHA-256
 for each referenced PDF. PDF files remain outside Git.
+
+To start a note after an authorized PDF has been downloaded, use the helper to
+record its hash before asking Codex to fill the analytical sections:
+
+```bash
+./.mamba-env/bin/python scripts/create-paper-note.py \
+  --short-title contact-survey \
+  --title "Exact paper title" \
+  --authors "Author One; Author Two" \
+  --venue-year "Journal, 2022" \
+  --discovery-source "OpenAlex; CNKI" \
+  --full-text-route "school portal -> CNKI" \
+  --pdf /mnt/research-data/literature/pdfs/contact-survey.pdf \
+  --output docs/literature/notes/contact-survey.md
+```
+
+The helper refuses missing/non-PDF inputs and refuses to overwrite an existing
+note. It does not access the portal or store credentials.
