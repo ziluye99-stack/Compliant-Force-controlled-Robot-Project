@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from src.contact_data import (
+    compare_identification_to_config,
     identify_parameters,
     read_contact_log,
     replay_safety_check,
@@ -33,3 +34,15 @@ def test_replay_check_rejects_command_limit_violation() -> None:
     report = replay_safety_check(samples, tangential_command_limit_n=3.0)
     assert not report.within_limits
     assert not report.safe_to_replay
+
+
+def test_identification_comparison_reports_tolerance() -> None:
+    result = identify_parameters(synthetic_calibration_log(samples_per_phase=100, seed=9))
+    comparison = compare_identification_to_config(
+        result,
+        configured_normal_bias_n=0.12,
+        configured_friction_coefficient=0.45,
+    )
+    assert comparison.within_tolerance
+    assert comparison.normal_bias_error_n is not None
+    assert comparison.friction_error is not None

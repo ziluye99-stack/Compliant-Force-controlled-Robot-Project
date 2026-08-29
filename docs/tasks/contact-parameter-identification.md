@@ -18,7 +18,7 @@ friction estimator, and replay safety gate.
 ## Inputs and outputs
 
 - Inputs: Versioned contact-log CSV and metadata sidecar
-- Expected code/config/documentation artifacts: `src/contact_data.py`, config, tests, experiment record
+- Expected code/config/documentation artifacts: `src/contact_data.py`, `src/mujoco_contact_trace.py`, config, tests, experiment record
 - Expected experiment run IDs or figures: Synthetic calibration report only
 
 ## Acceptance criteria
@@ -40,5 +40,5 @@ friction estimator, and replay safety gate.
 - Git commit: `04160df` (this task branch)
 - Test output: `18 passed`; synthetic identification and replay safety checks returned `valid: true` and `safe_to_replay: true`
 - Artifact path: Synthetic output only; real logs remain outside Git
-- Known limitations: No real sensor calibration or MuJoCo trace adapter yet
-- Follow-up task: Export a MuJoCo planar-arm trace into `contact-log/v1`, then compare identified and configured parameters
+- Known limitations: No real sensor calibration; the current trace is mostly sticking contact and is not sufficient for friction calibration
+- Follow-up task: Add a dedicated sliding excitation, then compare identified and configured friction parameters before real-log replay

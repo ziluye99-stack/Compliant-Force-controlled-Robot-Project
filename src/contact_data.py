@@ -77,6 +77,19 @@ class ReplayReport:
     safe_to_replay: bool
 
 
+@dataclass(frozen=True)
+class ParameterComparison:
+    """Compare identified values with parameters declared by an experiment."""
+
+    configured_normal_bias_n: float | None
+    identified_normal_bias_n: float
+    normal_bias_error_n: float | None
+    configured_friction_coefficient: float | None
+    identified_friction_coefficient: float | None
+    friction_error: float | None
+    within_tolerance: bool
+
+
 def write_contact_log(path: Path, samples: Iterable[ContactSample], metadata: dict[str, object] | None = None) -> None:
     """Write a CSV and a sidecar metadata file; neither belongs in Git."""
     rows = list(samples)
@@ -193,6 +206,47 @@ def replay_safety_check(
         finite_values=finite,
         within_limits=within_limits,
         safe_to_replay=safe,
+    )
+
+
+def compare_identification_to_config(
+    result: IdentificationResult,
+    *,
+    configured_normal_bias_n: float | None = None,
+    configured_friction_coefficient: float | None = None,
+    normal_bias_tolerance_n: float = 0.05,
+    friction_tolerance: float = 0.1,
+) -> ParameterComparison:
+    """Report whether identified parameters agree with declared values.
+
+    A missing configured value is reported as unknown rather than treated as a
+    pass. This keeps calibration evidence separate from simulator metadata.
+    """
+    if normal_bias_tolerance_n < 0 or friction_tolerance < 0:
+        raise ValueError("comparison tolerances must be non-negative")
+    bias_error = (
+        abs(result.normal_bias_n - configured_normal_bias_n)
+        if configured_normal_bias_n is not None
+        else None
+    )
+    friction_error = (
+        abs(result.friction_coefficient - configured_friction_coefficient)
+        if result.friction_coefficient is not None and configured_friction_coefficient is not None
+        else None
+    )
+    checks: list[bool] = []
+    if bias_error is not None:
+        checks.append(bias_error <= normal_bias_tolerance_n)
+    if friction_error is not None:
+        checks.append(friction_error <= friction_tolerance)
+    return ParameterComparison(
+        configured_normal_bias_n=configured_normal_bias_n,
+        identified_normal_bias_n=result.normal_bias_n,
+        normal_bias_error_n=bias_error,
+        configured_friction_coefficient=configured_friction_coefficient,
+        identified_friction_coefficient=result.friction_coefficient,
+        friction_error=friction_error,
+        within_tolerance=bool(result.valid and checks and all(checks)),
     )
 
 

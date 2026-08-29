@@ -35,6 +35,7 @@ earlier gate. Each item should become a focused branch using
 
 - [x] Define versioned contact-log schema and offline replay safety gate
 - [x] Validate bias/noise/friction identification on a synthetic fixture
+- [x] Export a MuJoCo planar-arm trace into `contact-log/v1` with provenance and replay checks
 - [ ] Measure model mismatch and sensor noise from the selected hardware
 - [ ] Calibrate the corresponding MuJoCo parameters
 - [ ] Replay recorded trajectories offline before issuing commands

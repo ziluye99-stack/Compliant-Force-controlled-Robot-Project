@@ -14,6 +14,8 @@
 ## Data contract
 
 `src/contact_data.py` writes `contact-log/v1` CSV files plus a metadata sidecar.
+`src/mujoco_contact_trace.py` adapts the planar-arm MuJoCo run to this schema
+and emits identification, replay, and configured-parameter comparison reports.
 The schema records time, episode, two joint positions/velocities, commanded and
 measured normal/tangential forces, slip speed, and a contact flag. Metadata must
 include the Git revision, environment identifier, sensor calibration revision,
@@ -35,9 +37,18 @@ pass `replay_safety_check` before it is replayed or used to generate a command.
 
 ```bash
 ./.mamba-env/bin/python -m src.contact_data
+tmp_dir=$(mktemp -d)
+./.mamba-env/bin/python -m src.mujoco_contact_trace \
+  --out "$tmp_dir/planar-arm.csv" --steps 1000 --pre-contact-steps 100 \
+  --sensor-bias 0.12 --sensor-noise-std 0.01
 ./.mamba-env/bin/python -m pytest -q
 ```
 
-The CLI uses a deterministic synthetic fixture with known friction 0.45,
+The `contact_data` CLI uses a deterministic synthetic fixture with known friction 0.45,
 normal bias 0.12 N, and 0.02 N noise. Replace the fixture with a real or MuJoCo
 log only after recording its provenance and calibration metadata.
+
+The MuJoCo adapter intentionally reports a failed friction comparison when the
+trace contains sticking rather than sliding contact. A dedicated sliding
+calibration excitation is required before using the result to calibrate
+MuJoCo friction parameters.
