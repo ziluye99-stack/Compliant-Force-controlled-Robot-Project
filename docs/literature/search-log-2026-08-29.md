@@ -12,8 +12,9 @@ receive a paper note before they support a design claim.
 - Queries: `robot force control manipulation`; `humanoid whole body contact control`; `sim-to-real force control robot`
 - Filter: publication date from 2019 or 2020 depending on query, type `article`, sorted by API relevance
 - Deduplication key: DOI, then normalized title
-- Access result: public arXiv PDF downloaded for the RA-L force-learning paper;
-  remaining candidates are metadata-only or require the school portal
+- Access result: public arXiv PDFs downloaded for the RA-L force-learning paper
+  and the contact-manipulation survey; remaining candidates are metadata-only
+  or require the school portal
 - Limitation: Semantic Scholar returned HTTP 429 during this run; CNKI and subscription publishers require the school's portal session
 
 ## Follow-up access check
@@ -44,12 +45,12 @@ receive a paper note before they support a design claim.
 
 ## Next reading action
 
-Start with the survey and the RA-L force-learning paper. For each PDF, create
-`docs/literature/notes/<slug>.md` using `paper-note-template.md`, record the
-publisher/preprint URL and SHA-256 of the downloaded PDF, then extract the
-task, sensor, controller, simulator, real-robot evidence, metrics, ablations,
-failure cases, and limitations. A paper is not considered evidence for the
-project until that note exists.
+The survey and RA-L force-learning paper now have structured notes. For each
+remaining PDF, create `docs/literature/notes/<slug>.md` using
+`paper-note-template.md`, record the publisher/preprint URL and SHA-256 of the
+downloaded PDF, then extract the task, sensor, controller, simulator,
+real-robot evidence, metrics, ablations, failure cases, and limitations. A
+paper is not considered evidence for the project until that note exists.
 
 ## Multi-axis discovery refresh
 

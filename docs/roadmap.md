@@ -20,9 +20,10 @@ earlier gate. Each item should become a focused branch using
 - [ ] Obtain authorized full text for the contact-manipulation survey
 - [x] Obtain public full text and write a structured note for the force-learning paper
 - [x] Obtain public full text and write a structured note for the humanoid whole-body force-control paper
-- [ ] Write a structured note for the contact-manipulation survey covering
+- [x] Write a structured note for the contact-manipulation survey covering
   translation, equations, interfaces, baselines, metrics, ablations, failure
-  cases, and reproducibility
+  cases, and reproducibility (arXiv preprint; publisher/portal version remains
+  a separate verification item)
 - [x] Build a related-work taxonomy and identify a falsifiable project gap
 
 ## Stage 0.6: Proposal and task decomposition

@@ -28,9 +28,12 @@ supports explicit multi-contact wrench feasibility and robustness analysis.
 The related-work taxonomy identifies a missing controlled comparison of what a
 slow residual should modify under held-out contact dynamics.
 
-The contact-manipulation survey and Chinese CNKI/万方 papers remain
-discovery-only until downloaded through the university portal. They cannot yet
-justify a design claim.
+The contact-manipulation survey has a verified legal arXiv preprint and a
+structured note, so it can inform taxonomy and a bounded follow-up experiment;
+the publisher/portal version remains unverified and cannot be represented as
+the final version. Chinese CNKI/万方 papers remain discovery-only until
+downloaded through the university portal, so they cannot yet justify a design
+claim.
 
 ## System and interface
 

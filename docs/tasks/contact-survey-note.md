@@ -9,7 +9,7 @@ Read `docs/PROJECT_VISION.md` before filling this template.
 - Stage gate: Literature
 - Expected artifact: structured survey note and one MuJoCo follow-up mapping
 - Related literature notes: `docs/literature/related-work-taxonomy.md`, `docs/literature/paper-note-template.md`
-- Dependencies or blockers: An authorized publisher or university-portal PDF for DOI `10.1016/j.robot.2022.104224`
+- Dependencies or blockers: The publisher/portal PDF is still pending; a legal arXiv v3 preprint is available for the structured note
 
 ## Objective
 
@@ -31,11 +31,11 @@ claims supported by the survey from claims that require primary papers.
 ## Acceptance criteria
 
 - [ ] `docs/PROJECT_VISION.md` was read immediately before branch work
-- [ ] PDF provenance and SHA-256 are recorded; no portal credentials are stored
-- [ ] Translation, terminology, methods, interfaces, baselines, metrics,
+- [x] PDF provenance and SHA-256 are recorded; no portal credentials are stored
+- [x] Translation, terminology, methods, interfaces, baselines, metrics,
   limitations, and reproducibility details are filled in
-- [ ] At least one survey observation becomes a falsifiable MuJoCo test
-- [ ] `metadata-only` is not used as full-text evidence
+- [x] At least one survey observation becomes a falsifiable MuJoCo test
+- [x] `metadata-only` is not used as full-text evidence
 
 ## Verification
 
@@ -47,9 +47,10 @@ test -s docs/PROJECT_VISION.md
 
 ## Completion note
 
-- Git commit:
-- Test output:
-- Artifact path:
-- Known limitations: The survey cannot replace primary-paper verification or
-  measured hardware specifications.
+- Git commit: `a4a83f1`
+- Test output: `4/4` paper notes valid with verified hashes; local test suite passed
+- Artifact path: `/mnt/research-data/literature/pdfs/contact-survey-104224.pdf`
+- Known limitations: This note is based on the legal arXiv v3 preprint; it
+  cannot replace publisher/portal version verification, primary-paper details,
+  or measured hardware specifications.
 - Follow-up task: `codex/chinese-force-control-notes` or a focused MuJoCo test
