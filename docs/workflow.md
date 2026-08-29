@@ -131,6 +131,18 @@ ID. `--dry-run` creates no artifact directory.
 Run `bash scripts/preflight.sh server` only when a scheduler is available; on
 the current shared workstation it intentionally reports `slurm=unavailable`.
 
+For a non-failing, read-only inventory of the shared workstation, run:
+
+```bash
+bash scripts/server-status.sh
+```
+
+This reports the host, visible GPUs, user environments, disk space, and
+scheduler state without starting a process beyond short metadata commands. If
+it reports `scheduler=unavailable`, use only dry-runs and short, explicitly
+coordinated smoke checks. Do not run training directly on the shared host or
+claim that GPU visibility is a reservation.
+
 This host currently has no verified Slurm scheduler. Until the lab provides an
 approved scheduler or reservation procedure, do not run long jobs or occupy a
 GPU directly. Once Slurm is available, submit only through
