@@ -56,3 +56,7 @@ Each serious reading produces a note from `paper-note-template.md`. A survey
 also maintains a table of methods, sensors, tasks, metrics, baselines,
 simulators, real-robot evidence, and limitations. A proposed project must cite
 the gap it addresses and identify the minimum experiment that could falsify it.
+
+Discovery runs are recorded as dated `search-log-YYYY-MM-DD.md` files. The
+current seed search is `search-log-2026-08-29.md`; it contains candidate DOIs
+only, so it must not be cited as a completed review.
