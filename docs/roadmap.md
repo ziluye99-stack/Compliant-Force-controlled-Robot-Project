@@ -19,6 +19,7 @@ earlier gate. Each item should become a focused branch using
 - [x] Record a dated, deduplicated discovery session with access status
 - [ ] Obtain authorized full text for the contact-manipulation survey
 - [x] Obtain public full text and write a structured note for the force-learning paper
+- [x] Obtain public full text and write a structured note for the humanoid whole-body force-control paper
 - [ ] Write a structured note for the contact-manipulation survey covering
   translation, equations, interfaces, baselines, metrics, ablations, failure
   cases, and reproducibility

@@ -42,6 +42,16 @@ friction-contact, planar-arm, and controller-ablation rows. Those results remain
 task-local MuJoCo evidence. They must not be summarized as real-robot or
 sim-to-real evidence until calibration and replay gates are complete.
 
+The second completed note, *Multi-Contact Whole-Body Force Control for
+Position-Controlled Robots*, covers the humanoid/whole-body family. SEIKO uses
+two constrained QPs and an explicit joint-flexibility model to regulate
+redundant contact wrenches on a position-controlled Talos humanoid. Its MuJoCo
+robustness grid and real-robot contact-switching results support the project's
+focus on force metrics, model mismatch, and feasibility gates, while its
+quasi-static and externally supplied contact-state assumptions define clear
+limits. See
+[`multi-contact-whole-body-force-control-2024.md`](notes/multi-contact-whole-body-force-control-2024.md).
+
 ## Reading and classification queue
 
 The next papers are selected to cover complementary axes rather than to collect
