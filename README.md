@@ -46,6 +46,11 @@ The project north star and branch-entry rule are in
 portal-access rules, and paper note template are in
 [`docs/literature/README.md`](docs/literature/README.md).
 
+The staged research backlog is in [`docs/roadmap.md`](docs/roadmap.md); use
+[`docs/tasks/task-template.md`](docs/tasks/task-template.md) for each focused
+branch and [`docs/literature/search-log-template.md`](docs/literature/search-log-template.md)
+for a reproducible search session.
+
 ## Server policy
 
 The project uses only the `gbu` user space on the shared server. Jobs must request their resources through Slurm. The scripts refuse to submit without explicit account, partition, GPU, CPU, memory, and time settings.
