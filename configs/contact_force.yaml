@@ -3,6 +3,7 @@ defaults:
 
 experiment:
   name: normal-force-baseline
+  artifact_root: artifacts/contact-force-baseline
 
 runtime:
   mode: sim
