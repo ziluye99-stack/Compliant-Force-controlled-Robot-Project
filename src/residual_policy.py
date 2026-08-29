@@ -138,6 +138,7 @@ def collect_dataset(
     kd: float = 0.3,
     integral_limit: float = 10.0,
     control_limit_n: float = 30.0,
+    dynamics_randomization: tuple[tuple[float, float], tuple[float, float]] | None = None,
     seed: int = 42,
 ) -> ResidualDataset:
     """Collect noisy-baseline states and oracle-minus-baseline actions."""
@@ -145,6 +146,10 @@ def collect_dataset(
         raise ValueError("episodes must be positive and steps must be at least 10")
     if force_noise_std_n < 0:
         raise ValueError("force_noise_std_n must be non-negative")
+    if dynamics_randomization is not None:
+        for low, high in dynamics_randomization:
+            if low <= 0 or high < low:
+                raise ValueError("dynamics randomization bounds must be positive and ordered")
     if target_force_range_n is not None:
         low, high = target_force_range_n
         if low <= 0 or high < low:
@@ -157,7 +162,11 @@ def collect_dataset(
         episode_target_force_n = target_force_n
         if target_force_range_n is not None:
             episode_target_force_n = float(rng.uniform(*target_force_range_n))
-        model, data = _make_system(damping_scale, actuator_gain, friction_scale)
+        episode_damping, episode_gain = damping_scale, actuator_gain
+        if dynamics_randomization is not None:
+            episode_damping = float(rng.uniform(*dynamics_randomization[0]))
+            episode_gain = float(rng.uniform(*dynamics_randomization[1]))
+        model, data = _make_system(episode_damping, episode_gain, friction_scale)
         dt = model.opt.timestep
         baseline_integral = 0.0
         oracle_integral = 0.0
@@ -216,6 +225,7 @@ def evaluate_residual(
     kd: float = 0.3,
     integral_limit: float = 10.0,
     control_limit_n: float = 30.0,
+    feature_indices: tuple[int, ...] | None = None,
     seed: int = 123,
 ) -> ForceTrackingMetrics:
     """Evaluate PI plus a bounded residual under the same disturbance contract."""
@@ -238,6 +248,10 @@ def evaluate_residual(
             control_limit_n=control_limit_n, dt=dt,
         )
         feature = _features(target_force_n, measured_force_n, float(data.qvel[0]), integral_error, base_control)
+        if feature_indices is not None:
+            if not feature_indices or any(index < 0 or index >= len(feature) for index in feature_indices):
+                raise ValueError("feature_indices must contain valid feature positions")
+            feature = feature[list(feature_indices)]
         residual = float(policy.predict(feature[None, :])[0])
         applied_control = float(np.clip(base_control + residual, -control_limit_n, control_limit_n))
         data.ctrl[0] = applied_control

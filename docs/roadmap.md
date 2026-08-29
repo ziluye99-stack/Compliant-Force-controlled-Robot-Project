@@ -29,7 +29,7 @@ earlier gate. Each item should become a focused branch using
 - [x] Define demonstrations or interaction-data collection protocol
 - [x] Specify train/validation/test splits and leakage checks
 - [x] Train one transparent baseline before adding a new model component
-- [ ] Run ablations over observations, dynamics randomization, and controller gains
+- [x] Run ablations over observations, dynamics randomization, and controller gains
 
 ## Stage 3: Transfer analysis
 

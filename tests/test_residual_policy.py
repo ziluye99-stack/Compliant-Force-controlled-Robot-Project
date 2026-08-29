@@ -15,6 +15,11 @@ def test_dataset_split_keeps_episodes_together() -> None:
     assert len(train.features) + len(test.features) == len(dataset.features)
 
 
+def test_dataset_supports_dynamics_randomization() -> None:
+    dataset = collect_dataset(episodes=3, steps=20, dynamics_randomization=((1.2, 1.8), (0.7, 0.9)), seed=4)
+    assert dataset.features.shape == (60, 5)
+
+
 def test_residual_policy_fit_is_deterministic_and_bounded() -> None:
     dataset = collect_dataset(episodes=4, steps=40, seed=3)
     train, _ = split_by_episode(dataset)
