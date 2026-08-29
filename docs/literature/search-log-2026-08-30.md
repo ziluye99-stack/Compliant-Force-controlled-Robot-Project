@@ -152,3 +152,31 @@ Reproduction commands:
   --year-from 2018 --limit 20 \
   --output /tmp/discovery-humanoid-force-20260830.json
 ```
+
+## Public-source adapter verification
+
+The repository query tool was extended and verified on 2026-08-30. The
+default source set is now OpenAlex, Crossref, Semantic Scholar, and arXiv; the
+new run below used all four sources and retained the same `metadata-only`
+boundary:
+
+```bash
+./.mamba-env/bin/python scripts/literature-query.py \
+  "humanoid whole-body multi-contact force control" \
+  --year-from 2022 --limit 5 --timeout 10 \
+  --output /tmp/lit-public-sources-20260830.json
+```
+
+OpenAlex and Crossref returned records. Semantic Scholar returned HTTP 429 and
+arXiv timed out within the 10-second test budget; both failures were preserved
+under `source_errors` while the run still returned five deduplicated records.
+The retained records included *Dynamic Complementarity Conditions and
+Whole-Body Trajectory Optimization for Humanoid Robot Locomotion* (IEEE T-RO,
+2022), *Whole-Body Multi-Contact Motion Control for Humanoid Robots Based on
+Distributed Tactile Sensors* (IEEE RA-L, 2024), and *Multi-Contact Whole-Body
+Force Control for Position-Controlled Robots* (IEEE RA-L, 2024).
+
+This verifies source isolation, not paper validity. Semantic Scholar/arXiv
+availability can vary with rate limits and network latency. WoS/SCI, CNKI/万方,
+and publisher claims still require portal or official-version verification and
+an SHA-256-tracked PDF before entering the literature evidence gate.

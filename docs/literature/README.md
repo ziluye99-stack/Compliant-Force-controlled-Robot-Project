@@ -155,9 +155,9 @@ only, so it must not be cited as a completed review.
 ## Reproducible public-metadata query
 
 For a new discovery session, run the repository tool with an English or
-Chinese query. It queries OpenAlex and Crossref, deduplicates by DOI (then
-normalized title/year), records source errors, and marks every result
-`metadata-only`:
+Chinese query. By default it queries OpenAlex, Crossref, Semantic Scholar, and
+arXiv, deduplicates by DOI (then normalized title/year), records source errors,
+and marks every result `metadata-only`:
 
 ```bash
 ./.mamba-env/bin/python scripts/literature-query.py \
@@ -167,12 +167,15 @@ normalized title/year), records source errors, and marks every result
 ```
 
 Use `--venue` for a narrow pass, for example `--venue "Robotics and
-Automation Letters"`. Copy the query, date, sources, and selected DOI records
-into a dated search log. This tool does not query CNKI or Web of Science
-accounts and does not download restricted PDFs; use the school portal for
-those steps and record the authorized full-text route in the paper note.
+Automation Letters"`. Use `--sources OpenAlex,Crossref` for a historical
+two-source pass, or choose any comma-separated subset of
+`OpenAlex,Crossref,Semantic Scholar,arXiv`. Copy the query, date, sources, and
+selected DOI records into a dated search log. This tool does not query CNKI or
+Web of Science accounts and does not download restricted PDFs; use the school
+portal for those steps and record the authorized full-text route in the paper
+note.
 
-If OpenAlex or Crossref returns HTTP 429, the tool retries once by default and
+If a selected source returns HTTP 429, the tool retries once by default and
 caps the `Retry-After` delay at five seconds. The retry is deliberately bounded
 so a rate-limited source remains visible in `source_errors` instead of causing
 an unbounded request loop. For a strict no-retry run, pass

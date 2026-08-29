@@ -32,6 +32,60 @@ def test_venue_priority_ranks_robotics_top_venues() -> None:
     assert literature_query.venue_score("IEEE Transactions on Robotics") > literature_query.venue_score("Unknown Journal")
 
 
+def test_semantic_scholar_record_maps_shared_fields() -> None:
+    record = literature_query.from_semantic_scholar(
+        {
+            "title": "Contact Force Learning",
+            "authors": [{"name": "A Researcher"}],
+            "year": 2024,
+            "venue": "IEEE RA-L",
+            "citationCount": 7,
+            "externalIds": {"DOI": "10.1109/LRA.2024.1234567"},
+            "url": "https://www.semanticscholar.org/paper/example",
+            "openAccessPdf": {"url": "https://example.test/paper.pdf"},
+        }
+    )
+    assert record["doi"] == "10.1109/lra.2024.1234567"
+    assert record["discovery_sources"] == ["Semantic Scholar"]
+    assert record["open_access"] is True
+    assert record["citations"] == 7
+
+
+def test_arxiv_query_parses_atom_and_filters_year(monkeypatch) -> None:
+    atom = """<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:arxiv="http://arxiv.org/schemas/atom">
+  <entry>
+    <id>https://arxiv.org/abs/2401.00001</id>
+    <title>  Contact force control  </title>
+    <published>2024-01-02T00:00:00Z</published>
+    <author><name>A Researcher</name></author>
+    <link title="pdf" type="application/pdf" href="https://arxiv.org/pdf/2401.00001" />
+    <arxiv:doi>10.1109/LRA.2024.1234567</arxiv:doi>
+  </entry>
+  <entry>
+    <id>https://arxiv.org/abs/2010.00001</id>
+    <title>Old result</title>
+    <published>2020-01-02T00:00:00Z</published>
+  </entry>
+</feed>"""
+    monkeypatch.setattr(literature_query, "request_text", lambda *args, **kwargs: atom)
+    records = literature_query.query_arxiv("force control", 5, 2021, 2.0)
+    assert len(records) == 1
+    assert records[0]["title"] == "Contact force control"
+    assert records[0]["doi"] == "10.1109/lra.2024.1234567"
+    assert records[0]["pdf_url"].endswith("2401.00001")
+
+
+def test_parse_sources_rejects_unknown_and_preserves_order() -> None:
+    assert literature_query.parse_sources("arXiv,OpenAlex") == ["arXiv", "OpenAlex"]
+    try:
+        literature_query.parse_sources("CNKI")
+    except ValueError as error:
+        assert "unknown literature source" in str(error)
+    else:
+        raise AssertionError("unknown source should be rejected")
+
+
 class _Response:
     def __init__(self, payload: dict) -> None:
         self._payload = json.dumps(payload).encode("utf-8")

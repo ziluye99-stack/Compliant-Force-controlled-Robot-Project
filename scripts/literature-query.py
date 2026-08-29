@@ -16,6 +16,7 @@ import sys
 import time
 import urllib.parse
 import urllib.request
+import xml.etree.ElementTree as ET
 from collections import defaultdict
 from pathlib import Path
 from typing import Any
@@ -23,6 +24,7 @@ from typing import Any
 
 DEFAULT_RATE_LIMIT_RETRIES = 1
 DEFAULT_MAX_RETRY_DELAY = 5.0
+DEFAULT_SOURCES = ("OpenAlex", "Crossref", "Semantic Scholar", "arXiv")
 
 
 VENUE_PRIORITY = (
@@ -141,6 +143,28 @@ def from_crossref(item: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def from_semantic_scholar(item: dict[str, Any]) -> dict[str, Any]:
+    """Convert a Semantic Scholar Graph API result to the shared schema."""
+    external_ids = item.get("externalIds") or {}
+    doi = normalize_doi(external_ids.get("DOI"))
+    open_access_pdf = item.get("openAccessPdf") or {}
+    pdf_url = open_access_pdf.get("url")
+    authors = [str(author["name"]) for author in item.get("authors", []) if author.get("name")]
+    return {
+        "title": str(item.get("title") or "").strip(),
+        "doi": doi,
+        "venue": item.get("venue"),
+        "year": item.get("year") if isinstance(item.get("year"), int) else None,
+        "authors": authors,
+        "citations": int(item.get("citationCount") or 0),
+        "publisher_url": f"https://doi.org/{doi}" if doi else item.get("url"),
+        "open_access": bool(pdf_url),
+        "pdf_url": pdf_url,
+        "discovery_sources": ["Semantic Scholar"],
+        "evidence_status": "metadata-only",
+    }
+
+
 def merge_records(records: list[dict[str, Any]], limit: int) -> list[dict[str, Any]]:
     grouped: dict[str, dict[str, Any]] = {}
     for source_record in records:
@@ -218,6 +242,32 @@ def request_json(
     return parsed
 
 
+def request_text(
+    base_url: str,
+    params: dict[str, str],
+    timeout: float,
+    *,
+    rate_limit_retries: int = DEFAULT_RATE_LIMIT_RETRIES,
+    max_retry_delay: float = DEFAULT_MAX_RETRY_DELAY,
+) -> str:
+    """Fetch text from an API using the same bounded retry policy as JSON."""
+    query = urllib.parse.urlencode(params)
+    request = urllib.request.Request(
+        f"{base_url}?{query}",
+        headers={"Accept": "application/atom+xml, text/plain", "User-Agent": "compliant-force-robot-literature/0.1"},
+    )
+    attempts = 0
+    while True:
+        try:
+            with urllib.request.urlopen(request, timeout=timeout) as response:
+                return response.read().decode("utf-8")
+        except urllib.error.HTTPError as error:
+            if error.code != 429 or attempts >= rate_limit_retries:
+                raise
+            time.sleep(_retry_delay(error, max_retry_delay))
+            attempts += 1
+
+
 def query_openalex(
     query: str,
     limit: int,
@@ -263,12 +313,126 @@ def query_crossref(
     return [from_crossref(item) for item in (message.get("items") or []) if isinstance(item, dict)]
 
 
+def query_semantic_scholar(
+    query: str,
+    limit: int,
+    year_from: int | None,
+    timeout: float,
+    *,
+    rate_limit_retries: int = DEFAULT_RATE_LIMIT_RETRIES,
+    max_retry_delay: float = DEFAULT_MAX_RETRY_DELAY,
+) -> list[dict[str, Any]]:
+    params = {
+        "query": query,
+        "limit": str(limit),
+        "fields": "title,authors,year,venue,citationCount,externalIds,url,openAccessPdf",
+    }
+    if year_from is not None:
+        params["year"] = f"{year_from}-"
+    payload = request_json(
+        "https://api.semanticscholar.org/graph/v1/paper/search",
+        params,
+        timeout,
+        rate_limit_retries=rate_limit_retries,
+        max_retry_delay=max_retry_delay,
+    )
+    return [from_semantic_scholar(item) for item in (payload.get("data") or []) if isinstance(item, dict)]
+
+
+def query_arxiv(
+    query: str,
+    limit: int,
+    year_from: int | None,
+    timeout: float,
+    *,
+    rate_limit_retries: int = DEFAULT_RATE_LIMIT_RETRIES,
+    max_retry_delay: float = DEFAULT_MAX_RETRY_DELAY,
+) -> list[dict[str, Any]]:
+    # arXiv's API is Atom rather than JSON; use all-fields search for
+    # cross-lingual queries and leave venue filtering to the shared pipeline.
+    params = {
+        "search_query": f"all:{query}",
+        "start": "0",
+        "max_results": str(limit),
+        "sortBy": "submittedDate",
+        "sortOrder": "descending",
+    }
+    xml_text = request_text(
+        "https://export.arxiv.org/api/query",
+        params,
+        timeout,
+        rate_limit_retries=rate_limit_retries,
+        max_retry_delay=max_retry_delay,
+    )
+    namespace = "{http://www.w3.org/2005/Atom}"
+    arxiv_namespace = "{http://arxiv.org/schemas/atom}"
+    root = ET.fromstring(xml_text)
+    records: list[dict[str, Any]] = []
+    for entry in root.findall(f"{namespace}entry"):
+        published = entry.findtext(f"{namespace}published") or ""
+        year = int(published[:4]) if published[:4].isdigit() else None
+        if year_from is not None and (year is None or year < year_from):
+            continue
+        title = " ".join((entry.findtext(f"{namespace}title") or "").split())
+        abstract_url = (entry.findtext(f"{namespace}id") or "").strip()
+        pdf_url = None
+        for link in entry.findall(f"{namespace}link"):
+            if link.get("title") == "pdf" or link.get("type") == "application/pdf":
+                pdf_url = link.get("href")
+                break
+        doi = normalize_doi(entry.findtext(f"{arxiv_namespace}doi"))
+        authors = [
+            str(name)
+            for name in (author.findtext(f"{namespace}name") for author in entry.findall(f"{namespace}author"))
+            if name
+        ]
+        records.append(
+            {
+                "title": title,
+                "doi": doi,
+                "venue": "arXiv",
+                "year": year,
+                "authors": authors,
+                "citations": 0,
+                "publisher_url": f"https://doi.org/{doi}" if doi else abstract_url,
+                "open_access": bool(pdf_url),
+                "pdf_url": pdf_url,
+                "discovery_sources": ["arXiv"],
+                "evidence_status": "metadata-only",
+            }
+        )
+    return records
+
+
+SOURCE_FUNCTIONS = {
+    "OpenAlex": query_openalex,
+    "Crossref": query_crossref,
+    "Semantic Scholar": query_semantic_scholar,
+    "arXiv": query_arxiv,
+}
+
+
+def parse_sources(value: str) -> list[str]:
+    selected = [item.strip() for item in value.split(",") if item.strip()]
+    unknown = [item for item in selected if item not in SOURCE_FUNCTIONS]
+    if unknown:
+        raise ValueError(f"unknown literature source(s): {', '.join(unknown)}")
+    if not selected:
+        raise ValueError("at least one literature source is required")
+    return selected
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("query", help="English or Chinese discovery query")
     parser.add_argument("--limit", type=int, default=10)
     parser.add_argument("--year-from", type=int)
     parser.add_argument("--venue", help="Keep records whose venue contains this text")
+    parser.add_argument(
+        "--sources",
+        default=",".join(DEFAULT_SOURCES),
+        help="Comma-separated sources: OpenAlex,Crossref,Semantic Scholar,arXiv",
+    )
     parser.add_argument("--timeout", type=float, default=20.0)
     parser.add_argument(
         "--rate-limit-retries",
@@ -290,10 +454,15 @@ def main() -> int:
         parser.error("--rate-limit-retries must be non-negative")
     if args.max_retry_delay < 0:
         parser.error("--max-retry-delay must be non-negative")
+    try:
+        selected_sources = parse_sources(args.sources)
+    except ValueError as error:
+        parser.error(str(error))
 
     records: list[dict[str, Any]] = []
     errors: dict[str, str] = {}
-    for source, function in (("OpenAlex", query_openalex), ("Crossref", query_crossref)):
+    for source in selected_sources:
+        function = SOURCE_FUNCTIONS[source]
         try:
             records.extend(
                 function(
@@ -313,8 +482,8 @@ def main() -> int:
     result = {
         "created_at_utc": dt.datetime.now(dt.timezone.utc).isoformat(),
         "query": args.query,
-        "filters": {"year_from": args.year_from, "venue": args.venue, "limit": args.limit},
-        "sources_queried": ["OpenAlex", "Crossref"],
+        "filters": {"year_from": args.year_from, "venue": args.venue, "limit": args.limit, "sources": selected_sources},
+        "sources_queried": selected_sources,
         "source_errors": errors,
         "result_count": min(args.limit, len(records)),
         "results": merge_records(records, args.limit),
