@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import subprocess
 from pathlib import Path
 from typing import Any
@@ -17,6 +18,7 @@ REQUIRED_MARKERS = (
     "Expected artifact",
     "## Verification",
 )
+VISION_CHECK_RE = re.compile(r"(?im)^\s*-\s*\[x\]\s+.*docs/PROJECT_VISION\.md.*$")
 
 
 def current_branch(root: Path) -> str:
@@ -50,6 +52,8 @@ def validate_branch_task(root: Path, branch: str | None = None) -> dict[str, Any
         for marker in REQUIRED_MARKERS:
             if marker not in text:
                 issues.append(f"task brief missing marker: {marker}")
+        if not VISION_CHECK_RE.search(text):
+            issues.append("task brief must check the docs/PROJECT_VISION.md gate before branch work")
         if "Project priority" not in text and "Project priorities" not in text:
             issues.append("task brief missing marker: Project priority")
         if f"`codex/{task_name}`" not in text and f"codex/{task_name}" not in text:
