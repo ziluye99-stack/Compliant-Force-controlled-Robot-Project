@@ -23,6 +23,6 @@ controls or store school-portal passwords, cookies, or restricted PDFs.
 
 ## Completion note
 
-- Git commit: pending
+- Git commit: `4d3cce4` (this task branch)
 - Search result: seven deduplicated candidates recorded; metadata only
 - Follow-up: download two accessible or school-portal PDFs and write structured paper notes
