@@ -5,6 +5,10 @@ understand the experiment, identify a real gap, and turn it into a testable
 MuJoCo experiment. Every claim used in a design or paper should have a saved
 source URL/DOI and a reading note.
 
+SCI is a Web of Science indexing and selection system, not a full-text
+database by itself. For every paper, distinguish the index or discovery record
+from the publisher page and from the PDF actually read.
+
 ## Source map
 
 | Use | Preferred sources | Notes |
@@ -23,6 +27,18 @@ metadata, Exa/Tavily-style web search, AMiner for Chinese authors and venues,
 and citation chaining. It does not automatically inherit the school's CNKI
 session. When a paper is behind the school portal, use the logged-in browser to
 open and download it, then provide the PDF or stable URL to Codex.
+
+The resulting evidence hierarchy is:
+
+1. Publisher or official proceedings full text (IEEE Xplore, ScienceDirect,
+   Springer, Wiley, Nature, Science, RSS/CoRL/ICRA/IROS proceedings).
+2. Authorized university-portal full text (including Web of Science/SCI,
+   CNKI, and 万方 links reached from the library app).
+3. Author manuscript or institutional repository with clear provenance.
+4. arXiv and metadata indexes for discovery, version comparison, and citation
+   chaining only.
+5. GitHub or Papers with Code for implementation clues and licenses, never as
+   evidence for a published performance claim.
 
 ## Source priority for this project
 
@@ -63,6 +79,11 @@ CNKI content:
 5. Provide Codex the local PDF path or stable URL for translation, technical
    digest, strengths/limitations analysis, and experiment-design extraction.
 
+If the portal opens a publisher site in a separate tab, keep the DOI/title and
+access date in the search log before downloading. If download is unavailable,
+export only what the portal permits and mark the record `metadata-only`; do not
+infer equations, baselines, or experimental results from an abstract.
+
 For a restricted page that cannot be downloaded, keep its bibliographic record
 and provide the PDF through the authorized portal. Do not bypass access
 controls or use a copy with unclear provenance.
@@ -102,6 +123,12 @@ Each serious reading produces a note from `paper-note-template.md`. A survey
 also maintains a table of methods, sensors, tasks, metrics, baselines,
 simulators, real-robot evidence, and limitations. A proposed project must cite
 the gap it addresses and identify the minimum experiment that could falsify it.
+
+The handoff from literature to engineering is explicit: the note's “follow-up
+experiment in MuJoCo” becomes an experiment record, its interfaces become a
+config and test, and its reported metrics become an evaluation script. Only
+after that chain exists should a new model, mechanical change, or hardware
+trial be proposed.
 
 Discovery runs are recorded as dated `search-log-YYYY-MM-DD.md` files. The
 current seed search is `search-log-2026-08-29.md`; it contains candidate DOIs

@@ -5,6 +5,16 @@ training, evaluation, and supervised hardware validation. Robot-specific
 drivers and control limits must be supplied before the hardware stages are
 enabled.
 
+## 0. Reconfirm the vision and evidence boundary
+
+Before creating a branch or starting a substantial change, read
+`docs/PROJECT_VISION.md` and create a focused task from
+`docs/tasks/task-template.md`. The task must name one project priority, one
+stage gate, the expected artifact, and the smallest verification command. Do
+not start implementation from an uncited idea: the literature log and paper
+notes must state what is known, what is missing, and which claim the experiment
+can falsify.
+
 ## 1. Design the experiment
 
 Start with `docs/experiments/template.md`. State one question, one hypothesis,
@@ -16,7 +26,27 @@ Every run must have a unique `run_id`, fixed seed, committed Git revision, and
 an artifact directory. Do not put raw data, checkpoints, videos, or credentials
 in Git.
 
-## 2. Validate locally
+## 2. Freeze the system and mechanical interface
+
+Before interpreting a controller or learned policy, write the platform-neutral
+system contract and, once a platform is selected, the corresponding mechanical
+record. At minimum record:
+
+- links, joints, mass/inertia, transmission, contact geometry, and CAD revision;
+- joint/torque/velocity/temperature limits and the safe operating envelope;
+- force/torque sensor location, frame convention, calibration, rate, bias, and
+  filtering;
+- observation/action units, timing, latency budget, controller ownership, and
+  failure behavior;
+- which parameters are measured, identified, randomized, or intentionally held
+  fixed in MuJoCo.
+
+Keep large CAD, raw meshes, and sensor dumps on the research drive. Commit the
+small metadata, exported model hashes, URDF/MJCF references, and calibration
+reports needed to reproduce the simulation. Do not claim sim-to-real transfer
+until the measured parameters and their uncertainty are linked to a config.
+
+## 3. Validate locally
 
 Use the laptop for configuration validation, lightweight MuJoCo scenes,
 visualization, unit tests, and controller logic that does not command hardware:
@@ -30,7 +60,7 @@ bash scripts/preflight.sh local
 The local stage should prove the config contract and observation/action shapes
 before consuming server GPU time.
 
-## 3. Run simulation on the server
+## 4. Run simulation on the server
 
 Connect with VS Code Remote-SSH or `ssh research-gpu`. The server project uses
 `/home/gbu/miniforge3/envs/compliant-force-robot` for the common MuJoCo
@@ -45,7 +75,16 @@ Simulation jobs should write only to `artifacts/<run-id>` and record the config,
 metrics, simulator version, seed, and job ID. Keep large videos and checkpoints
 on the server until evaluation is complete.
 
-## 4. Evaluate and archive
+## 5. Collect data, train, and evaluate
+
+Use the same committed config and observation/action contract for data
+collection, training, validation, and held-out evaluation. Separate training,
+validation, and test seeds or environments; record leakage checks, checkpoint
+selection, and all failed runs. Add one transparent baseline before introducing
+new policy components, then report ablations for sensors, dynamics
+randomization, controller gains, and latency where relevant.
+
+## 6. Evaluate and archive
 
 Evaluate a checkpoint with a separate config and record aggregate metrics plus
 per-seed results. Before copying results, preview the transfer:
@@ -59,7 +98,7 @@ The script copies from the server with resumable, checksum-verified `rsync` to
 `/mnt/research-data`. Source code is synchronized with GitHub; the mechanical
 drive is for large artifacts and data only.
 
-## 5. Prepare supervised hardware validation
+## 7. Prepare supervised hardware validation
 
 Do not add a real robot command until these fields are documented in the
 experiment record:
@@ -73,10 +112,13 @@ First replay recorded trajectories, then use low-gain, low-speed commands with a
 human operator and an independent stop path. Compare real observations against
 the simulation contract before enabling learning or adaptation.
 
-## 6. Iterate and release
+## 8. Iterate, write, and release
 
 For each change, record the Git commit, environment lock, config, seed, run IDs,
-metrics, failures, and rollback decision. Promote a model from simulation to
-hardware only after it passes offline evaluation, bounded simulation tests,
-and a supervised hardware checklist. A paper-ready result should be reproducible
-from the committed config and the archived run directory.
+metrics, failures, and rollback decision. Generate figures and tables directly
+from versioned metrics; keep equation definitions tied to the observation,
+action, and controller interfaces. Promote a model from simulation to hardware
+only after it passes offline evaluation, bounded simulation tests, and a
+supervised hardware checklist. A paper-ready result should be reproducible from
+the committed config and the archived run directory, with limitations and
+negative results retained alongside successful runs.

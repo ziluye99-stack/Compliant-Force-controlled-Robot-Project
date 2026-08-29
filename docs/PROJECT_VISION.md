@@ -20,6 +20,24 @@ The long-term target is not a single robot or model. It is a reusable method
 that explains when contact-aware policies work, why they fail, and how to move
 from simulation to a real arm or humanoid platform without hiding safety limits.
 
+## End-to-end research loop
+
+Every project decision should leave a small, reviewable artifact and advance
+through the same loop:
+
+```text
+vision -> literature evidence -> system/mechanical design -> experiment design
+-> MuJoCo implementation -> data collection/training -> evaluation/ablations
+-> sim-to-real calibration -> supervised hardware -> paper/release
+```
+
+The literature step is a gate, not an optional background exercise. A proposed
+method must be positioned against primary papers, and its claimed gap must map
+to a falsifiable experiment. Mechanical design is part of the experimental
+system: mass properties, transmission, limits, contact geometry, sensor frames,
+and mounting tolerances must be versioned before simulation parameters or
+control gains are interpreted.
+
 ## Research priorities
 
 1. **Compliant interaction:** force/torque-aware control, contact stability,
@@ -53,6 +71,8 @@ An experiment advances only after the previous gate has evidence:
 | Gate | Required evidence |
 | --- | --- |
 | Question | Hypothesis, variables, baseline, metrics, and safety constraints |
+| Literature | Dated search log, provenance for each full text, structured notes, and a gap statement |
+| System design | Mechanical/sensing requirements, interface contract, limits, and a parameter-to-measurement map |
 | Simulation | MuJoCo scene, observation/action contract, fixed seeds, smoke tests |
 | Training | Locked environment, config, resource allocation, checkpoints, metrics |
 | Evaluation | Baselines, ablations, multiple seeds, failure analysis |

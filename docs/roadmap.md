@@ -25,6 +25,17 @@ earlier gate. Each item should become a focused branch using
   cases, and reproducibility
 - [x] Build a related-work taxonomy and identify a falsifiable project gap
 
+## Stage 0.75: System and mechanical interface
+
+- [ ] Select the first robot embodiment and document why it fits the gap
+- [ ] Freeze link/joint/contact conventions and the observation/action contract
+- [ ] Record CAD revision, mass properties, transmissions, limits, and sensor
+  frame/calibration requirements
+- [ ] Map each MuJoCo parameter to a measured value, identification procedure,
+  or explicitly justified randomization range
+- [ ] Review the safety envelope, watchdog, E-stop, and rollback plan before any
+  hardware command path is added
+
 ## Stage 1: Contact task baseline
 
 - [x] Author a minimal MuJoCo contact scene with deterministic reset
