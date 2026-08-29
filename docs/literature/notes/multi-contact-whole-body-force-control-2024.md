@@ -9,6 +9,7 @@
 - Publisher URL: [IEEE Xplore DOI landing page](https://doi.org/10.1109/LRA.2024.3396094)
 - Preprint or code URL: [HAL record and PDF](https://hal.science/hal-04362547v5); [SEIKO project page](https://hucebot.github.io/seiko_controller_website/)
 - Discovery source and access date: Crossref/OpenAlex metadata; HAL open-access PDF; 2026-08-29
+- Full-text access route: CC-BY HAL repository PDF and supplementary material
 - Full-text file and SHA-256: `/mnt/research-data/literature/pdfs/multi-contact-whole-body-force-control-2024.pdf`; `4ce71c106a580cc80f68f69670189466bb09f6085585a6b9f479ba5f4ee9735e`
 - Evidence status: Full text and supplementary material read from the CC-BY HAL version; publisher metadata cross-checked.
 

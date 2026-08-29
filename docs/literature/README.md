@@ -153,3 +153,16 @@ Automation Letters"`. Copy the query, date, sources, and selected DOI records
 into a dated search log. This tool does not query CNKI or Web of Science
 accounts and does not download restricted PDFs; use the school portal for
 those steps and record the authorized full-text route in the paper note.
+
+Before using notes to justify a new experiment, check the structured fields and
+the evidence boundary:
+
+```bash
+./.mamba-env/bin/python scripts/check-paper-notes.py
+./.mamba-env/bin/python scripts/check-paper-notes.py \
+  --require-full-text --verify-files
+```
+
+The second command is the literature stage gate. It requires a non-empty
+technical note, a non-`metadata-only` evidence status, and a matching SHA-256
+for each referenced PDF. PDF files remain outside Git.

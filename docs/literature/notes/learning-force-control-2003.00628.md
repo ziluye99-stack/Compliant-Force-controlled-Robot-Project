@@ -9,6 +9,7 @@
 - Publisher URL: [IEEE Xplore](https://ieeexplore.ieee.org/document/9144504)
 - Preprint or code URL: [arXiv:2003.00628](https://arxiv.org/abs/2003.00628)
 - Discovery source and access date: OpenAlex metadata; public arXiv PDF; 2026-08-29
+- Full-text access route: Public arXiv PDF; publisher metadata cross-checked
 - Full-text file and SHA-256: `/mnt/research-data/literature/pdfs/learning-force-control-2003.00628.pdf`; `06ead9f87a59b17359e6877c9fe86ece7f1393bc615da61ee59daa4cb67ca48d`
 - Evidence status: Full text read from the arXiv version. Publisher metadata and venue were cross-checked; no school-portal copy was needed.
 
