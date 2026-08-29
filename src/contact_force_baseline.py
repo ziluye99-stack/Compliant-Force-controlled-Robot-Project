@@ -61,6 +61,7 @@ def run(
     force_noise_std_n: float = 0.0,
     damping_scale: float = 1.0,
     actuator_gain: float = 1.0,
+    friction_scale: float = 1.0,
     actuator_delay_steps: int = 0,
     seed: int = 42,
 ) -> ForceTrackingMetrics:
@@ -71,14 +72,15 @@ def run(
         raise ValueError("target_force_n must be positive")
     if force_noise_std_n < 0:
         raise ValueError("force_noise_std_n must be non-negative")
-    if damping_scale <= 0 or actuator_gain <= 0:
-        raise ValueError("damping_scale and actuator_gain must be positive")
+    if damping_scale <= 0 or actuator_gain <= 0 or friction_scale <= 0:
+        raise ValueError("damping_scale, actuator_gain, and friction_scale must be positive")
     if actuator_delay_steps < 0:
         raise ValueError("actuator_delay_steps must be non-negative")
     rng = np.random.default_rng(seed)
     model = mujoco.MjModel.from_xml_string(MODEL_XML)
     model.dof_damping[0] *= damping_scale
     model.actuator_gear[0, 0] *= actuator_gain
+    model.geom_friction[:, 0] *= friction_scale
     data = mujoco.MjData(model)
     # Start just above the plane: body origin 0.2 m minus sphere radius 0.05 m.
     data.qpos[0] = -0.149
@@ -129,6 +131,7 @@ def main() -> None:
     parser.add_argument("--noise-std", type=float, default=0.0)
     parser.add_argument("--damping-scale", type=float, default=1.0)
     parser.add_argument("--actuator-gain", type=float, default=1.0)
+    parser.add_argument("--friction-scale", type=float, default=1.0)
     parser.add_argument("--actuator-delay-steps", type=int, default=0)
     args = parser.parse_args()
     metrics = run(
@@ -137,6 +140,7 @@ def main() -> None:
         force_noise_std_n=args.noise_std,
         damping_scale=args.damping_scale,
         actuator_gain=args.actuator_gain,
+        friction_scale=args.friction_scale,
         actuator_delay_steps=args.actuator_delay_steps,
     )
     print(json.dumps(metrics.__dict__, indent=2))

@@ -85,12 +85,13 @@ class ResidualLinearPolicy:
             )
 
 
-def _make_system(damping_scale: float, actuator_gain: float) -> tuple[mujoco.MjModel, mujoco.MjData]:
-    if damping_scale <= 0 or actuator_gain <= 0:
-        raise ValueError("damping_scale and actuator_gain must be positive")
+def _make_system(damping_scale: float, actuator_gain: float, friction_scale: float = 1.0) -> tuple[mujoco.MjModel, mujoco.MjData]:
+    if damping_scale <= 0 or actuator_gain <= 0 or friction_scale <= 0:
+        raise ValueError("damping_scale, actuator_gain, and friction_scale must be positive")
     model = mujoco.MjModel.from_xml_string(MODEL_XML)
     model.dof_damping[0] *= damping_scale
     model.actuator_gear[0, 0] *= actuator_gain
+    model.geom_friction[:, 0] *= friction_scale
     data = mujoco.MjData(model)
     data.qpos[0] = -0.149
     mujoco.mj_forward(model, data)
@@ -130,6 +131,8 @@ def collect_dataset(
     force_noise_std_n: float = 0.2,
     damping_scale: float = 1.5,
     actuator_gain: float = 0.8,
+    friction_scale: float = 1.0,
+    target_force_range_n: tuple[float, float] | None = None,
     kp: float = 0.5,
     ki: float = 5.0,
     kd: float = 0.3,
@@ -142,12 +145,19 @@ def collect_dataset(
         raise ValueError("episodes must be positive and steps must be at least 10")
     if force_noise_std_n < 0:
         raise ValueError("force_noise_std_n must be non-negative")
+    if target_force_range_n is not None:
+        low, high = target_force_range_n
+        if low <= 0 or high < low:
+            raise ValueError("target_force_range_n must be positive and ordered")
     rng = np.random.default_rng(seed)
     feature_rows: list[np.ndarray] = []
     target_rows: list[float] = []
     episode_rows: list[int] = []
     for episode_id in range(episodes):
-        model, data = _make_system(damping_scale, actuator_gain)
+        episode_target_force_n = target_force_n
+        if target_force_range_n is not None:
+            episode_target_force_n = float(rng.uniform(*target_force_range_n))
+        model, data = _make_system(damping_scale, actuator_gain, friction_scale)
         dt = model.opt.timestep
         baseline_integral = 0.0
         oracle_integral = 0.0
@@ -155,16 +165,16 @@ def collect_dataset(
             true_force_n = _normal_force(model, data)
             measured_force_n = max(0.0, true_force_n + float(rng.normal(0.0, force_noise_std_n)))
             base_control, baseline_integral = _pi_action(
-                target_force_n, measured_force_n, float(data.qvel[0]), baseline_integral,
+                episode_target_force_n, measured_force_n, float(data.qvel[0]), baseline_integral,
                 kp=kp, ki=ki, kd=kd, integral_limit=integral_limit,
                 control_limit_n=control_limit_n, dt=dt,
             )
             oracle_control, oracle_integral = _pi_action(
-                target_force_n, true_force_n, float(data.qvel[0]), oracle_integral,
+                episode_target_force_n, true_force_n, float(data.qvel[0]), oracle_integral,
                 kp=kp, ki=ki, kd=kd, integral_limit=integral_limit,
                 control_limit_n=control_limit_n, dt=dt,
             )
-            feature_rows.append(_features(target_force_n, measured_force_n, float(data.qvel[0]), baseline_integral, base_control))
+            feature_rows.append(_features(episode_target_force_n, measured_force_n, float(data.qvel[0]), baseline_integral, base_control))
             target_rows.append(oracle_control - base_control)
             episode_rows.append(episode_id)
             data.ctrl[0] = base_control
@@ -200,6 +210,7 @@ def evaluate_residual(
     force_noise_std_n: float = 0.2,
     damping_scale: float = 1.5,
     actuator_gain: float = 0.8,
+    friction_scale: float = 1.0,
     kp: float = 0.5,
     ki: float = 5.0,
     kd: float = 0.3,
@@ -211,7 +222,7 @@ def evaluate_residual(
     if steps < 10 or force_noise_std_n < 0:
         raise ValueError("steps must be at least 10 and force noise must be non-negative")
     rng = np.random.default_rng(seed)
-    model, data = _make_system(damping_scale, actuator_gain)
+    model, data = _make_system(damping_scale, actuator_gain, friction_scale)
     dt = model.opt.timestep
     integral_error = 0.0
     forces: list[float] = []

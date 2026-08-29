@@ -53,7 +53,9 @@ earlier gate. Each item should become a focused branch using
 ## Current next decision
 
 The next research decision is a held-out robustness study for the residual
-policy: vary target force and contact/friction conditions, use at least three
-seeds, and compare against PI with identical metrics. Robot-specific
+policy: vary target force and dynamics conditions, use at least three seeds,
+and compare against PI with identical metrics. The current one-dimensional
+normal-contact scene cannot expose tangential friction effects yet; friction
+must be evaluated only after a tangential contact task is added. Robot-specific
 implementation remains blocked until the robot and sensor specifications are
 supplied.

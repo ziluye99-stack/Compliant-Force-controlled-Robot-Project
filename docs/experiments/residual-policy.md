@@ -49,10 +49,28 @@ With 8 training episodes, 500 steps per episode, and evaluation seed 123:
 Both controllers remained in contact and below the 30 N action limit. This is
 one deterministic engineering run, not a generalization or sim-to-real claim.
 
+## Held-out study
+
+`src/heldout_study.py` trains on target forces sampled from 3--7 N, then tests
+target forces 4 and 6 N under two unseen damping/actuator settings and seeds
+101, 202, and 303 (12 evaluations total). Aggregate results from the fixed
+study command are:
+
+| Controller | Mean true-force RMSE | Mean measured-force RMSE | Worst penetration |
+| --- | ---: | ---: | ---: |
+| PI baseline | 0.08640 N | 0.22204 N | 0.546 mm |
+| PI + residual | 0.07674 N | 0.21861 N | 0.533 mm |
+
+The residual improved both aggregate error measures in this study and stayed
+within the contact/action limits. The effect is modest and comes from an
+oracle-generated target in a one-dimensional scene; it is not evidence for
+real-robot transfer or statistical significance.
+
 ## Limitations and next step
 
 This is an oracle-generated supervised baseline, not a claim of improved
-control or sim-to-real transfer. It uses one simple contact scene and fixed
-target force. The next experiment should vary target force and contact/friction
-conditions, add a held-out scene split, and compare against the PI baseline
-with at least three seeds before any hardware consideration.
+control or sim-to-real transfer. It uses one simple contact scene. The held-out
+study varies target force and dynamics with three evaluation seeds; tangential
+friction remains out of scope because the current scene has no tangential
+degree of freedom. A later contact-task branch should add that degree of
+freedom and a held-out scene split before any hardware consideration.
