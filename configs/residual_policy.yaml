@@ -1,0 +1,17 @@
+defaults:
+  - contact_force_robust
+
+experiment:
+  name: normal-force-residual-policy
+
+learning:
+  method: linear_residual_ridge
+  episodes: 8
+  steps_per_episode: 500
+  ridge: 0.001
+  train_fraction_by_episode: 0.8
+  residual_limit_n: 10.0
+
+evaluation:
+  steps: 1000
+  seed: 123

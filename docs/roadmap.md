@@ -23,10 +23,10 @@ earlier gate. Each item should become a focused branch using
 
 ## Stage 2: Data and learning
 
-- [ ] Select the first learning method and its reproducible baseline
-- [ ] Define demonstrations or interaction-data collection protocol
-- [ ] Specify train/validation/test splits and leakage checks
-- [ ] Train one transparent baseline before adding a new model component
+- [x] Select the first learning method and its reproducible baseline
+- [x] Define demonstrations or interaction-data collection protocol
+- [x] Specify train/validation/test splits and leakage checks
+- [x] Train one transparent baseline before adding a new model component
 - [ ] Run ablations over observations, dynamics randomization, and controller gains
 
 ## Stage 3: Transfer analysis
@@ -52,7 +52,8 @@ earlier gate. Each item should become a focused branch using
 
 ## Current next decision
 
-The next research decision is the first MuJoCo contact task. It should be small
-enough to run locally and representative enough to exercise force sensing or
-contact stability. Robot-specific implementation remains blocked until the
-robot and sensor specifications are supplied.
+The next research decision is a held-out robustness study for the residual
+policy: vary target force and contact/friction conditions, use at least three
+seeds, and compare against PI with identical metrics. Robot-specific
+implementation remains blocked until the robot and sensor specifications are
+supplied.
