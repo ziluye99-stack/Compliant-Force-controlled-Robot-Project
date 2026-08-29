@@ -176,6 +176,15 @@ REMOTE_ARTIFACT_ROOT=/home/gbu/research/worktrees/codex-<task-name>/artifacts \
   bash scripts/sync-results.sh <run-id>
 ```
 
+The same root can be supplied explicitly; this is useful in scripts and takes
+precedence over the environment variable:
+
+```bash
+bash scripts/sync-results.sh --dry-run \
+  --remote-artifact-root /home/gbu/research/worktrees/codex-<task-name>/artifacts \
+  <run-id>
+```
+
 The script refuses to run unless `/mnt/research-data` is mounted and writable,
 then writes `SHA256SUMS` after a successful copy. Source code is synchronized
 with GitHub; the mechanical drive is for large artifacts and data only. The

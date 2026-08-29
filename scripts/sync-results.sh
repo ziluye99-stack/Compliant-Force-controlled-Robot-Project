@@ -2,19 +2,62 @@
 set -euo pipefail
 
 dry_run=false
-if [[ "${1:-}" == "--dry-run" ]]; then
-  dry_run=true
-  shift
-fi
-run_id="${1:-}"
+remote_artifact_root="${REMOTE_ARTIFACT_ROOT:-}"
+run_id=""
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --dry-run)
+      dry_run=true
+      shift
+      ;;
+    --remote-artifact-root)
+      if [[ $# -lt 2 || -z "$2" ]]; then
+        echo "--remote-artifact-root requires a path" >&2
+        exit 2
+      fi
+      remote_artifact_root="$2"
+      shift 2
+      ;;
+    --remote-artifact-root=*)
+      remote_artifact_root="${1#*=}"
+      if [[ -z "$remote_artifact_root" ]]; then
+        echo "--remote-artifact-root requires a path" >&2
+        exit 2
+      fi
+      shift
+      ;;
+    --)
+      shift
+      if [[ $# -gt 0 ]]; then
+        run_id="$1"
+        shift
+      fi
+      ;;
+    -* )
+      echo "Unknown option: $1" >&2
+      echo "Usage: $0 [--dry-run] [--remote-artifact-root <path>] <run-id>" >&2
+      exit 2
+      ;;
+    *)
+      if [[ -n "$run_id" ]]; then
+        echo "Only one <run-id> may be supplied" >&2
+        exit 2
+      fi
+      run_id="$1"
+      shift
+      ;;
+  esac
+done
 if [[ -z "$run_id" ]]; then
-  echo "Usage: $0 [--dry-run] <run-id>" >&2
+  echo "Usage: $0 [--dry-run] [--remote-artifact-root <path>] <run-id>" >&2
   exit 2
 fi
 
 drive="/mnt/research-data"
 project="Compliant-Force-controlled-Robot-Project"
-remote_artifact_root="${REMOTE_ARTIFACT_ROOT:-~/research/$project/artifacts}"
+if [[ -z "$remote_artifact_root" ]]; then
+  remote_artifact_root="~/research/$project/artifacts"
+fi
 source_path="research-gpu:${remote_artifact_root%/}/$run_id/"
 destination="$drive/$project/$run_id/"
 
