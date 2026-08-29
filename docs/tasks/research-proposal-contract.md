@@ -40,8 +40,8 @@ bash scripts/preflight.sh local
 
 ## Completion note
 
-- Git commit: pending
-- Test output: pending
+- Git commit: `185242e` (`Add literature-backed research proposal workflow`)
+- Verification: `bash scripts/preflight.sh local` and `./.mamba-env/bin/python -m pytest -q` (`53 passed` on the current branch)
 - Artifact path: committed proposal documents; experiment outputs remain under ignored `artifacts/`
 - Known limitations: the proposal is platform-neutral until the robot and sensor are selected
 - Follow-up task: obtain authorized contact-manipulation and Chinese full texts, then review this proposal

@@ -24,3 +24,17 @@ def test_focused_branch_requires_matching_task_file() -> None:
     report = checker.validate_branch_task(ROOT, "codex/not-yet-defined")
     assert not report["valid"]
     assert "missing task brief" in report["issues"][0]
+
+
+def test_focused_branch_requires_explicit_vision_read_marker(tmp_path: Path) -> None:
+    task_dir = tmp_path / "docs" / "tasks"
+    task_dir.mkdir(parents=True)
+    (task_dir / "example.md").write_text(
+        "# Task\n\n- docs/PROJECT_VISION.md\n- Stage gate: simulation\n"
+        "- Expected artifact: test\n\n## Verification\n\nrun\n"
+        "- Project priority: reproducibility\n- Branch: `codex/example`\n",
+        encoding="utf-8",
+    )
+    report = checker.validate_branch_task(tmp_path, "codex/example")
+    assert not report["valid"]
+    assert "task brief missing marker: Read `docs/PROJECT_VISION.md`" in report["issues"]

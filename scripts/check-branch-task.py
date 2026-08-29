@@ -12,6 +12,7 @@ from typing import Any
 
 REQUIRED_MARKERS = (
     "docs/PROJECT_VISION.md",
+    "Read `docs/PROJECT_VISION.md`",
     "Stage gate",
     "Expected artifact",
     "## Verification",
