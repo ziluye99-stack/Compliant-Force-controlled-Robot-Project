@@ -112,6 +112,22 @@ python -m src.contact_loss_recovery_matrix \
 The matrix JSON must be copied with the run manifest when it becomes a server
 artifact. Its `failure_count` is evidence, not a reason to discard cases.
 
+For the variable-compliance peg-in-hole matrix, use the same config-driven
+entry point locally or in a user-space server worktree:
+
+```bash
+.mamba-env/bin/python -m src.variable_compliance_matrix \
+  --config configs/variable_compliance_peg.yaml --dry-run
+.mamba-env/bin/python -m src.variable_compliance_matrix \
+  --config configs/variable_compliance_peg.yaml --max-cases 1 \
+  --run-id variable-peg-smoke
+```
+
+The four matrix axes are strategy, seed, initial lateral offset, and friction.
+Each case is retained in `results.json`, including failures, and the manifest
+records the current Git commit, Python package snapshot, and optional Slurm job
+ID. `--dry-run` creates no artifact directory.
+
 Run `bash scripts/preflight.sh server` only when a scheduler is available; on
 the current shared workstation it intentionally reports `slurm=unavailable`.
 

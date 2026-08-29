@@ -34,3 +34,9 @@ evaluation:
     - final_lateral_error_m
     - max_geometric_intrusion_m
     - safety_gate_activations
+
+matrix:
+  strategies: [fixed, variable]
+  seeds: [101, 202, 303]
+  initial_offsets_m: [0.012]
+  friction_coefficients: [0.7]
