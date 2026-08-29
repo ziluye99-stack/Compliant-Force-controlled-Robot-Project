@@ -6,7 +6,7 @@
 - Project priorities: compliant interaction, embodied learning, simulation-to-real transfer, and reproducibility
 - Stage gate advanced: literature evidence to simulation-ready experiment design
 - Review date: 2026-08-29 (Asia/Shanghai)
-- Related records: [`PROJECT_VISION.md`](../PROJECT_VISION.md), [`learning-force-control-2003.00628.md`](../literature/notes/learning-force-control-2003.00628.md), [`residual-learning-dmp-2008.07682.md`](../literature/notes/residual-learning-dmp-2008.07682.md), [`multi-contact-whole-body-force-control-2024.md`](../literature/notes/multi-contact-whole-body-force-control-2024.md), [`contact-survey-104224.md`](../literature/notes/contact-survey-104224.md), [`two-rate-residual-study.md`](../experiments/two-rate-residual-study.md)
+- Related records: [`PROJECT_VISION.md`](../PROJECT_VISION.md), [`learning-force-control-2003.00628.md`](../literature/notes/learning-force-control-2003.00628.md), [`residual-learning-dmp-2008.07682.md`](../literature/notes/residual-learning-dmp-2008.07682.md), [`variable-compliance-peg-in-hole-2020.md`](../literature/notes/variable-compliance-peg-in-hole-2020.md), [`multi-contact-whole-body-force-control-2024.md`](../literature/notes/multi-contact-whole-body-force-control-2024.md), [`contact-survey-104224.md`](../literature/notes/contact-survey-104224.md), [`two-rate-residual-study.md`](../experiments/two-rate-residual-study.md)
 
 ## Research question and hypothesis
 
@@ -23,7 +23,10 @@ contact logging, and safety checks are exercised.
 ## Evidence and gap
 
 The verified force-learning note supports a slow learned layer over a faster
-force controller and documents force-limit checks. The verified humanoid note
+force controller and documents force-limit checks. The variable-compliance
+peg-in-hole note adds an open-access full-text reference for bounded compliance
+parameters with a 20 Hz policy over a 500 Hz position-force loop, domain
+randomization, and short real-robot refinement. The verified humanoid note
 supports explicit multi-contact wrench feasibility and robustness analysis.
 The related-work taxonomy identifies a missing controlled comparison of what a
 slow residual should modify under held-out contact dynamics.

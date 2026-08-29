@@ -20,6 +20,7 @@ earlier gate. Each item should become a focused branch using
 - [ ] Obtain authorized full text for the contact-manipulation survey
 - [x] Obtain public full text and write a structured note for the force-learning paper
 - [x] Obtain public full text and write a structured note for the humanoid whole-body force-control paper
+- [x] Obtain open-access full text and write a structured note for the variable-compliance peg-in-hole paper
 - [x] Write a structured note for the contact-manipulation survey covering
   translation, equations, interfaces, baselines, metrics, ablations, failure
   cases, and reproducibility (arXiv preprint; publisher/portal version remains

@@ -60,6 +60,16 @@ residual interface, while incomplete force and safety reporting keeps the
 result simulation/design evidence rather than a deployment guarantee. See
 [`residual-learning-dmp-2008.07682.md`](notes/residual-learning-dmp-2008.07682.md).
 
+The fourth completed note, *Variable Compliance Control for Robotic Peg-in-Hole
+Assembly: A Deep-Reinforcement-Learning Approach*, studies SAC with a TCN
+over a 500 Hz parallel position-force loop and a 20 Hz policy that emits motion
+and bounded compliance parameters. Its Gazebo-to-UR3e experiments motivate
+force-history observations, domain randomization, and short real-robot
+refinement, while its limited statistics, manually chosen gain ranges, and
+missing force/penetration safety distributions leave a direct gap for the
+MuJoCo held-out-mismatch study. See
+[`variable-compliance-peg-in-hole-2020.md`](notes/variable-compliance-peg-in-hole-2020.md).
+
 ## Reading and classification queue
 
 The next papers are selected to cover complementary axes rather than to collect
