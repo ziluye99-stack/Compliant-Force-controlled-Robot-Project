@@ -16,6 +16,9 @@ check.
 | P1 | Chinese admittance control | Search title/keyword/abstract: `机械臂 AND 导纳控制 AND 力传感器`; prefer a paper with force-tracking plots and a real-arm or MuJoCo/Gazebo experiment | CNKI or 万方 record, identifier and official PDF URL required | Not selected until portal search |
 | P1 | Chinese impedance/hybrid control | Search title/keyword/abstract: `(阻抗控制 OR 混合位置力控制) AND 机械臂 AND 接触/装配`; prefer an explicit selection matrix or impedance equation | CNKI or 万方 record, identifier and official PDF URL required | Not selected until portal search |
 | P1 | Chinese humanoid/multi-contact | Search title/keyword/abstract: `(人形机器人 OR 类人机器人) AND (全身控制 OR 多接触) AND 柔顺/力控`; require contact assumptions and stability/force metrics | CNKI or 万方 record, identifier and official PDF URL required | Not selected until portal search |
+| P1 | Constrained admittance | *Admittance-Based Controller Design for Physical Human-Robot Interaction in the Constrained Task Space* | IEEE T-ASE, 2020; DOI `10.1109/TASE.2020.2983225`; [publisher DOI](https://doi.org/10.1109/TASE.2020.2983225) | Discovery candidate; verify final PDF and experimental details |
+| P1 | Humanoid whole-body constraints | *Constraint-consistent task-oriented whole-body robot formulation* | IJRR, 2022; DOI `10.1177/02783649221120029`; [publisher DOI](https://doi.org/10.1177/02783649221120029) | Discovery candidate; verify final PDF and contact/balance assumptions |
+| P1 | Sim-to-real transfer | *Crossing the Reality Gap: A Survey on Sim-to-Real Transferability of Robot Controllers in Reinforcement Learning* | IEEE Access, 2021; DOI `10.1109/ACCESS.2021.3126658`; [publisher DOI](https://doi.org/10.1109/ACCESS.2021.3126658) | Discovery candidate; verify final PDF before using taxonomy |
 
 The public metadata probe also returned *Neural Network Adaptive Force Tracking
 Admittance Control for Spinning Yarn Piecing Robot* (Journal of Mechanical

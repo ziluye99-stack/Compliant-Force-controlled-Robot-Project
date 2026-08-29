@@ -237,3 +237,26 @@ Reproduction commands:
 This probe changes the candidate queue only. Formal evidence still requires the
 publisher or authorized university-portal PDF, a local SHA-256, and a completed
 structured note.
+
+## Focused source audit (executed 2026-08-29, current session)
+
+Three additional queries were run with `scripts/literature-query.py` using
+OpenAlex and Crossref (`--year-from 2020 --limit 10`). Crossref returned HTTP
+429 for the humanoid query, so those results are OpenAlex-only and need DOI
+cross-checking. The following high-relevance records were added to the portal
+queue as discovery metadata only:
+
+| Axis | Candidate | Why it is useful | Evidence status |
+| --- | --- | --- | --- |
+| Admittance/interaction | *Admittance-Based Controller Design for Physical Human-Robot Interaction in the Constrained Task Space* (IEEE T-ASE, 2020, DOI `10.1109/TASE.2020.2983225`) | Constrained task-space admittance and contact interaction baseline | Metadata-only; verify publisher or portal PDF |
+| Variable compliance | *Variable Impedance Control and Learning--A Review* (Frontiers in Robotics and AI, 2020, DOI `10.3389/frobt.2020.590681`) | Terminology and learning interfaces for adaptive impedance | Metadata-only; review source, not a performance claim |
+| Humanoid multi-contact | *Constraint-consistent task-oriented whole-body robot formulation* (IJRR, 2022, DOI `10.1177/02783649221120029`) | Task/posture/constraint formulation for multiple contacts and balance | Metadata-only; verify publisher or portal PDF |
+| Sim-to-real | *Crossing the Reality Gap: A Survey on Sim-to-Real Transferability of Robot Controllers in Reinforcement Learning* (IEEE Access, 2021, DOI `10.1109/ACCESS.2021.3126658`) | Organizes system identification, randomization, and transfer evaluation variables | Metadata-only; verify publisher or portal PDF |
+
+The arm query also returned *Neural-Learning-Based Force Sensorless Admittance
+Control for Robots With Input Deadzone* (IEEE T-IE, 2020, DOI
+`10.1109/TIE.2020.2991929`), which is retained as a secondary candidate because
+the project currently prioritizes measured F/T sensing. The exact JSON outputs
+are transient under `/tmp/literature-0.json`, `/tmp/literature-1.json`, and
+`/tmp/literature-2.json`; the table above is the committed, human-reviewed
+selection rather than an unfiltered dump.
