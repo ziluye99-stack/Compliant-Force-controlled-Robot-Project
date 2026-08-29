@@ -18,11 +18,13 @@ seed.
 
 ## Metrics and controls
 
-Report insertion success, peak and tail mean contact force, maximum lateral
-contact force, final lateral error, geometric intrusion proxy, and safety-gate
-activations. Run seeds 101, 202, and 303. Retain failures and the exact Git
-commit in the run manifest. This experiment does not establish sim-to-real or
-hardware performance.
+Report insertion success, peak contact force, contact-active mean force, tail
+mean contact force, maximum lateral contact force, final lateral error,
+geometric intrusion proxy, and safety-gate activations. The contact-active mean
+uses only time steps with nonzero contact; the tail mean uses the final 20% of
+all steps and may be zero after insertion has cleared the rim. Run seeds 101,
+202, and 303. Retain failures and the exact Git commit in the run manifest.
+This experiment does not establish sim-to-real or hardware performance.
 
 ## Current status
 

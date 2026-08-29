@@ -10,6 +10,8 @@ def test_both_strategies_insert_within_safety_envelope() -> None:
         metrics = run(strategy, steps=1500, seed=42)
         assert metrics.contacts_seen
         assert metrics.success
+        assert metrics.contact_active_mean_force_n > 0.0
+        assert metrics.tail_mean_contact_force_n >= 0.0
         assert metrics.max_geometric_intrusion_m <= 0.006
         assert metrics.peak_contact_force_n <= 80.0
 

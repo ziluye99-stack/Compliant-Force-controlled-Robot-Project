@@ -45,7 +45,8 @@ class PegInHoleMetrics:
     success: bool
     steps: int
     peak_contact_force_n: float
-    mean_contact_force_n: float
+    contact_active_mean_force_n: float
+    tail_mean_contact_force_n: float
     max_lateral_contact_force_n: float
     final_lateral_error_m: float
     max_geometric_intrusion_m: float
@@ -153,6 +154,8 @@ def run(
         lateral_forces.append(lateral_force)
         intrusions.append(geometric_intrusion)
     tail = slice(max(0, int(steps * 0.8)), None)
+    force_values = np.asarray(peak_forces)
+    active_forces = force_values[force_values > 0.0]
     final_x = abs(float(data.qpos[0]))
     success = bool(
         data.qpos[1] <= target_depth_qpos_m + 0.004
@@ -166,7 +169,8 @@ def run(
         success=success,
         steps=steps,
         peak_contact_force_n=float(max(peak_forces)),
-        mean_contact_force_n=float(np.asarray(peak_forces[tail]).mean()),
+        contact_active_mean_force_n=float(active_forces.mean()) if active_forces.size else 0.0,
+        tail_mean_contact_force_n=float(force_values[tail].mean()),
         max_lateral_contact_force_n=float(max(lateral_forces)),
         final_lateral_error_m=final_x,
         max_geometric_intrusion_m=float(max(intrusions)),

@@ -29,7 +29,8 @@ evaluation:
   metrics:
     - success
     - peak_contact_force_n
-    - mean_contact_force_n
+    - contact_active_mean_force_n
+    - tail_mean_contact_force_n
     - max_lateral_contact_force_n
     - final_lateral_error_m
     - max_geometric_intrusion_m
