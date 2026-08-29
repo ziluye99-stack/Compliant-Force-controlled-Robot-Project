@@ -46,6 +46,7 @@ earlier gate. Each item should become a focused branch using
 - [x] Add a controlled actuator-delay evaluation
 - [x] Add a normal/tangential contact scene with a friction-regime test
 - [x] Connect contact force control to a platform-neutral two-link arm model
+- [x] Add a platform-neutral simultaneous dual-contact force-control fixture
 
 ## Stage 2: Data and learning
 

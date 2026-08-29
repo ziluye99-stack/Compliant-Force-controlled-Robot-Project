@@ -41,6 +41,9 @@ gates are documented in [`docs/workflow.md`](docs/workflow.md). The baseline
 server dependency snapshot is kept in `environment.lock.txt`; regenerate it
 with `scripts/setup-server-env.sh` after an intentional environment change.
 
+The current platform-neutral dual-contact MuJoCo fixture is documented in
+[`docs/experiments/dual-contact-force-control.md`](docs/experiments/dual-contact-force-control.md).
+
 The project north star and branch-entry rule are in
 [`docs/PROJECT_VISION.md`](docs/PROJECT_VISION.md). The literature source map,
 portal-access rules, and paper note template are in
