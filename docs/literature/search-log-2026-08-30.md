@@ -114,3 +114,41 @@ This probe is discovery metadata only. It does not establish a method,
 equation, baseline, or performance claim. The three accepted papers must still
 be selected through the university portal, downloaded outside Git, hashed, and
 read into structured notes on the `codex/chinese-force-control-notes` branch.
+
+## Focused public refresh: three project axes
+
+On 2026-08-30, the repository discovery tool was run with three narrower
+queries to prepare the next portal session. OpenAlex and Crossref were queried
+in parallel; results were deduplicated by DOI and remain `metadata-only`.
+
+| Axis | Exact query | Candidates retained for official-version verification |
+| --- | --- | --- |
+| Arm contact force control | `robot manipulator contact force control compliant manipulation` | *Unified Method for Task-Space Motion/Force/Impedance Control of Manipulator With Unknown Contact Reaction Strategy* (IEEE RA-L, 2022, DOI `10.1109/LRA.2021.3139675`); *Real-Time Deformable-Contact-Aware Model Predictive Control for Force-Modulated Manipulation* (IEEE T-RO, 2023, DOI `10.1109/TRO.2023.3286070`) |
+| Admittance / hybrid control | `admittance impedance hybrid position force control robot assembly` | *Admittance-Based Controller Design for Physical Human–Robot Interaction in the Constrained Task Space* (IEEE T-ASE, 2020, DOI `10.1109/TASE.2020.2983225`); *Force Sensorless Admittance Control With Neural Learning for Robots With Actuator Saturation* (IEEE T-IE, 2019, DOI `10.1109/TIE.2019.2912781`) |
+| Humanoid whole-body / multi-contact | `humanoid whole body multi contact force control` | *Whole-Body Multi-Contact Motion Control for Humanoid Robots Based on Distributed Tactile Sensors* (IEEE RA-L, 2024, DOI `10.1109/LRA.2024.3475052`); *Multi-Contact Whole-Body Force Control for Position-Controlled Robots* (IEEE RA-L, 2024, DOI `10.1109/LRA.2024.3396094`); *Constraint-consistent task-oriented whole-body robot formulation* (IJRR, 2022, DOI `10.1177/02783649221120029`) |
+
+The exact transient outputs were `/tmp/discovery-contact-force-20260830.json`,
+`/tmp/discovery-admittance-20260830.json`, and
+`/tmp/discovery-humanoid-force-20260830.json`. They are not copied into Git
+and are reproducibility aids only. Before any paper is used for a design or
+performance statement, verify its final publisher or proceedings version in
+the school portal, record the authorized URL and access date, download the PDF
+to `/mnt/research-data/literature/pdfs/`, compute its SHA-256, and create a
+structured note.
+
+Reproduction commands:
+
+```bash
+./.mamba-env/bin/python scripts/literature-query.py \
+  "robot manipulator contact force control compliant manipulation" \
+  --year-from 2020 --limit 20 \
+  --output /tmp/discovery-contact-force-20260830.json
+./.mamba-env/bin/python scripts/literature-query.py \
+  "admittance impedance hybrid position force control robot assembly" \
+  --year-from 2018 --limit 20 \
+  --output /tmp/discovery-admittance-20260830.json
+./.mamba-env/bin/python scripts/literature-query.py \
+  "humanoid whole body multi contact force control" \
+  --year-from 2018 --limit 20 \
+  --output /tmp/discovery-humanoid-force-20260830.json
+```
