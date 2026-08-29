@@ -10,7 +10,7 @@ check.
 
 | Priority | Research axis | Candidate or portal query | Formal source to verify | Status |
 | --- | --- | --- | --- | --- |
-| P0 | Contact-manipulation survey | *A survey of robot manipulation in contact* | Robotics and Autonomous Systems, 2022; DOI `10.1016/j.robot.2022.104224`; [publisher DOI](https://doi.org/10.1016/j.robot.2022.104224) | Awaiting authorized PDF |
+| P0 | Contact-manipulation survey | *A survey of robot manipulation in contact* | Robotics and Autonomous Systems, 2022; DOI `10.1016/j.robot.2022.104224`; [publisher DOI](https://doi.org/10.1016/j.robot.2022.104224) | Legal arXiv preprint read; publisher/portal PDF still optional to verify |
 | P0 | Arm force learning baseline | *Learning Force Control for Contact-Rich Manipulation Tasks With Rigid Position-Controlled Robots* | IEEE RA-L, 2020; DOI `10.1109/LRA.2020.3010739`; [publisher DOI](https://doi.org/10.1109/LRA.2020.3010739) | Note already completed from public full text; portal copy optional |
 | P0 | Humanoid whole-body/multi-contact | *Whole-Body Multi-Contact Motion Control for Humanoid Robots Based on Distributed Tactile Sensors* | IEEE RA-L, 2024; DOI `10.1109/LRA.2024.3475052`; [publisher DOI](https://doi.org/10.1109/LRA.2024.3475052) | Candidate; verify final version |
 | P1 | Chinese admittance control | Search title/keyword/abstract: `机械臂 AND 导纳控制 AND 力传感器`; prefer a paper with force-tracking plots and a real-arm or MuJoCo/Gazebo experiment | CNKI or 万方 record, identifier and official PDF URL required | Not selected until portal search |
@@ -62,4 +62,3 @@ rate/calibration, force or contact metrics, and an identifiable baseline. Keep
 theses or application reports as supplementary context rather than silently
 mixing them with primary evidence. Record why near-duplicates were rejected in
 the dated search log.
-

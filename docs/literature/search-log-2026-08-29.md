@@ -22,19 +22,20 @@ receive a paper note before they support a design claim.
 - Metadata/provenance: OpenAlex and Unpaywall both report the survey as a
   hybrid open-access article with a CC-BY license and list the Aalto repository
   copy plus the ScienceDirect PDF endpoint.
-- Retrieval result: direct requests to both listed PDF endpoints returned HTTP
-  403 from this environment. No access control was bypassed and no PDF was
-  treated as obtained.
-- Next authorized action: open the Aalto/ScienceDirect record through the
-  university library portal, download the publisher or accepted-manuscript PDF,
-  and provide its local path for the structured note.
+- Retrieval result: direct requests to both listed publisher/repository PDF
+  endpoints returned HTTP 403 from this environment. A legal arXiv v3 PDF was
+  obtained instead; no access control was bypassed and it is recorded as a
+  preprint, not as the publisher PDF.
+- Local file: `/mnt/research-data/literature/pdfs/contact-survey-104224.pdf`
+- SHA-256: `f31948cc21d9da3cb0c3570ef1d6214be000c48a37a31839c4f30b8cbe5922a2`
+- Evidence status: `preprint`; the publisher version remains unverified.
 
 ## Candidates for reading
 
 | Candidate | Venue/year | DOI | Why it enters the queue | Status |
 | --- | --- | --- | --- | --- |
 | Learning Force Control for Contact-Rich Manipulation Tasks With Rigid Position-Controlled Robots | IEEE RA-L, 2020 | [10.1109/LRA.2020.3010739](https://doi.org/10.1109/LRA.2020.3010739); [arXiv:2003.00628](https://arxiv.org/abs/2003.00628) | Direct force-learning baseline for contact-rich manipulation | Full text read; [structured note](notes/learning-force-control-2003.00628.md) |
-| A survey of robot manipulation in contact | Robotics and Autonomous Systems, 2022 | [10.1016/j.robot.2022.104224](https://doi.org/10.1016/j.robot.2022.104224); [repository copy](https://research.aalto.fi/files/87131047/1_s2.0_S0921889022001312_main.pdf) | Taxonomy and evaluation dimensions for contact tasks | Metadata only |
+| A survey of robot manipulation in contact | Robotics and Autonomous Systems, 2022 | [10.1016/j.robot.2022.104224](https://doi.org/10.1016/j.robot.2022.104224); [arXiv:2112.01942v3](https://arxiv.org/abs/2112.01942) | Taxonomy and evaluation dimensions for contact tasks | Preprint read; [structured note](notes/contact-survey-104224.md); publisher PDF unverified |
 | Force Sensorless Admittance Control With Neural Learning for Robots With Actuator Saturation | IEEE T-IE, 2019 | [10.1109/TIE.2019.2912781](https://doi.org/10.1109/TIE.2019.2912781) | Sensorless/admittance comparison and saturation constraints | Metadata only |
 | A Unified Parametric Representation for Robotic Compliant Skills With Adaptation of Impedance and Force | IEEE/ASME T-Mech, 2021 | [10.1109/TMECH.2021.3109160](https://doi.org/10.1109/TMECH.2021.3109160) | Compliant skill parameterization relevant to reusable interfaces | Metadata only |
 | Crossing the Reality Gap: A Survey on Sim-to-Real Transferability of Robot Controllers in Reinforcement Learning | IEEE Access, 2021 | [10.1109/ACCESS.2021.3126658](https://doi.org/10.1109/ACCESS.2021.3126658) | Transfer variables and evaluation language | Metadata only |
