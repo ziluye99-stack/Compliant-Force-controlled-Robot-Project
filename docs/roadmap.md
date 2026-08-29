@@ -9,6 +9,7 @@ earlier gate. Each item should become a focused branch using
 - [x] MuJoCo-first repository and reproducible environment
 - [x] Laptop/server split, artifact archive, and shared-server safety policy
 - [x] Project vision, literature source map, and paper-note workflow
+- [x] End-to-end literature-to-MuJoCo-to-training-to-hardware-to-paper workflow
 - [x] Select the first MuJoCo task and define observation/action contracts
 - [x] Select a non-learning baseline controller
 
@@ -52,7 +53,8 @@ earlier gate. Each item should become a focused branch using
 
 ## Current next decision
 
-The next research decision is the first MuJoCo contact task. It should be small
-enough to run locally and representative enough to exercise force sensing or
-contact stability. Robot-specific implementation remains blocked until the
+The next research decision is the first learning method on the completed
+MuJoCo contact baseline. Choose behavior cloning or a residual policy, define
+the data schema and episode-level splits, and cite the literature notes that
+motivate the choice. Robot-specific implementation remains blocked until the
 robot and sensor specifications are supplied.
