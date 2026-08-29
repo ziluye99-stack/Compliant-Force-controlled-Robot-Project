@@ -52,3 +52,22 @@ def test_smallest_runner_smoke_is_reproducible() -> None:
     second = train_and_evaluate("joint_residual", episodes=2, steps=20, eval_steps=40, residual_period_fast_steps=5, seed=9)
     assert first == second
     assert first["residual"]["safety_gate_activations"] >= 0
+
+
+def test_training_dynamics_randomization_is_reproducible() -> None:
+    kwargs = {
+        "episodes": 3,
+        "steps": 20,
+        "seed": 12,
+        "dynamics_randomization": {
+            "friction_scale": (0.8, 1.2),
+            "stiffness_scale": (0.8, 1.2),
+            "force_noise_std_n": (0.1, 0.3),
+            "actuator_delay_steps": (0.0, 2.0),
+        },
+    }
+    first = collect_dataset("trajectory_residual", **kwargs)
+    second = collect_dataset("trajectory_residual", **kwargs)
+    assert np.array_equal(first.features, second.features)
+    assert np.array_equal(first.targets, second.targets)
+    assert np.array_equal(first.episode_ids, second.episode_ids)

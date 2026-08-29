@@ -189,6 +189,8 @@ def collect_dataset(
     kd: float = 0.3,
     integral_limit: float = 10.0,
     control_limit_n: float = 30.0,
+    dynamics_randomization: dict[str, tuple[float, float]] | None = None,
+    actuator_delay_steps: int = 0,
     seed: int = 42,
 ) -> TwoRateDataset:
     _validate_variant(variant)
@@ -197,21 +199,49 @@ def collect_dataset(
     if episodes < 1 or steps < 10:
         raise ValueError("episodes must be positive and steps must be at least 10")
     low, high = target_force_range_n
-    if low <= 0 or high < low or force_noise_std_n < 0:
+    if low <= 0 or high < low or force_noise_std_n < 0 or actuator_delay_steps < 0:
         raise ValueError("invalid target range or noise")
+    if dynamics_randomization is not None:
+        allowed = {"damping_scale", "actuator_gain", "friction_scale", "stiffness_scale", "force_noise_std_n", "actuator_delay_steps"}
+        unknown = set(dynamics_randomization) - allowed
+        if unknown:
+            raise ValueError(f"unknown randomized dynamics: {sorted(unknown)}")
+        for name, bounds in dynamics_randomization.items():
+            if len(bounds) != 2 or bounds[0] < 0 or bounds[1] < bounds[0]:
+                raise ValueError(f"invalid randomization bounds for {name}")
+            if name != "force_noise_std_n" and name != "actuator_delay_steps" and bounds[0] <= 0:
+                raise ValueError(f"{name} randomization must be positive")
     rng = np.random.default_rng(seed)
     rows: list[np.ndarray] = []
     targets: list[np.ndarray] = []
     episode_ids: list[int] = []
     for episode_id in range(episodes):
         target_force_n = float(rng.uniform(low, high))
-        model, data = _make_system(damping_scale, actuator_gain, friction_scale, stiffness_scale)
+        episode_values: dict[str, float] = {
+            "damping_scale": damping_scale,
+            "actuator_gain": actuator_gain,
+            "friction_scale": friction_scale,
+            "stiffness_scale": stiffness_scale,
+            "force_noise_std_n": force_noise_std_n,
+        }
+        episode_delay_steps = actuator_delay_steps
+        if dynamics_randomization is not None:
+            for name, bounds in dynamics_randomization.items():
+                if name == "actuator_delay_steps":
+                    episode_delay_steps = int(rng.integers(int(bounds[0]), int(bounds[1]) + 1))
+                else:
+                    episode_values[name] = float(rng.uniform(bounds[0], bounds[1]))
+        model, data = _make_system(
+            episode_values["damping_scale"], episode_values["actuator_gain"],
+            episode_values["friction_scale"], episode_values["stiffness_scale"],
+        )
         dt = model.opt.timestep
         measured_integral = 0.0
         true_integral = 0.0
+        delay_queue: deque[float] = deque([0.0] * episode_delay_steps)
         for _ in range(steps):
             true_force = _normal_force(model, data)
-            measured_force = max(0.0, true_force + float(rng.normal(0.0, force_noise_std_n)))
+            measured_force = max(0.0, true_force + float(rng.normal(0.0, episode_values["force_noise_std_n"])))
             base_control, measured_integral, error = _pi_control(
                 target_force_n, measured_force, float(data.qvel[0]), measured_integral,
                 kp=kp, ki=ki, kd=kd, integral_limit=integral_limit,
@@ -225,7 +255,8 @@ def collect_dataset(
             rows.append(_features(target_force_n, measured_force, float(data.qvel[0]), measured_integral, base_control))
             targets.append(_target_vector(variant, oracle_control - base_control, error, measured_integral))
             episode_ids.append(episode_id)
-            data.ctrl[0] = base_control
+            delay_queue.append(base_control)
+            data.ctrl[0] = delay_queue.popleft()
             mujoco.mj_step(model, data)
     return TwoRateDataset(np.asarray(rows), np.asarray(targets), np.asarray(episode_ids, dtype=np.int64))
 
@@ -362,6 +393,7 @@ def train_and_evaluate(
     train_actuator_gain: float = 0.8,
     train_friction_scale: float = 1.0,
     train_stiffness_scale: float = 1.0,
+    train_dynamics_randomization: dict[str, tuple[float, float]] | None = None,
     eval_target_force_n: float = 5.0,
     eval_force_noise_std_n: float = 0.2,
     eval_damping_scale: float = 1.5,
@@ -383,6 +415,7 @@ def train_and_evaluate(
             variant, episodes=episodes, steps=steps, target_force_range_n=target_force_range_n,
             damping_scale=train_damping_scale, actuator_gain=train_actuator_gain,
             friction_scale=train_friction_scale, stiffness_scale=train_stiffness_scale,
+            dynamics_randomization=train_dynamics_randomization,
             seed=seed,
         )
         train, test = split_by_episode(dataset)

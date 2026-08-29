@@ -16,7 +16,7 @@ import os
 import subprocess
 import sys
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any
 
 import yaml
 
@@ -89,7 +89,9 @@ def _git_revision() -> str:
     return result.stdout.strip() if result.returncode == 0 else "unavailable"
 
 
-def _training_values(config: dict[str, Any]) -> tuple[tuple[float, float], dict[str, float]]:
+def _training_values(
+    config: dict[str, Any],
+) -> tuple[tuple[float, float], dict[str, float], dict[str, tuple[float, float]]]:
     training = config["training"]
     target_range = tuple(float(v) for v in training.get("target_force_range_n", (3.0, 7.0)))
     if len(target_range) != 2 or target_range[0] <= 0 or target_range[1] < target_range[0]:
@@ -106,7 +108,15 @@ def _training_values(config: dict[str, Any]) -> tuple[tuple[float, float], dict[
     }
     for name, value in values.items():
         _positive(value, f"training.dynamics.nominal.{name}")
-    return target_range, values
+    randomized_raw = dynamics.get("randomized", {}) if isinstance(dynamics, dict) else {}
+    if not isinstance(randomized_raw, dict):
+        raise ValueError("training.dynamics.randomized must be a mapping")
+    randomized: dict[str, tuple[float, float]] = {}
+    for name, bounds in randomized_raw.items():
+        if not isinstance(bounds, (list, tuple)) or len(bounds) != 2:
+            raise ValueError(f"training.dynamics.randomized.{name} must be a two-value list")
+        randomized[name] = (float(bounds[0]), float(bounds[1]))
+    return target_range, values, randomized
 
 
 def run_matrix(
@@ -125,7 +135,7 @@ def run_matrix(
         if max_cases < 1:
             raise ValueError("max_cases must be positive")
         cases = cases[:max_cases]
-    target_range, train_dynamics = _training_values(config)
+    target_range, train_dynamics, train_randomization = _training_values(config)
     control = config.get("control", {})
     training = config.get("training", {})
     evaluation = config.get("evaluation", {})
@@ -151,6 +161,7 @@ def run_matrix(
             "steps_per_episode": train_steps,
             "target_force_range_n": list(target_range),
             "nominal_dynamics": train_dynamics,
+            "randomized_dynamics": train_randomization,
         },
         "evaluation": {"steps": run_steps, "residual_period_fast_steps": period},
         "package_snapshot": package_snapshot(),
@@ -176,6 +187,7 @@ def run_matrix(
             train_actuator_gain=train_dynamics["actuator_gain"],
             train_friction_scale=train_dynamics["friction_scale"],
             train_stiffness_scale=train_dynamics["stiffness_scale"],
+            train_dynamics_randomization=train_randomization,
             eval_target_force_n=case["target_force_n"],
             eval_force_noise_std_n=case["force_noise_std_n"],
             eval_damping_scale=train_dynamics["damping_scale"],

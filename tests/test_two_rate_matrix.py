@@ -1,5 +1,6 @@
 import json
 
+from src.analyze_two_rate_matrix import bootstrap_mean_ci, summarize_rows
 from src.two_rate_matrix import matrix_cases, run_matrix
 
 
@@ -59,3 +60,25 @@ def test_matrix_smoke_writes_provenance_and_results(tmp_path) -> None:
     assert results[0]["case"]["variant"] == "joint_residual"
     assert results[0]["result"]["residual"]["contacts_seen"]
     assert results[0]["result"]["baseline"]["contacts_seen"]
+
+
+def test_summary_reports_paired_delta_and_deterministic_ci() -> None:
+    metrics = {
+        "force_rmse_n": 1.0,
+        "measured_force_rmse_n": 1.0,
+        "tail_abs_error_n": 1.0,
+        "max_penetration_m": 0.001,
+        "peak_force_n": 2.0,
+        "contact_loss_rate": 0.0,
+        "max_abs_control_n": 3.0,
+        "safety_gate_activations": 0,
+    }
+    rows = [
+        {"case": {"variant": "pi_only", "target_force_n": 4.0, "seed": 1}, "result": {"baseline": metrics}},
+        {"case": {"variant": "joint_residual", "target_force_n": 4.0, "seed": 1}, "result": {"baseline": metrics, "residual": {**metrics, "force_rmse_n": 0.8}}},
+    ]
+    summary = summarize_rows(rows, replicates=50, seed=9)
+    assert summary["case_count"] == 2
+    assert summary["variants"]["joint_residual"]["force_rmse_n"]["mean"] == 0.8
+    assert abs(summary["paired_delta_residual_minus_pi"]["joint_residual"]["force_rmse_n"]["mean_delta"] + 0.2) < 1e-12
+    assert bootstrap_mean_ci([1.0], replicates=10) == (1.0, 1.0)
