@@ -38,8 +38,8 @@ Jacobian-transpose Cartesian force interface with bounded joint torques.
 
 ## Completion note
 
-- Git commit: pending
-- Test output: pending
+- Git commit: `509307e` (`Add Jacobian transpose planar arm contact task`)
+- Test output: `15 passed`; zero and 1 N tangential CLI runs completed
 - Artifact path: CLI JSON output; no generated data committed
 - Known limitations: No joint limits, actuator delay, calibration, or vendor-specific dynamics
 - Follow-up task: Parameter identification from measured force/torque traces
