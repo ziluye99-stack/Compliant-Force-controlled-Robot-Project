@@ -72,3 +72,26 @@ SHA-256, then create a structured note with `scripts/create-paper-note.py`.
   "机械臂 导纳控制 力传感器" \
   --year-from 2020 --limit 12 --output /tmp/lit-cn-force-20260830.json
 ```
+
+## Focused refresh: 2026-08-30 afternoon
+
+The same reproducible tool was run with four narrower queries (15 records per
+query, year >= 2020). The tool queried OpenAlex and Crossref only; this pass is
+still discovery metadata and does not replace Web of Science/SCI, publisher,
+or CNKI/万方 verification.
+
+| Query axis | Candidate worth portal verification | Venue/year and DOI | Why retain |
+| --- | --- | --- | --- |
+| Arm force/contact learning | *Fine Robotic Manipulation Without Force/Torque Sensor* | IEEE RA-L, 2024; `10.1109/LRA.2023.3341770` | Tests whether contact behavior can be inferred without a wrist F/T sensor; useful sensor-ablation baseline |
+| Arm force/contact learning | *Multifingered Robot Hand Compliant Manipulation Based on Vision-Based Demonstration and Adaptive Force Control* | IEEE T-NNLS, 2022; `10.1109/TNNLS.2022.3184258` | Connects demonstration, visual sensing, and adaptive force control |
+| Sim-to-real | *Crossing the Reality Gap: A Survey on Sim-to-Real Transferability of Robot Controllers in Reinforcement Learning* | IEEE Access, 2021; `10.1109/ACCESS.2021.3126658` | Candidate taxonomy for calibration, randomization, and transfer failure analysis |
+| Humanoid multi-contact | *Whole-Body Multi-Contact Motion Control for Humanoid Robots Based on Distributed Tactile Sensors* | IEEE RA-L, 2024; `10.1109/LRA.2024.3475052` | Directly matches the humanoid/tactile branch and contact switching interface |
+| Humanoid multi-contact | *Multi-Contact Whole-Body Force Control for Position-Controlled Robots* | IEEE RA-L, 2024; `10.1109/LRA.2024.3396094` | Relevant to position-controlled hardware and wrench feasibility constraints |
+| Tactile sensing | *A soft thumb-sized vision-based sensor with accurate all-round force perception* | Nature Machine Intelligence, 2022; `10.1038/s42256-021-00439-3` | Candidate sensor calibration and force-perception reference |
+| Assembly transfer | *A review on reinforcement learning for contact-rich robotic manipulation tasks* | RCIM, 2022; `10.1016/j.rcim.2022.102517` | Organizes contact-rich task, reward, simulator, and sim-to-real choices |
+
+The Chinese query `机械臂 阻抗控制 混合位置力控制 接触 装配` returned mostly
+low-precision engineering records. It remains a terminology probe only. The
+Chinese evidence gate is unchanged: search CNKI/万方 through the university
+portal, select one admittance, one impedance/hybrid position-force, and one
+humanoid multi-contact paper, then download and hash the authorized PDFs.
