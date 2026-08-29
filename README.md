@@ -53,6 +53,8 @@ The project north star and branch-entry rule are in
 [`docs/PROJECT_VISION.md`](docs/PROJECT_VISION.md). The literature source map,
 portal-access rules, and paper note template are in
 [`docs/literature/README.md`](docs/literature/README.md).
+The concrete school-portal download and Codex handoff checklist is in
+[`docs/literature/portal-intake.md`](docs/literature/portal-intake.md).
 
 Git、GitHub、分支和 Codex 终端的操作步骤见
 [`docs/git-codex.md`](docs/git-codex.md)。

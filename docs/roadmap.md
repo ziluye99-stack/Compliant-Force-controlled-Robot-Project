@@ -99,3 +99,7 @@ experiment. In parallel, collect the selected robot and sensor specifications
 needed for later transfer.
 Hardware commands remain blocked until calibration, limits, watchdog, E-stop,
 operator, and replay evidence are documented.
+
+Use [`docs/literature/portal-intake.md`](literature/portal-intake.md) to hand
+authorized portal PDFs into the structured-note gate without sharing portal
+credentials.
