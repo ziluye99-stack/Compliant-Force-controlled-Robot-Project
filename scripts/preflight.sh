@@ -16,6 +16,8 @@ if [[ "$mode" == "local" ]]; then
   require_command "$python_bin"
   require_command rsync
   git -C "$root" status --short --branch
+  (cd "$root" && "$python_bin" scripts/check-branch-task.py >/dev/null)
+  (cd "$root" && "$python_bin" scripts/check-literature-sources.py >/dev/null)
   (cd "$root" && "$python_bin" -m src.experiment --config configs/sim.yaml --dry-run >/dev/null)
   (cd "$root" && "$python_bin" -m src.mujoco_smoke --steps 10 >/dev/null)
   echo "Local preflight passed."

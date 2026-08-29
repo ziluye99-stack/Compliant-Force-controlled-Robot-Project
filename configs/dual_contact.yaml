@@ -1,0 +1,40 @@
+experiment:
+  name: dual-contact-force-control
+  status: fixture-implemented
+  artifact_root: artifacts/dual-contact
+  simulator: mujoco
+  seed: 42
+
+interface_contract: configs/platform_neutral_interface.yaml
+
+scene:
+  type: platform-neutral-dual-contact
+  timestep_s: 0.002
+  contacts:
+    floor_target_force_n: 5.0
+    wall_target_force_n: 4.0
+  surfaces:
+    floor: horizontal_plane
+    wall: vertical_plane
+
+controller:
+  type: independent_pi_force_loops
+  kp: 0.8
+  ki: 7.0
+  kd: 0.5
+  integral_limit: 5.0
+  control_limit_n: 30.0
+  total_force_limit_n: 40.0
+
+evaluation:
+  steps: 1500
+  metrics:
+    - floor_force_rmse_n
+    - wall_force_rmse_n
+    - max_floor_penetration_m
+    - max_wall_penetration_m
+    - peak_total_force_n
+    - control_limit_violations
+    - force_limit_violations
+    - floor_contact_loss_rate
+    - wall_contact_loss_rate

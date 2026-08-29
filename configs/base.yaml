@@ -14,6 +14,8 @@ reproducibility:
   record_python_packages: true
   record_slurm_job_id: true
 
+interface_contract: configs/platform_neutral_interface.yaml
+
 # Robot, sensor, controller, and model fields remain intentionally unset
 # until a concrete experimental platform and safety protocol are specified.
 robot: null

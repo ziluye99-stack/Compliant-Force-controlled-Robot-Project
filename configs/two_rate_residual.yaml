@@ -1,0 +1,56 @@
+defaults:
+  - residual_policy
+
+experiment:
+  name: two-rate-residual-force-control
+  artifact_root: artifacts/two-rate-residual
+  status: runner-implemented
+
+control:
+  fast_dt_s: 0.002
+  fast_rate_hz: 500
+  residual_period_fast_steps: 25
+  residual_rate_hz: 20
+  command_limit_n: 30.0
+  penetration_limit_m: 0.001
+
+variants:
+  - pi_only
+  - trajectory_residual
+  - gain_residual
+  - joint_residual
+
+training:
+  target_force_range_n: [3.0, 7.0]
+  episodes: 4
+  steps_per_episode: 500
+  seeds: [101, 202, 303]
+  split: episode
+  dynamics:
+    nominal:
+      damping_scale: 1.5
+      actuator_gain: 0.8
+      friction_scale: 1.0
+      stiffness_scale: 1.0
+    randomized:
+      friction_scale: [0.8, 1.2]
+      stiffness_scale: [0.8, 1.2]
+      force_noise_std_n: [0.1, 0.3]
+      actuator_delay_steps: [0, 10]
+
+evaluation:
+  target_force_n: [4.0, 6.0]
+  heldout_dynamics:
+    friction_scale: [0.75, 1.25]
+    stiffness_scale: [0.75, 1.25]
+    force_noise_std_n: [0.08, 0.35]
+    actuator_delay_steps: [5, 15]
+  steps: 200
+  metrics:
+    - true_force_rmse_n
+    - measured_force_rmse_n
+    - tail_abs_error_n
+    - max_penetration_m
+    - peak_force_n
+    - contact_loss_rate
+    - safety_gate_activations

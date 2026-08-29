@@ -13,6 +13,8 @@ from typing import Any
 
 import yaml
 
+from .interface_contract import load_summary
+
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 
@@ -58,6 +60,16 @@ def package_snapshot() -> list[str]:
     return result.stdout.splitlines() if result.returncode == 0 else []
 
 
+def interface_contract_summary(config: dict[str, Any]) -> dict[str, Any]:
+    reference = config.get("interface_contract")
+    if not isinstance(reference, str) or not reference.strip():
+        raise ValueError("interface_contract must reference a YAML contract")
+    path = Path(reference).expanduser()
+    if not path.is_absolute():
+        path = REPOSITORY_ROOT / path
+    return load_summary(path.resolve())
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", type=Path, required=True)
@@ -65,6 +77,7 @@ def main() -> None:
     args = parser.parse_args()
 
     config = load_config(args.config)
+    interface = interface_contract_summary(config)
     experiment = config.setdefault("experiment", {})
     run_id = experiment.get("run_id") or dt.datetime.now(dt.timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     artifact_root = REPOSITORY_ROOT / experiment.get("artifact_root", "artifacts")
@@ -79,6 +92,7 @@ def main() -> None:
         "slurm_job_id": os.environ.get("SLURM_JOB_ID"),
         "artifact_dir": str(artifact_dir),
         "package_snapshot": package_snapshot(),
+        "interface_contract": interface,
     }
 
     if args.dry_run:

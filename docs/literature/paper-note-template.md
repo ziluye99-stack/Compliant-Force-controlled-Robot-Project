@@ -9,7 +9,9 @@
 - Publisher URL:
 - Preprint or code URL:
 - Discovery source and access date:
+- Full-text access route (publisher, school portal, repository, or preprint):
 - Full-text file and SHA-256:
+- Evidence status (`full-text`, `accepted-manuscript`, `preprint`, or `metadata-only`):
 
 ## Translation and terminology
 
@@ -25,6 +27,7 @@
 - Simulation platform and task details:
 - Dataset or demonstrations:
 - Training procedure and compute:
+- Reproduction-critical constants and missing details:
 
 ## Experimental design analysis
 
@@ -33,6 +36,7 @@
 - Ablations and what they establish:
 - Real-robot evidence and sim-to-real procedure:
 - Failure cases and missing controls:
+- Evidence locations (section/table/figure/equation):
 
 ## Assessment
 

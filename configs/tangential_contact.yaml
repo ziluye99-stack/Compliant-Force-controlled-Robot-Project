@@ -1,0 +1,16 @@
+defaults:
+  - contact_force
+
+experiment:
+  name: tangential-contact-friction
+
+task:
+  name: normal-tangential-contact
+  target_normal_force_n: 5.0
+  target_tangential_force_n: 1.0
+  steps: 2000
+  seed: 42
+
+contact:
+  friction_coefficient: 0.5
+  tangential_control_limit_n: 10.0

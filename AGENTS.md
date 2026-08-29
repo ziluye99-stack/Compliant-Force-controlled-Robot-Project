@@ -25,7 +25,11 @@ remain outside Git.
 ## Commands
 
 - `python -m src.experiment --config configs/sim.yaml --dry-run` validates a config without starting a simulator or training job.
+- `python -m src.contact_loss_recovery_matrix --config configs/contact_loss_recovery_matrix.yaml --output <path>` runs the fixed-seed MuJoCo recovery matrix and retains failures.
 - `bash scripts/preflight.sh local` checks the laptop environment.
+- Local preflight also requires a matching `docs/tasks/<branch-name>.md` brief
+  for every `codex/<branch-name>` branch and validates the literature source
+  policy.
 - `bash scripts/preflight.sh server` runs read-only checks through the `research-gpu` SSH alias after server access is configured.
 - `bash scripts/submit-slurm.sh train` submits the training template only when the required Slurm environment variables are explicitly set.
 

@@ -2,6 +2,10 @@
 
 Read `docs/PROJECT_VISION.md` before filling this template.
 
+Before creating the branch, read the current `docs/PROJECT_VISION.md` and copy
+the relevant priority and stage gate below. The branch is not ready for review
+until the task statement and its verification command are committed.
+
 ## Scope
 
 - Branch: `codex/<name>`
@@ -23,6 +27,7 @@ claims, and paper editing in one task.
 
 ## Acceptance criteria
 
+- [ ] `docs/PROJECT_VISION.md` was read immediately before branch work
 - [ ] A measurable behavior or artifact exists
 - [ ] Baseline and comparison are defined
 - [ ] Fixed seed/config and environment are recorded
@@ -32,6 +37,7 @@ claims, and paper editing in one task.
 
 ```bash
 # Replace with the smallest relevant command(s).
+test -s docs/PROJECT_VISION.md
 ```
 
 ## Completion note

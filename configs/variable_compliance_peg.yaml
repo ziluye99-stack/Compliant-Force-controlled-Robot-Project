@@ -1,0 +1,43 @@
+defaults:
+  - base
+
+experiment:
+  name: variable-compliance-peg-in-hole
+  simulator: mujoco
+  status: simulation-ready
+  artifact_root: artifacts/variable-compliance-peg
+
+task:
+  initial_offset_m: 0.012
+  target_depth_qpos_m: -0.080
+  search_depth_qpos_m: -0.035
+  steps: 1500
+  seeds: [101, 202, 303]
+
+control:
+  fast_rate_hz: 500
+  outer_rate_hz: 20
+  outer_period_fast_steps: 25
+  force_limit_n: 80.0
+  intrusion_limit_m: 0.006
+  strategies: [fixed, variable]
+
+contact:
+  friction_coefficient: 0.7
+
+evaluation:
+  metrics:
+    - success
+    - peak_contact_force_n
+    - contact_active_mean_force_n
+    - tail_mean_contact_force_n
+    - max_lateral_contact_force_n
+    - final_lateral_error_m
+    - max_geometric_intrusion_m
+    - safety_gate_activations
+
+matrix:
+  strategies: [fixed, variable]
+  seeds: [101, 202, 303]
+  initial_offsets_m: [0.012]
+  friction_coefficients: [0.7]

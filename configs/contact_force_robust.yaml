@@ -1,0 +1,16 @@
+defaults:
+  - contact_force
+
+experiment:
+  name: normal-force-robustness
+
+task:
+  steps: 3000
+  seed: 7
+
+disturbance:
+  force_noise_std_n: 0.2
+  damping_scale: 1.5
+  actuator_gain: 0.8
+  friction_scale: 1.0
+  actuator_delay_steps: 10

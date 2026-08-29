@@ -1,0 +1,13 @@
+defaults:
+  - residual_policy
+
+experiment:
+  name: residual-controller-ablation
+
+ablation:
+  observations: [full, force_error_only, no_integral]
+  randomized_training: [false, true]
+  controller_gains:
+    nominal: {kp: 0.5, ki: 5.0, kd: 0.3}
+    low_integral: {kp: 0.5, ki: 2.0, kd: 0.3}
+  evaluation_seeds: [101, 202, 303]

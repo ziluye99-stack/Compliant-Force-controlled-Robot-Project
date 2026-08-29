@@ -1,0 +1,43 @@
+defaults:
+  - base
+
+experiment:
+  name: contact-loss-recovery
+  status: simulation-only
+  artifact_root: artifacts/contact-loss-recovery
+  simulator: mujoco
+
+task:
+  name: normal-contact-loss-recovery
+  target_force_n: 5.0
+  steps: 1200
+  seed: 42
+
+disturbance:
+  step: 300
+  separation_impulse_m_s: 0.2
+  loss_threshold_n: 0.05
+
+controller:
+  kp: 0.5
+  ki: 5.0
+  kd: 0.3
+  integral_limit: 10.0
+  control_limit_n: 30.0
+
+safety:
+  force_limit_n: 40.0
+  penetration_limit_m: 0.002
+
+evaluation:
+  recovery_fraction: 0.9
+  recovery_hold_steps: 5
+  metrics:
+    - contact_loss_step
+    - recovery_step
+    - recovery_time_s
+    - peak_force_after_disturbance_n
+    - max_penetration_m
+    - control_limit_violations
+    - force_limit_violations
+    - safety_gate_activations
