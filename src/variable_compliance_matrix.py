@@ -101,6 +101,8 @@ def run_matrix(
         "requested_case_count": len(matrix_cases(config)),
         "executed_case_count": len(cases),
         "failure_count": 0,
+        "execution_error_count": 0,
+        "unsuccessful_case_count": 0,
         "package_snapshot": package_snapshot(),
         "simulation": {
             "steps": int(task.get("steps", 1500)),
@@ -133,10 +135,27 @@ def run_matrix(
                 force_limit_n=manifest["simulation"]["force_limit_n"],
                 intrusion_limit_m=manifest["simulation"]["intrusion_limit_m"],
             )
-            row = {"index": index, "case": case, "status": "completed", "metrics": metrics.__dict__}
+            outcome = "success" if metrics.success else "unsuccessful"
+            if not metrics.success:
+                manifest["failure_count"] += 1
+                manifest["unsuccessful_case_count"] += 1
+            row = {
+                "index": index,
+                "case": case,
+                "status": "completed",
+                "outcome": outcome,
+                "metrics": metrics.__dict__,
+            }
         except Exception as exc:  # retain failures as first-class matrix evidence
             manifest["failure_count"] += 1
-            row = {"index": index, "case": case, "status": "failed", "error": f"{type(exc).__name__}: {exc}"}
+            manifest["execution_error_count"] += 1
+            row = {
+                "index": index,
+                "case": case,
+                "status": "failed",
+                "outcome": "execution_error",
+                "error": f"{type(exc).__name__}: {exc}",
+            }
         results.append(row)
         results_path.write_text(json.dumps(results, indent=2) + "\n", encoding="utf-8")
         (artifact_dir / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
