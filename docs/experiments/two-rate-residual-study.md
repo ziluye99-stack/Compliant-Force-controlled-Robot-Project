@@ -122,10 +122,10 @@ support the hypothesis.
 
 ## Formal matrix result
 
-The complete Cartesian matrix was rerun after the implementation commit and
+The complete Cartesian matrix was rerun on the current implementation and
 completed 384/384 cases locally on 2026-08-29. The artifact directory is
-`artifacts/two-rate-residual/matrix-full-20260829-r2/`; its manifest records Git
-commit `501e0f76350af54e03f149878b56c469b695b74e` and the locked package
+`artifacts/two-rate-residual/matrix-full-20260829-r3/`; its manifest records Git
+commit `296b67667177569ff1ed3e376bd0d531b0a9ff7a` and the locked package
 snapshot. Each variant has 96 cases (two target forces, three seeds, two
 friction values, two stiffness values, two noise levels, and two delays).
 
@@ -142,7 +142,15 @@ below the 0.001 m penetration limit and had zero safety-gate activations. The
 effect is small, so this is evidence for a narrow follow-up rather than a
 general force-control or sim-to-real claim. The summary was generated with
 `src/analyze_two_rate_matrix.py` using 2,000 bootstrap replicates; per-case
-results and checksums remain in the ignored artifact directory.
+results and checksums remain in the ignored artifact directory. Reproduce the
+summary with:
+
+```bash
+./.mamba-env/bin/python -m src.analyze_two_rate_matrix \
+  artifacts/two-rate-residual/matrix-full-20260829-r3/results.json \
+  --output artifacts/two-rate-residual/matrix-full-20260829-r3/summary.json \
+  --replicates 2000 --seed 0
+```
 
 ## Follow-up gates
 
