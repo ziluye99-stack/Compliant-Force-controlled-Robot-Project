@@ -84,3 +84,38 @@ will be added through the same process after portal login.
   is obtained from a publisher or the authorized university portal
 - Reproduction output: the JSON result was written to `/tmp` during validation;
   generated query output is not committed as a research claim
+
+## Public discovery refresh (executed 2026-08-29)
+
+The following four-axis pass was run with the repository tool. Each command
+queried both OpenAlex and Crossref, used a publication-year lower bound of
+2020, returned at most 12 records per source, and wrote transient JSON output
+under `/tmp` (not into Git). All returned records remain `metadata-only`.
+
+| Axis | Exact query | Output | Selected candidates for authorized full-text retrieval |
+| --- | --- | --- | --- |
+| Arm contact force learning | `robot manipulator contact force control learning` | `/tmp/arm-literature.json` | Learning Force Control (RA-L 2020, DOI `10.1109/LRA.2020.3010739`); Unified task-space motion/force/impedance control (RA-L 2022, DOI `10.1109/LRA.2021.3139675`) |
+| Humanoid multi-contact | `humanoid whole body multi contact force control` | `/tmp/humanoid-literature.json` | Constraint-consistent task-oriented whole-body formulation (IJRR 2022, DOI `10.1177/02783649221120029`); Whole-Body Multi-Contact Motion Control (RA-L 2024, DOI `10.1109/LRA.2024.3475052`) |
+| Transfer and force modulation | `sim-to-real compliant contact force control robot` | `/tmp/sim2real-literature.json` | Real-Time Deformable-Contact-Aware MPC (T-RO 2023, DOI `10.1109/TRO.2023.3286070`); Contact Force Control with Continuously Compliant Robotic Legs (ICRA 2023, DOI `10.1109/ICRA48891.2023.10160269`) |
+| Chinese terminology probe | `机械臂 接触 力控制 仿真` | `/tmp/chinese-literature.json` | Public-index results were low precision; repeat through CNKI/万方 with title/keyword/abstract fields and terms `导纳控制`, `阻抗控制`, `混合位置力控制` |
+
+The commands are reproducible from the repository root:
+
+```bash
+./.mamba-env/bin/python scripts/literature-query.py \
+  "robot manipulator contact force control learning" \
+  --year-from 2020 --limit 12 --output /tmp/arm-literature.json
+./.mamba-env/bin/python scripts/literature-query.py \
+  "humanoid whole body multi contact force control" \
+  --year-from 2020 --limit 12 --output /tmp/humanoid-literature.json
+./.mamba-env/bin/python scripts/literature-query.py \
+  "sim-to-real compliant contact force control robot" \
+  --year-from 2020 --limit 12 --output /tmp/sim2real-literature.json
+./.mamba-env/bin/python scripts/literature-query.py \
+  "机械臂 接触 力控制 仿真" \
+  --year-from 2020 --limit 12 --output /tmp/chinese-literature.json
+```
+
+The next evidence action is to obtain the selected publisher or university-
+portal PDFs, record their SHA-256 values, and write structured notes. No
+equation, baseline, or performance claim is promoted from this discovery pass.
