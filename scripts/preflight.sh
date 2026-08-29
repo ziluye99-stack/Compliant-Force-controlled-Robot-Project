@@ -21,7 +21,20 @@ if [[ "$mode" == "local" ]]; then
   echo "Local preflight passed."
 elif [[ "$mode" == "server" ]]; then
   require_command ssh
-  ssh research-gpu 'set -e; command -v sinfo; command -v squeue; sinfo -h -o "%P %G %C"; squeue -u "$USER"; nvidia-smi --query-gpu=name,memory.total --format=csv,noheader; df -h "$HOME"'
+  ssh research-gpu 'set -e;
+    printf "host=%s user=%s\\n" "$(hostname)" "$(id -un)";
+    printf "gpu:\\n";
+    nvidia-smi --query-gpu=index,name,memory.total,memory.used,utilization.gpu --format=csv,noheader;
+    printf "home:\\n";
+    df -h "$HOME";
+    if command -v sinfo >/dev/null && command -v squeue >/dev/null; then
+      printf "slurm:\\n";
+      sinfo -h -o "%P %G %C";
+      squeue -u "$USER";
+    else
+      printf "slurm=unavailable (sinfo/squeue not found)\\n";
+      exit 2;
+    fi'
   echo "Server read-only preflight passed."
 else
   echo "Usage: $0 {local|server}" >&2
