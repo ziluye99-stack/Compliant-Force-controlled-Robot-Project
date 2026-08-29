@@ -172,3 +172,36 @@ the contact-manipulation survey and at least three Chinese CNKI/万方 full text
 still require the school portal. Search results with a public PDF URL are not
 automatically promoted, because the PDF version, provenance, and hash must be
 verified in `docs/literature/portal-intake.md`.
+
+## Reproducible three-axis refresh (executed 2026-08-29)
+
+The repository query tool was rerun from the project root. Each pass queried
+OpenAlex and Crossref, used `--year-from 2020 --limit 12`, deduplicated by DOI,
+and wrote transient JSON outside Git under `/tmp/codex-literature-20260829/`.
+Both sources returned successfully and every record remains `metadata-only`.
+
+| Axis | Exact query | Priority candidates for portal verification |
+| --- | --- | --- |
+| Arm contact force learning | `robot manipulator contact force control learning` | *Learning Force Control for Contact-Rich Manipulation Tasks With Rigid Position-Controlled Robots* (RA-L 2020, `10.1109/LRA.2020.3010739`); *Unified Method for Task-Space Motion/Force/Impedance Control of Manipulator With Unknown Contact Reaction Strategy* (RA-L 2022, `10.1109/LRA.2021.3139675`) |
+| Humanoid multi-contact | `humanoid whole body multi contact force control` | *Dynamic Complementarity Conditions and Whole-Body Trajectory Optimization for Humanoid Robot Locomotion* (T-RO 2022, `10.1109/TRO.2022.3183785`); *Constraint-consistent task-oriented whole-body robot formulation* (IJRR 2022, `10.1177/02783649221120029`); *Whole-Body Multi-Contact Motion Control for Humanoid Robots Based on Distributed Tactile Sensors* (RA-L 2024, `10.1109/LRA.2024.3475052`) |
+| Sim-to-real and force modulation | `sim-to-real compliant contact force control robot` | *Real-Time Deformable-Contact-Aware Model Predictive Control for Force-Modulated Manipulation* (T-RO 2023, `10.1109/TRO.2023.3286070`); *Contact Force Control with Continuously Compliant Robotic Legs* (ICRA 2023, `10.1109/ICRA48891.2023.10160269`); *Forces for free: Vision-based contact force estimation with a compliant hand* (Science Robotics 2025, `10.1126/scirobotics.adq5046`) |
+
+Reproduction commands:
+
+```bash
+./.mamba-env/bin/python scripts/literature-query.py \
+  "robot manipulator contact force control learning" --year-from 2020 \
+  --limit 12 --output /tmp/codex-literature-20260829/arm.json
+./.mamba-env/bin/python scripts/literature-query.py \
+  "humanoid whole body multi contact force control" --year-from 2020 \
+  --limit 12 --output /tmp/codex-literature-20260829/humanoid.json
+./.mamba-env/bin/python scripts/literature-query.py \
+  "sim-to-real compliant contact force control robot" --year-from 2020 \
+  --limit 12 --output /tmp/codex-literature-20260829/transfer.json
+```
+
+These candidates are a retrieval queue only. Before they support a design
+claim, use the university portal or an authorized open-access publisher copy,
+record the DOI and SHA-256, and create a structured note with
+`scripts/create-paper-note.py`. The Chinese axis still must be searched directly
+in CNKI/万方 using title, keyword, and abstract fields.
