@@ -21,6 +21,11 @@ controller:
   integral_limit: 10.0
   control_limit_n: 30.0
 
+disturbance:
+  force_noise_std_n: 0.0
+  damping_scale: 1.0
+  actuator_gain: 1.0
+
 evaluation:
   tail_fraction: 0.2
   force_rmse_tolerance_n: 0.05
