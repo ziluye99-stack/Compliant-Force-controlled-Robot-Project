@@ -6,7 +6,7 @@
 - Project priorities: compliant interaction, embodied learning, simulation-to-real transfer, and reproducibility
 - Stage gate advanced: literature evidence to simulation-ready experiment design
 - Review date: 2026-08-29 (Asia/Shanghai)
-- Related records: [`PROJECT_VISION.md`](../PROJECT_VISION.md), [`learning-force-control-2003.00628.md`](../literature/notes/learning-force-control-2003.00628.md), [`multi-contact-whole-body-force-control-2024.md`](../literature/notes/multi-contact-whole-body-force-control-2024.md), [`two-rate-residual-study.md`](../experiments/two-rate-residual-study.md)
+- Related records: [`PROJECT_VISION.md`](../PROJECT_VISION.md), [`learning-force-control-2003.00628.md`](../literature/notes/learning-force-control-2003.00628.md), [`residual-learning-dmp-2008.07682.md`](../literature/notes/residual-learning-dmp-2008.07682.md), [`multi-contact-whole-body-force-control-2024.md`](../literature/notes/multi-contact-whole-body-force-control-2024.md), [`two-rate-residual-study.md`](../experiments/two-rate-residual-study.md)
 
 ## Research question and hypothesis
 

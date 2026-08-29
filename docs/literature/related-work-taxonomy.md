@@ -52,6 +52,14 @@ quasi-static and externally supplied contact-state assumptions define clear
 limits. See
 [`multi-contact-whole-body-force-control-2024.md`](notes/multi-contact-whole-body-force-control-2024.md).
 
+The third completed note, *Residual Learning from Demonstration: Adapting DMPs
+for Contact-rich Manipulation*, covers task-space residual learning over a DMP
+prior. Its 100/10/500 Hz DMP-policy-impedance split, full-pose residual
+ablation, and few-shot cross-task transfer motivate the project's two-rate
+residual interface, while incomplete force and safety reporting keeps the
+result simulation/design evidence rather than a deployment guarantee. See
+[`residual-learning-dmp-2008.07682.md`](notes/residual-learning-dmp-2008.07682.md).
+
 ## Reading and classification queue
 
 The next papers are selected to cover complementary axes rather than to collect
