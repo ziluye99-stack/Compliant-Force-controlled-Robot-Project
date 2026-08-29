@@ -34,6 +34,7 @@ if "$dry_run"; then
 fi
 rsync "${options[@]}" "$source_path" "$destination"
 if ! "$dry_run"; then
-  (cd "$destination" && find . -type f -print0 | sort -z | xargs -0 sha256sum) > "$destination/SHA256SUMS"
+  # Exclude the manifest itself so `sha256sum -c SHA256SUMS` is stable.
+  (cd "$destination" && find . -type f ! -name SHA256SUMS -print0 | sort -z | xargs -0 sha256sum) > "$destination/SHA256SUMS"
   echo "Archived $run_id to $destination"
 fi

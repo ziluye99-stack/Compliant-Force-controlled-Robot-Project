@@ -150,7 +150,9 @@ REMOTE_ARTIFACT_ROOT=/home/gbu/research/worktrees/codex-<task-name>/artifacts \
 
 The script refuses to run unless `/mnt/research-data` is mounted and writable,
 then writes `SHA256SUMS` after a successful copy. Source code is synchronized
-with GitHub; the mechanical drive is for large artifacts and data only.
+with GitHub; the mechanical drive is for large artifacts and data only. The
+checksum list intentionally excludes `SHA256SUMS` itself, so it can be checked
+directly with `(cd /mnt/research-data/<project>/<run-id> && sha256sum -c SHA256SUMS)`.
 
 ## 7. Prepare supervised hardware validation
 
