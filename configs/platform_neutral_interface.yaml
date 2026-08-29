@@ -1,5 +1,6 @@
 interface:
   name: platform-neutral-contact-force-v1
+  version: 1
   status: platform-neutral
   units: SI
   simulator: mujoco

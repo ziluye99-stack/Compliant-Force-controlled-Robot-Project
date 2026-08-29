@@ -5,6 +5,8 @@ experiment:
   simulator: mujoco
   seed: 42
 
+interface_contract: configs/platform_neutral_interface.yaml
+
 scene:
   type: platform-neutral-dual-contact
   timestep_s: 0.002

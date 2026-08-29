@@ -20,7 +20,7 @@ from typing import Any
 
 import yaml
 
-from .experiment import load_config, package_snapshot
+from .experiment import interface_contract_summary, load_config, package_snapshot
 from .two_rate_residual import VARIANTS, train_and_evaluate
 
 
@@ -139,6 +139,7 @@ def run_matrix(
     control = config.get("control", {})
     training = config.get("training", {})
     evaluation = config.get("evaluation", {})
+    interface = interface_contract_summary(config)
     period = int(control.get("residual_period_fast_steps", 25))
     train_episodes = int(episodes if episodes is not None else training.get("episodes", 4))
     train_steps = int(steps if steps is not None else training.get("steps_per_episode", 500))
@@ -165,6 +166,7 @@ def run_matrix(
         },
         "evaluation": {"steps": run_steps, "residual_period_fast_steps": period},
         "package_snapshot": package_snapshot(),
+        "interface_contract": interface,
     }
     if dry_run:
         return {"manifest": manifest, "cases": cases}

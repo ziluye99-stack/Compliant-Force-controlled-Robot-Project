@@ -7,6 +7,7 @@ from src.two_rate_matrix import matrix_cases, run_matrix
 def _config() -> dict:
     return {
         "experiment": {"name": "test", "artifact_root": "artifacts/test"},
+        "interface_contract": "configs/platform_neutral_interface.yaml",
         "control": {"residual_period_fast_steps": 5},
         "variants": ["pi_only", "joint_residual"],
         "training": {
@@ -41,6 +42,8 @@ def test_matrix_dry_run_is_side_effect_free(tmp_path) -> None:
     output = run_matrix(_config(), artifact_dir, max_cases=1, dry_run=True)
     assert output["manifest"]["requested_case_count"] == 64
     assert output["manifest"]["executed_case_count"] == 1
+    assert output["manifest"]["interface_contract"]["name"] == "platform-neutral-contact-force-v1"
+    assert output["manifest"]["interface_contract"]["safety"]["hardware_commands_enabled"] is False
     assert len(output["cases"]) == 1
     assert not artifact_dir.exists()
 
