@@ -17,10 +17,11 @@ earlier gate. Each item should become a focused branch using
 - [x] Define source priority across robotics venues, Nature/Science, SCI, CNKI,
   and public metadata indexes
 - [x] Record a dated, deduplicated discovery session with access status
-- [ ] Obtain authorized full text for the contact-manipulation survey and the
-  force-learning paper
-- [ ] Write structured notes covering translation, equations, interfaces,
-  baselines, metrics, ablations, failure cases, and reproducibility
+- [ ] Obtain authorized full text for the contact-manipulation survey
+- [x] Obtain public full text and write a structured note for the force-learning paper
+- [ ] Write a structured note for the contact-manipulation survey covering
+  translation, equations, interfaces, baselines, metrics, ablations, failure
+  cases, and reproducibility
 - [ ] Build a related-work taxonomy and identify a falsifiable project gap
 
 ## Stage 1: Contact task baseline
@@ -69,8 +70,9 @@ earlier gate. Each item should become a focused branch using
 
 ## Current next decision
 
-The immediate next decision is literature-backed: complete the first two paper
-notes and use them to define one falsifiable MuJoCo experiment. In parallel,
-collect the selected robot and sensor specifications needed for later transfer.
+The immediate next decision is literature-backed: complete the contact-
+manipulation survey note and use both notes to define one falsifiable MuJoCo
+experiment. In parallel, collect the selected robot and sensor specifications
+needed for later transfer.
 Hardware commands remain blocked until calibration, limits, watchdog, E-stop,
 operator, and replay evidence are documented.

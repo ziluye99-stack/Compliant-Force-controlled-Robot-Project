@@ -12,14 +12,15 @@ receive a paper note before they support a design claim.
 - Queries: `robot force control manipulation`; `humanoid whole body contact control`; `sim-to-real force control robot`
 - Filter: publication date from 2019 or 2020 depending on query, type `article`, sorted by API relevance
 - Deduplication key: DOI, then normalized title
-- Access result: metadata only; no paywalled PDF was downloaded
+- Access result: public arXiv PDF downloaded for the RA-L force-learning paper;
+  remaining candidates are metadata-only or require the school portal
 - Limitation: Semantic Scholar returned HTTP 429 during this run; CNKI and subscription publishers require the school's portal session
 
 ## Candidates for reading
 
 | Candidate | Venue/year | DOI | Why it enters the queue | Status |
 | --- | --- | --- | --- | --- |
-| Learning Force Control for Contact-Rich Manipulation Tasks With Rigid Position-Controlled Robots | IEEE RA-L, 2020 | [10.1109/LRA.2020.3010739](https://doi.org/10.1109/LRA.2020.3010739); [arXiv:2003.00628](https://arxiv.org/abs/2003.00628) | Direct force-learning baseline for contact-rich manipulation | Metadata only |
+| Learning Force Control for Contact-Rich Manipulation Tasks With Rigid Position-Controlled Robots | IEEE RA-L, 2020 | [10.1109/LRA.2020.3010739](https://doi.org/10.1109/LRA.2020.3010739); [arXiv:2003.00628](https://arxiv.org/abs/2003.00628) | Direct force-learning baseline for contact-rich manipulation | Full text read; [structured note](notes/learning-force-control-2003.00628.md) |
 | A survey of robot manipulation in contact | Robotics and Autonomous Systems, 2022 | [10.1016/j.robot.2022.104224](https://doi.org/10.1016/j.robot.2022.104224); [repository copy](https://research.aalto.fi/files/87131047/1_s2.0_S0921889022001312_main.pdf) | Taxonomy and evaluation dimensions for contact tasks | Metadata only |
 | Force Sensorless Admittance Control With Neural Learning for Robots With Actuator Saturation | IEEE T-IE, 2019 | [10.1109/TIE.2019.2912781](https://doi.org/10.1109/TIE.2019.2912781) | Sensorless/admittance comparison and saturation constraints | Metadata only |
 | A Unified Parametric Representation for Robotic Compliant Skills With Adaptation of Impedance and Force | IEEE/ASME T-Mech, 2021 | [10.1109/TMECH.2021.3109160](https://doi.org/10.1109/TMECH.2021.3109160) | Compliant skill parameterization relevant to reusable interfaces | Metadata only |
