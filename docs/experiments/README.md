@@ -23,8 +23,12 @@ the hypothesis. Promote it to hardware only after the safety gate in
 | [`contact-parameter-identification.md`](contact-parameter-identification.md) | Transfer analysis, synthetic only | `src.mujoco_contact_trace` | Real logs and hardware calibration still missing |
 | [`contact-loss-recovery.md`](contact-loss-recovery.md) | MuJoCo robustness experiment | `configs/contact_loss_recovery.yaml` | Synthetic disturbance; no sim-to-real or hardware claim |
 | [`contact-loss-recovery-matrix.md`](contact-loss-recovery-matrix.md) | MuJoCo mismatch matrix | `configs/contact_loss_recovery_matrix.yaml` | Proxy noise/damping/delay axes; failed cases retained; no hardware claim |
+| [`variable-compliance-peg-in-hole.md`](variable-compliance-peg-in-hole.md) | MuJoCo simulation-ready | `configs/variable_compliance_peg.yaml` | Synthetic square-hole fixture; no sim-to-real or hardware claim |
 
 The directory is an index, not a replacement for the individual records. A
 paper or proposal may motivate a row, but its result is promoted only when the
 record links the exact config, seed, artifact path, and verification output.
 Generated data, checkpoints, videos, and raw logs stay outside Git.
+
+The variable-compliance record is the handoff point for later noise, delay,
+calibration, and learned-policy studies.
