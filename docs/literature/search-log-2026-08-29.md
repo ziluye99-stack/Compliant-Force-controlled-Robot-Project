@@ -119,3 +119,22 @@ The commands are reproducible from the repository root:
 The next evidence action is to obtain the selected publisher or university-
 portal PDFs, record their SHA-256 values, and write structured notes. No
 equation, baseline, or performance claim is promoted from this discovery pass.
+
+## Focused venue and Chinese-term pass
+
+- Date: 2026-08-29 (Asia/Shanghai)
+- Tool: `scripts/literature-query.py`
+- Public sources queried: OpenAlex and Crossref
+- Evidence status: every result below is `metadata-only`; no PDF was used as
+  experimental evidence
+
+| Axis | Exact query and filter | Result | Candidate follow-up |
+| --- | --- | --- | --- |
+| Arm force learning | `force control contact-rich manipulation`, year >= 2022, venue `IEEE Robotics and Automation Letters` | 2 records; Crossref returned HTTP 429 | *Residual Learning From Demonstration: Adapting DMPs for Contact-Rich Manipulation* (RA-L 2022, DOI `10.1109/LRA.2022.3150024`) |
+| Humanoid/contact dynamics | `humanoid whole body multi contact force control`, year >= 2022, venue `IEEE Transactions on Robotics` | 2 records; both public sources returned | *Optimization-Based Control for Dynamic Legged Robots* (T-RO 2023, DOI `10.1109/TRO.2023.3324580`); *Dynamic Complementarity Conditions and Whole-Body Trajectory Optimization for Humanoid Robot Locomotion* (T-RO 2022, DOI `10.1109/TRO.2022.3183785`) |
+| Chinese terminology probe | `机械臂 接触 力控 导纳 阻抗`, year >= 2020, no venue filter | 10 records; low precision and unrelated records present | Repeat in CNKI/万方 through the university portal using title/keyword/abstract fields and the terms `导纳控制`, `阻抗控制`, `混合位置力控制` |
+
+The focused pass confirms the source boundary: use public indexes to build a
+candidate queue and DOI map, then verify venue and read the publisher or
+authorized portal full text. The Chinese queue is intentionally not promoted
+until the university portal supplies database identifiers and full text.
