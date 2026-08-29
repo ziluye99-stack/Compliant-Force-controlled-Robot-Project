@@ -37,8 +37,8 @@ MuJoCo while preserving the baseline contact safety limits.
 
 ## Completion note
 
-- Git commit: pending
-- Test output: pending
+- Git commit: `ea2b911` (`Add transparent MuJoCo residual policy baseline`)
+- Test output: `8 passed`; CLI training/evaluation completed with fixed seed 123
 - Artifact path: `artifacts/residual-baseline/` (ignored by Git)
 - Known limitations: Single contact scene and one evaluation seed; no hardware commands
 - Follow-up task: Held-out target-force/contact/friction study with at least three seeds
