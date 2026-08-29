@@ -26,6 +26,24 @@ through a publisher or the authorized university portal.
 | Humanoid sensing/contact | same query | A soft thumb-sized vision-based sensor with accurate all-round force perception | Nature Machine Intelligence, 2022; `10.1038/s42256-021-00439-3` | Metadata-only; portal verification required |
 | Chinese force control | `机械臂 导纳控制 力传感器` | Neural Network Adaptive Force Tracking Admittance Control for Spinning Yarn Piecing Robot | Journal of Mechanical Engineering, 2023; `10.3901/jme.2023.11.221` | Metadata-only; CNKI/万方 record and PDF required |
 
+## Focused second pass
+
+A second public-metadata pass was run on the same date to improve coverage of
+learning-based compliant manipulation and humanoid contact control:
+
+| Exact query | Sources | Selected candidates for portal verification |
+| --- | --- | --- |
+| `robot force control contact-rich manipulation reinforcement learning` | OpenAlex, Crossref | *Learning contact-rich whole-body manipulation with example-guided reinforcement learning* (Science Robotics, 2025, DOI `10.1126/scirobotics.ads6790`); *Learning Variable Impedance Control via Inverse Reinforcement Learning for Force-Related Tasks* (IEEE RA-L, 2021, DOI `10.1109/LRA.2021.3061374`); *Stability-Guaranteed Reinforcement Learning for Contact-Rich Manipulation* (IEEE RA-L, 2021, DOI `10.1109/LRA.2020.3028529`); *A Contact-Safe Reinforcement Learning Framework for Contact-Rich Robot Manipulation* (IROS, 2022, DOI `10.1109/iros47612.2022.9981185`); *Adaptive Contact-Rich Manipulation Through Few-Shot Imitation Learning With Force-Torque Feedback and Pre-Trained Object Representations* (IEEE RA-L, 2025, DOI `10.1109/LRA.2024.3497713`) |
+| `humanoid whole-body force control multi-contact tactile` | OpenAlex, Crossref | *Whole-Body Multi-Contact Motion Control for Humanoid Robots Based on Distributed Tactile Sensors* (IEEE RA-L, 2024, DOI `10.1109/LRA.2024.3475052`); *Multi-Contact Whole-Body Force Control for Position-Controlled Robots* (IEEE RA-L, 2024, DOI `10.1109/LRA.2024.3396094`); *Whole-Body Control of Humanoid Robot in 3D Multi-Contact under Contact Wrench Constraints Including Joint Load Reduction with Self-Collision and Internal Wrench Distribution* (IROS, 2019, DOI `10.1109/iros40897.2019.8967555`) |
+| `robotic assembly force control admittance impedance sim-to-real` | OpenAlex, Crossref | *Variable Compliance Control for Robotic Peg-in-Hole Assembly: A Deep-Reinforcement-Learning Approach* (Applied Sciences, 2020, DOI `10.3390/app10196923`); *A review on reinforcement learning for contact-rich robotic manipulation tasks* (Robotics and Computer-Integrated Manufacturing, 2022, DOI `10.1016/j.rcim.2022.102517`); *Variable impedance control on contact-rich manipulation of a collaborative industrial mobile manipulator: An imitation learning approach* (Robotics and Computer-Integrated Manufacturing, 2024, DOI `10.1016/j.rcim.2024.102896`) |
+
+The transient JSON outputs for this pass were `/tmp/lit-arm-contact-learning-20260830.json`,
+`/tmp/lit-humanoid-force-20260830.json`, and
+`/tmp/lit-assembly-transfer-20260830.json`. They are reproducibility aids for
+the query session only and are not project evidence. All selected records remain
+`metadata-only` until the final version is verified and read from a publisher,
+authorized university portal, or clearly attributable open-access full text.
+
 ## Interpretation and limits
 
 The English pass returned relevant top-venue candidates for task-space force
