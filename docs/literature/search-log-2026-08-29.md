@@ -260,3 +260,25 @@ the project currently prioritizes measured F/T sensing. The exact JSON outputs
 are transient under `/tmp/literature-0.json`, `/tmp/literature-1.json`, and
 `/tmp/literature-2.json`; the table above is the committed, human-reviewed
 selection rather than an unfiltered dump.
+
+## Top-venue and sensing refresh (executed 2026-08-29, current session)
+
+Four focused passes were run with `scripts/literature-query.py`. OpenAlex and
+Crossref were queried; no portal or publisher access control was used. All
+records below remain `metadata-only` until the DOI and final/authorized PDF are
+verified through the university portal or an open-access publisher route.
+
+| Axis | Query and filter | New candidates for portal verification |
+| --- | --- | --- |
+| Arm force/impedance | `robot manipulator contact force learning`, year >= 2022, venue contains `Robotics and Automation Letters` | *Multi-Contact Cartesian Null-Space Impedance Control for the Anthropomorphic Manipulator Without Knowledge of Force Locations* (RA-L 2024, DOI `10.1109/LRA.2024.3443639`); *Image-Based Time-Varying Contact Force Control of Aerial Manipulator Using Robust Impedance Filter* (RA-L 2024, DOI `10.1109/LRA.2024.3382963`) |
+| Humanoid whole body | `humanoid whole body multi contact force`, year >= 2022, venue contains `IEEE Transactions on Robotics` | *Dynamic Complementarity Conditions and Whole-Body Trajectory Optimization for Humanoid Robot Locomotion* (T-RO 2022, DOI `10.1109/TRO.2022.3183785`) |
+| Nature tactile sensing | `robot tactile force sensing manipulation`, year >= 2022, venue contains `Nature` | *Multimodal tactile sensing fused with vision for dexterous robotic housekeeping* (Nature Communications, 2024, DOI `10.1038/s41467-024-51261-5`) |
+| Transfer/sensing | `sim-to-real compliant contact force control`, year >= 2022 | *A soft thumb-sized vision-based sensor with accurate all-round force perception* (Nature Machine Intelligence, 2022, DOI `10.1038/s42256-021-00439-3`); *Multifingered Robot Hand Compliant Manipulation Based on Vision-Based Demonstration and Adaptive Force Control* (IEEE T-NNLS, 2022, DOI `10.1109/TNNLS.2022.3184258`) |
+
+Reproduction outputs were written outside Git to
+`/tmp/codex-literature-refresh-20260829b/{arm-ral,humanoid-tro,nature-sensing,transfer}.json`.
+The `Nature` venue filter is intentionally treated as a broad candidate filter:
+Nature Communications records must be checked separately from Nature Machine
+Intelligence or Science Robotics. Chinese CNKI/万方 results are still not
+promoted by public metadata and must be selected in the school portal using
+title/keyword/abstract fields.
