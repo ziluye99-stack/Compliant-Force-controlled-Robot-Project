@@ -95,3 +95,22 @@ low-precision engineering records. It remains a terminology probe only. The
 Chinese evidence gate is unchanged: search CNKI/万方 through the university
 portal, select one admittance, one impedance/hybrid position-force, and one
 humanoid multi-contact paper, then download and hash the authorized PDFs.
+
+## Chinese-axis probe for the portal handoff
+
+To prepare the next portal session, the repository query tool was run again on
+2026-08-30 with 15 records per axis and year >= 2020. It queried OpenAlex and
+Crossref only; transient outputs were `/tmp/lit-cn-admittance-20260830.json`,
+`/tmp/lit-cn-impedance-20260830.json`, and
+`/tmp/lit-cn-humanoid-20260830.json`.
+
+| Axis | Exact public query | Result | Decision |
+| --- | --- | --- | --- |
+| Admittance | `机械臂 导纳控制 力传感器` | 15 records; most were unrelated sensing or manufacturing papers; one force-tracking admittance candidate was retained | Use CNKI/万方 title/keyword/abstract search; verify the candidate only after the portal record is found |
+| Impedance/hybrid position-force | `机械臂 阻抗控制 混合位置力 接触 装配` | 15 records; low precision, with unrelated mechanical-engineering reviews | Do not select a paper from this probe; search the portal with separate title/keyword/abstract fields and `(阻抗控制 OR 混合位置力控制)` |
+| Humanoid multi-contact | `人形机器人 全身控制 多接触 柔顺 力控` | 15 records; public ranking mixed unrelated engineering and optical papers; one admittance candidate recurred | Search the portal directly and require humanoid/multi-contact assumptions plus force or stability metrics |
+
+This probe is discovery metadata only. It does not establish a method,
+equation, baseline, or performance claim. The three accepted papers must still
+be selected through the university portal, downloaded outside Git, hashed, and
+read into structured notes on the `codex/chinese-force-control-notes` branch.

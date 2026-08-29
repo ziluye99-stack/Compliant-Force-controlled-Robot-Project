@@ -19,6 +19,15 @@ admittance control, impedance or hybrid position-force control, and humanoid
 whole-body or multi-contact control. Identify one measurable gap that can be
 tested in MuJoCo without claiming that Chinese metadata alone is evidence.
 
+## Current handoff status
+
+The public OpenAlex/Crossref probe is complete and recorded in
+`docs/literature/search-log-2026-08-30.md`. Its Chinese results are low
+precision, so no candidate is accepted from that probe. The next action is an
+authorized university-portal search using separate title, keyword, and
+abstract fields, followed by one selected PDF for each axis. Portal
+credentials, cookies, and OTPs remain user-only inputs.
+
 ## Inputs and outputs
 
 - Inputs: Three PDFs in `/mnt/research-data/literature/pdfs/`, each with its
