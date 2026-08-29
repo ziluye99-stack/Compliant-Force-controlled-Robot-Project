@@ -133,3 +133,23 @@ trial be proposed.
 Discovery runs are recorded as dated `search-log-YYYY-MM-DD.md` files. The
 current seed search is `search-log-2026-08-29.md`; it contains candidate DOIs
 only, so it must not be cited as a completed review.
+
+## Reproducible public-metadata query
+
+For a new discovery session, run the repository tool with an English or
+Chinese query. It queries OpenAlex and Crossref, deduplicates by DOI (then
+normalized title/year), records source errors, and marks every result
+`metadata-only`:
+
+```bash
+./.mamba-env/bin/python scripts/literature-query.py \
+  "robot manipulator contact force control" \
+  --year-from 2020 --limit 20 \
+  --output /tmp/force-control-discovery.json
+```
+
+Use `--venue` for a narrow pass, for example `--venue "Robotics and
+Automation Letters"`. Copy the query, date, sources, and selected DOI records
+into a dated search log. This tool does not query CNKI or Web of Science
+accounts and does not download restricted PDFs; use the school portal for
+those steps and record the authorized full-text route in the paper note.

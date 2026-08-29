@@ -73,3 +73,14 @@ interfaces, model-based contact prediction, floating-base stability, and
 assembly force estimation. The next step is authorized full-text retrieval via
 the school portal, followed by one structured note per paper; CNKI/万方 results
 will be added through the same process after portal login.
+
+## Public metadata tool verification
+
+- Date: 2026-08-29 (Asia/Shanghai)
+- Command: `scripts/literature-query.py "robot manipulator contact force control" --year-from 2022 --limit 5`
+- Sources queried: OpenAlex and Crossref
+- Result: 5 deduplicated metadata records; both sources returned successfully
+- Evidence boundary: all records remain `metadata-only` until the final paper
+  is obtained from a publisher or the authorized university portal
+- Reproduction output: the JSON result was written to `/tmp` during validation;
+  generated query output is not committed as a research claim
