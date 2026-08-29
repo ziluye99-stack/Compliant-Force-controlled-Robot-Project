@@ -49,3 +49,27 @@ publisher/preprint URL and SHA-256 of the downloaded PDF, then extract the
 task, sensor, controller, simulator, real-robot evidence, metrics, ablations,
 failure cases, and limitations. A paper is not considered evidence for the
 project until that note exists.
+
+## Multi-axis discovery refresh
+
+- Date: 2026-08-29 (Asia/Shanghai)
+- Primary metadata source: Crossref Works API (`query.bibliographic`)
+- Queries: `robot contact force control`; `humanoid whole-body multi-contact control`; `sim-to-real force control robot`
+- Filters: journal articles from 2020 onward where the API exposed a date and DOI
+- Ranking: title relevance followed by venue priority; DOI deduplication
+- Full-text status: all entries below are `metadata-only` until verified through
+  IEEE/Elsevier/publisher pages or the university portal
+
+| Candidate | Venue/year | DOI | Axis | Status |
+| --- | --- | --- | --- | --- |
+| Multi-Contact Whole-Body Force Control for Position-Controlled Robots | IEEE RA-L, 2024 | [10.1109/LRA.2024.3396094](https://doi.org/10.1109/LRA.2024.3396094) | Humanoid/whole-body contact | Metadata only |
+| Real-Time Deformable-Contact-Aware Model Predictive Control for Force-Modulated Manipulation | IEEE T-RO, 2023 | [10.1109/TRO.2023.3286070](https://doi.org/10.1109/TRO.2023.3286070) | Contact modeling and force modulation | Metadata only |
+| Jerk Control of Floating Base Systems With Contact-Stable Parameterized Force Feedback | IEEE T-RO, 2021 | [10.1109/TRO.2020.3005547](https://doi.org/10.1109/TRO.2020.3005547) | Floating-base/contact stability | Metadata only |
+| Robot peg-in-hole assembly based on contact force estimation compensated by convolutional neural network | Control Engineering Practice, 2022 | [10.1016/j.conengprac.2021.105012](https://doi.org/10.1016/j.conengprac.2021.105012) | Force estimation and assembly | Metadata only |
+| Contact force cancelation in robot impedance control by target impedance modification | Robotica, 2023 | [10.1017/S0263574723000103](https://doi.org/10.1017/S0263574723000103) | Impedance adaptation | Metadata only |
+
+These candidates expand the queue along the project taxonomy: learned force
+interfaces, model-based contact prediction, floating-base stability, and
+assembly force estimation. The next step is authorized full-text retrieval via
+the school portal, followed by one structured note per paper; CNKI/万方 results
+will be added through the same process after portal login.
