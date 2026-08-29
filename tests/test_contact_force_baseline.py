@@ -20,6 +20,7 @@ def test_baseline_handles_sensor_noise_and_dynamics_mismatch() -> None:
         force_noise_std_n=0.2,
         damping_scale=1.5,
         actuator_gain=0.8,
+        actuator_delay_steps=10,
         seed=7,
     )
     assert metrics.contacts_seen

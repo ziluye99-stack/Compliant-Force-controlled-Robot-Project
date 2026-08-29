@@ -19,6 +19,7 @@ earlier gate. Each item should become a focused branch using
 - [x] Define force tracking, penetration, contact, and safety metrics
 - [x] Add fixed-seed unit tests and short evaluation runs
 - [x] Add a controlled sensor-noise and dynamics-mismatch evaluation
+- [x] Add a controlled actuator-delay evaluation
 
 ## Stage 2: Data and learning
 

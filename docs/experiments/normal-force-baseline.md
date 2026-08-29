@@ -27,8 +27,9 @@
 - Maximum geometric penetration proxy: `< 1 mm`.
 - Determinism: same inputs produce identical metrics.
 
-The robustness extension uses `force_noise_std_n=0.2`, `damping_scale=1.5`, and
-`actuator_gain=0.8` to represent a controlled sensor and dynamics mismatch.
+The robustness extension uses `force_noise_std_n=0.2`, `damping_scale=1.5`,
+`actuator_gain=0.8`, and `actuator_delay_steps=10` to represent controlled
+sensor, dynamics, and command-path mismatch.
 
 ## Result
 
@@ -40,10 +41,11 @@ transfer. It omits friction, sensor noise, actuator delay, robot kinematics,
 and hardware limits.
 
 With `configs/contact_force_robust.yaml`, the same controller remains stable
-under 0.2 N measurement noise, 1.5x joint damping, and 0.8x actuator gain:
-the true tail mean is `4.99385 N`, true-force RMSE is `0.07984 N`, and maximum
-penetration is `0.000460 m`. The measured-force RMSE is `0.21810 N`, which is
-reported separately because the controller cannot remove measurement noise.
+under 0.2 N measurement noise, 1.5x joint damping, 0.8x actuator gain, and ten
+simulation steps of command delay. The observed run produced a true tail mean
+of `4.99496 N`, true-force RMSE `0.07935 N`, and maximum penetration
+`0.000482 m`; the measured-force RMSE was `0.21660 N`. These numbers should be
+regenerated from the config before making a publication claim.
 
 ## Next experiment
 

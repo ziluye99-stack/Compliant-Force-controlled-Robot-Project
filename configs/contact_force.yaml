@@ -25,6 +25,7 @@ disturbance:
   force_noise_std_n: 0.0
   damping_scale: 1.0
   actuator_gain: 1.0
+  actuator_delay_steps: 0
 
 evaluation:
   tail_fraction: 0.2

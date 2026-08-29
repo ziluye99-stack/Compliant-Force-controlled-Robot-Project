@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+from collections import deque
 from dataclasses import dataclass
 
 import mujoco
@@ -60,6 +61,7 @@ def run(
     force_noise_std_n: float = 0.0,
     damping_scale: float = 1.0,
     actuator_gain: float = 1.0,
+    actuator_delay_steps: int = 0,
     seed: int = 42,
 ) -> ForceTrackingMetrics:
     """Run the baseline with optional sensor noise and dynamics mismatch."""
@@ -71,6 +73,8 @@ def run(
         raise ValueError("force_noise_std_n must be non-negative")
     if damping_scale <= 0 or actuator_gain <= 0:
         raise ValueError("damping_scale and actuator_gain must be positive")
+    if actuator_delay_steps < 0:
+        raise ValueError("actuator_delay_steps must be non-negative")
     rng = np.random.default_rng(seed)
     model = mujoco.MjModel.from_xml_string(MODEL_XML)
     model.dof_damping[0] *= damping_scale
@@ -82,6 +86,7 @@ def run(
 
     dt = model.opt.timestep
     integral_error = 0.0
+    command_queue: deque[float] = deque([0.0] * actuator_delay_steps)
     forces: list[float] = []
     measured_forces: list[float] = []
     controls: list[float] = []
@@ -93,11 +98,13 @@ def run(
         integral_error = float(np.clip(integral_error + error * dt, -integral_limit, integral_limit))
         control = -(kp * error + ki * integral_error + kd * float(data.qvel[0]))
         control = float(np.clip(control, -control_limit_n, control_limit_n))
-        data.ctrl[0] = control
+        command_queue.append(control)
+        applied_control = command_queue.popleft()
+        data.ctrl[0] = applied_control
         mujoco.mj_step(model, data)
         forces.append(force_n)
         measured_forces.append(measured_force_n)
-        controls.append(control)
+        controls.append(applied_control)
         penetrations.append(max(0.0, float(-(data.qpos[0] + 0.15))))
 
     tail = np.asarray(forces[max(0, int(steps * 0.8)) :], dtype=np.float64)
@@ -122,6 +129,7 @@ def main() -> None:
     parser.add_argument("--noise-std", type=float, default=0.0)
     parser.add_argument("--damping-scale", type=float, default=1.0)
     parser.add_argument("--actuator-gain", type=float, default=1.0)
+    parser.add_argument("--actuator-delay-steps", type=int, default=0)
     args = parser.parse_args()
     metrics = run(
         steps=args.steps,
@@ -129,6 +137,7 @@ def main() -> None:
         force_noise_std_n=args.noise_std,
         damping_scale=args.damping_scale,
         actuator_gain=args.actuator_gain,
+        actuator_delay_steps=args.actuator_delay_steps,
     )
     print(json.dumps(metrics.__dict__, indent=2))
 
