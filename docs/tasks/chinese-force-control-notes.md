@@ -28,6 +28,10 @@ authorized university-portal search using separate title, keyword, and
 abstract fields, followed by one selected PDF for each axis. Portal
 credentials, cookies, and OTPs remain user-only inputs.
 
+The project vision was re-read on 2026-08-30 before this branch's continued
+work. The focused public refresh was recorded as metadata-only evidence; the
+literature gate remains open until the three portal PDFs are handed off.
+
 ## Inputs and outputs
 
 - Inputs: Three PDFs in `/mnt/research-data/literature/pdfs/`, each with its
@@ -41,7 +45,7 @@ credentials, cookies, and OTPs remain user-only inputs.
 
 ## Acceptance criteria
 
-- [ ] `docs/PROJECT_VISION.md` was read immediately before branch work
+- [x] `docs/PROJECT_VISION.md` was read immediately before this branch's continued work
 - [ ] Each paper has a verified full-text source and matching SHA-256
 - [ ] `scripts/check-portal-pdfs.py` accepts the three local PDFs and records a
   manifest outside Git
