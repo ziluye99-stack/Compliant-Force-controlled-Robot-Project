@@ -38,8 +38,8 @@ git diff --check
 
 ## Completion note
 
-- Git commit: pending
-- Test output: pending
+- Git commit: `f3e3e1b` (`Document end-to-end embodied research pipeline`)
+- Test output: `5 passed` via `./.mamba-env/bin/python -m pytest -q`; `git diff --check` clean
 - Artifact path: `docs/research-pipeline.md`
 - Known limitations: Portal authentication and hardware specifications remain user-provided inputs
 - Follow-up task: Select and implement the first learning baseline on the MuJoCo contact task
