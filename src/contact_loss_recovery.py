@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import json
 from dataclasses import dataclass
+from collections import deque
 
 import mujoco
 import numpy as np
@@ -32,6 +33,10 @@ class ContactLossRecoveryMetrics:
     contact_loss_detected: bool
     recovery_detected: bool
     contacts_seen: bool
+    force_noise_std_n: float
+    damping_scale: float
+    actuator_delay_steps: int
+    seed: int
 
 
 def _first_recovery_step(
@@ -64,8 +69,12 @@ def run(
     control_limit_n: float = 30.0,
     force_limit_n: float = 40.0,
     penetration_limit_m: float = 0.002,
+    force_noise_std_n: float = 0.0,
+    damping_scale: float = 1.0,
+    actuator_delay_steps: int = 0,
+    seed: int = 42,
 ) -> ContactLossRecoveryMetrics:
-    """Apply one outward impulse and measure whether bounded force control recovers."""
+    """Apply one outward impulse and measure bounded recovery under mismatch."""
     if steps < 50:
         raise ValueError("steps must be at least 50")
     if target_force_n <= 0:
@@ -80,8 +89,16 @@ def run(
         raise ValueError("recovery_hold_steps must be positive")
     if loss_threshold_n < 0 or control_limit_n <= 0 or force_limit_n <= 0 or penetration_limit_m < 0:
         raise ValueError("thresholds and limits must be non-negative, with positive force limits")
+    if force_noise_std_n < 0:
+        raise ValueError("force_noise_std_n must be non-negative")
+    if damping_scale <= 0:
+        raise ValueError("damping_scale must be positive")
+    if actuator_delay_steps < 0:
+        raise ValueError("actuator_delay_steps must be non-negative")
 
+    rng = np.random.default_rng(seed)
     model = mujoco.MjModel.from_xml_string(MODEL_XML)
+    model.dof_damping[0] *= damping_scale
     data = mujoco.MjData(model)
     data.qpos[0] = -0.149
     mujoco.mj_forward(model, data)
@@ -94,19 +111,22 @@ def run(
     control_limit_violations = 0
     force_limit_violations = 0
     safety_gate_activations = 0
+    command_queue: deque[float] = deque([0.0] * actuator_delay_steps)
 
     for step in range(steps):
         if step == disturbance_step:
             # This is a synthetic, logged disturbance; no hardware command is involved.
             data.qvel[0] += separation_impulse_m_s
         force_n = _normal_force(model, data)
-        error = target_force_n - force_n
+        measured_force_n = max(0.0, force_n + float(rng.normal(0.0, force_noise_std_n)))
+        error = target_force_n - measured_force_n
         integral_error = float(np.clip(integral_error + error * dt, -integral_limit, integral_limit))
         raw_control = -(kp * error + ki * integral_error + kd * float(data.qvel[0]))
         control = float(np.clip(raw_control, -control_limit_n, control_limit_n))
         control_limit_violations += int(abs(raw_control) > control_limit_n)
         force_limit_violations += int(force_n > force_limit_n)
-        data.ctrl[0] = control
+        command_queue.append(control)
+        data.ctrl[0] = command_queue.popleft()
         mujoco.mj_step(model, data)
         penetration_m = max(0.0, float(-(data.qpos[0] + 0.15)))
         if not np.isfinite(force_n) or not np.isfinite(control) or penetration_m > penetration_limit_m:
@@ -152,6 +172,10 @@ def run(
         contact_loss_detected=loss_step is not None,
         recovery_detected=recovery_step is not None,
         contacts_seen=bool(np.any(force_array > loss_threshold_n)),
+        force_noise_std_n=force_noise_std_n,
+        damping_scale=damping_scale,
+        actuator_delay_steps=actuator_delay_steps,
+        seed=seed,
     )
 
 
@@ -164,6 +188,10 @@ def main() -> None:
     parser.add_argument("--recovery-fraction", type=float, default=0.9)
     parser.add_argument("--recovery-hold-steps", type=int, default=5)
     parser.add_argument("--loss-threshold", type=float, default=0.05)
+    parser.add_argument("--noise-std", type=float, default=0.0)
+    parser.add_argument("--damping-scale", type=float, default=1.0)
+    parser.add_argument("--actuator-delay-steps", type=int, default=0)
+    parser.add_argument("--seed", type=int, default=42)
     args = parser.parse_args()
     metrics = run(
         steps=args.steps,
@@ -173,6 +201,10 @@ def main() -> None:
         recovery_fraction=args.recovery_fraction,
         recovery_hold_steps=args.recovery_hold_steps,
         loss_threshold_n=args.loss_threshold,
+        force_noise_std_n=args.noise_std,
+        damping_scale=args.damping_scale,
+        actuator_delay_steps=args.actuator_delay_steps,
+        seed=args.seed,
     )
     print(json.dumps(metrics.__dict__, indent=2))
 

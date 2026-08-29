@@ -100,6 +100,18 @@ git log -1 --oneline
   -m src.mujoco_smoke --steps 100
 ```
 
+For the contact-loss robustness matrix, use the committed YAML so the axes,
+controller, safety thresholds, and seed are part of the run contract:
+
+```bash
+python -m src.contact_loss_recovery_matrix \
+  --config configs/contact_loss_recovery_matrix.yaml \
+  --output /tmp/contact-loss-recovery-matrix.json
+```
+
+The matrix JSON must be copied with the run manifest when it becomes a server
+artifact. Its `failure_count` is evidence, not a reason to discard cases.
+
 Run `bash scripts/preflight.sh server` only when a scheduler is available; on
 the current shared workstation it intentionally reports `slurm=unavailable`.
 

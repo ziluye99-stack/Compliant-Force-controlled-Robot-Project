@@ -1,0 +1,47 @@
+defaults:
+  - base
+
+experiment:
+  name: contact-loss-recovery-matrix
+  status: simulation-only
+  artifact_root: artifacts/contact-loss-recovery-matrix
+  simulator: mujoco
+
+task:
+  name: normal-contact-loss-recovery
+  target_force_n: 5.0
+  steps: 1200
+  disturbance_step: 300
+  seed: 42
+
+disturbance:
+  loss_threshold_n: 0.05
+
+controller:
+  kp: 0.5
+  ki: 5.0
+  kd: 0.3
+  integral_limit: 10.0
+  control_limit_n: 30.0
+
+matrix:
+  separation_impulse_m_s: [0.2, 0.5, 1.0]
+  force_noise_std_n: [0.0, 0.1]
+  damping_scale: [0.5, 1.0, 2.0]
+  actuator_delay_steps: [0, 2]
+
+evaluation:
+  recovery_fraction: 0.9
+  recovery_hold_steps: 5
+  safe_recovery_requires:
+    - contact_loss_detected
+    - recovery_detected
+    - control_limit_violations == 0
+    - force_limit_violations == 0
+    - safety_gate_activations == 0
+  retain_failures: true
+  output_schema: contact-loss-recovery-matrix/v1
+
+safety:
+  force_limit_n: 40.0
+  penetration_limit_m: 0.002
