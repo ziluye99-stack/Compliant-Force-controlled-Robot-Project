@@ -38,8 +38,8 @@ sliding, friction ratio, and normal-force degradation under tangential load.
 
 ## Completion note
 
-- Git commit: pending
-- Test output: pending
+- Git commit: `e7f2d79` (`Add MuJoCo tangential friction contact task`)
+- Test output: `12 passed`; low-force sticking and high-force sliding CLI runs completed
 - Artifact path: CLI JSON output; no generated data committed
 - Known limitations: One sphere/plane scene, no robot kinematics or calibrated sensor model
 - Follow-up task: Add a multi-DOF end-effector or arm model and identify contact parameters from measured data
