@@ -25,6 +25,13 @@ visible GPUs but no Slurm client or scheduler configuration. Do not start
 training directly on that shared host; obtain the lab's scheduler node or an
 explicit resource-sharing policy first.
 
+The current host inventory is recorded in
+[`docs/server-inventory.md`](docs/server-inventory.md). It has two RTX 5090
+GPUs and usable CUDA-enabled PyTorch environments, but no Slurm, ROS 2, Gazebo,
+container runtime, or system CUDA Toolkit. A short GPU smoke test is permitted
+for validation; long-running jobs require an approved scheduler or reservation
+procedure.
+
 ## Experiment contract
 
 Each run has a unique `run_id`, a YAML configuration, and a server-side artifact directory. The run manifest records a random seed, Git revision, dependency snapshot, Slurm job ID, and result path. Generated artifacts never enter Git.
