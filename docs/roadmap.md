@@ -54,6 +54,7 @@ earlier gate. Each item should become a focused branch using
 - [x] Add fixed-seed unit tests and short evaluation runs
 - [x] Add a controlled sensor-noise and dynamics-mismatch evaluation
 - [x] Add a controlled actuator-delay evaluation
+- [x] Add an explicit contact-loss and recovery evaluation with bounded safety metrics
 - [x] Add a normal/tangential contact scene with a friction-regime test
 - [x] Connect contact force control to a platform-neutral two-link arm model
 - [x] Add a platform-neutral simultaneous dual-contact force-control fixture

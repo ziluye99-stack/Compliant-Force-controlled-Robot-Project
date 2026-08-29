@@ -21,6 +21,7 @@ the hypothesis. Promote it to hardware only after the safety gate in
 | [`two-rate-residual-study.md`](two-rate-residual-study.md) | `simulation-ready` | `configs/two_rate_residual.yaml` | Local CPU matrix; server GPU use remains resource-policy gated |
 | [`controller-ablation.md`](controller-ablation.md) | Evaluation complete | `configs/controller_ablation.yaml` | Task-local observation/gain ablation; no sim-to-real claim |
 | [`contact-parameter-identification.md`](contact-parameter-identification.md) | Transfer analysis, synthetic only | `src.mujoco_contact_trace` | Real logs and hardware calibration still missing |
+| [`contact-loss-recovery.md`](contact-loss-recovery.md) | MuJoCo robustness experiment | `configs/contact_loss_recovery.yaml` | Synthetic disturbance; no sim-to-real or hardware claim |
 
 The directory is an index, not a replacement for the individual records. A
 paper or proposal may motivate a row, but its result is promoted only when the
