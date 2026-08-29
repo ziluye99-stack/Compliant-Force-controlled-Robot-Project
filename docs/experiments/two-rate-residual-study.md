@@ -106,6 +106,20 @@ PI-only true-force RMSE about 2.946 N versus residual RMSE about 2.978 N; this
 is an under-trained interface check and must not be interpreted as evidence
 against the hypothesis.
 
+The same contract was rechecked on commit `8dda563` with seed `101` and the
+command below. The runner produced 40 dataset rows split 20/20 by episode and
+zero safety-gate activations. PI-only versus `joint_residual` true-force RMSE
+was `2.9338` versus `2.9100` N, with maximum penetration `0.454` versus
+`0.432` mm. Both variants had a `0.4` contact-loss rate in this deliberately
+short window, so the result is a contract/logging check only and does not
+support the hypothesis.
+
+```bash
+./.mamba-env/bin/python -m src.two_rate_residual \
+  --variant joint_residual --episodes 2 --steps 20 --eval-steps 40 \
+  --residual-period-fast-steps 5 --seed 101 --output /tmp/two-rate-smoke.json
+```
+
 ## Formal matrix result
 
 The complete Cartesian matrix was rerun after the implementation commit and
