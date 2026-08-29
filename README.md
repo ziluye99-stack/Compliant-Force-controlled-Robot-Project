@@ -59,6 +59,9 @@ The concrete school-portal download and Codex handoff checklist is in
 Git、GitHub、分支和 Codex 终端的操作步骤见
 [`docs/git-codex.md`](docs/git-codex.md)。
 
+已安装科研技能、用途、典型调用和暂缓项见
+[`docs/codex-skills.md`](docs/codex-skills.md)。
+
 The staged research backlog is in [`docs/roadmap.md`](docs/roadmap.md); use
 [`docs/tasks/task-template.md`](docs/tasks/task-template.md) for each focused
 branch and [`docs/literature/search-log-template.md`](docs/literature/search-log-template.md)
