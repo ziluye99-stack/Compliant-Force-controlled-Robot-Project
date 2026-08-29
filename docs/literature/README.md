@@ -40,6 +40,17 @@ The resulting evidence hierarchy is:
 5. GitHub or Papers with Code for implementation clues and licenses, never as
    evidence for a published performance claim.
 
+The machine-readable version of this policy is
+`configs/literature_sources.yaml`. Validate it before a new search session:
+
+```bash
+./.mamba-env/bin/python scripts/check-literature-sources.py
+```
+
+The policy keeps SCI/Web of Science, top robotics venues, Nature/Science, and
+CNKI/万方 in the primary evidence tier while keeping public indexes in the
+discovery tier.
+
 ## Source priority for this project
 
 Use the following order for force control, contact-rich manipulation, and

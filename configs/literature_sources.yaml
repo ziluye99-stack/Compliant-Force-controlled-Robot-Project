@@ -1,0 +1,68 @@
+# Versioned source policy for literature discovery and evidence.
+# A discovery record never substitutes for an authorized full-text reading.
+policy_version: 1
+project_axes:
+  - compliant force control
+  - contact-rich manipulation
+  - humanoid whole-body and multi-contact control
+  - sim-to-real calibration and safety
+
+primary_full_text:
+  - id: wos_sci
+    name: Web of Science / SCI
+    class: index-and-discovery
+    access: university-portal
+    priority: 1
+  - id: robotics_journals
+    name: IEEE T-RO, RA-L, IJRR, T-ASE, T-Mech, Automatica
+    class: publisher-full-text
+    access: publisher-or-university-portal
+    priority: 1
+  - id: robotics_conferences
+    name: RSS, CoRL, ICRA, IROS proceedings
+    class: official-proceedings-full-text
+    access: publisher-or-university-portal
+    priority: 1
+  - id: nature_science
+    name: Nature, Nature Machine Intelligence, Science, Science Robotics
+    class: publisher-full-text
+    access: publisher-or-university-portal
+    priority: 1
+  - id: chinese_databases
+    name: 中国知网 (CNKI), 万方
+    class: index-and-full-text
+    access: university-portal
+    priority: 1
+
+discovery_and_cross_check:
+  - id: semantic_scholar
+    name: Semantic Scholar
+    class: metadata-and-citations
+    access: public
+  - id: openalex
+    name: OpenAlex
+    class: metadata-and-citations
+    access: public
+  - id: crossref
+    name: Crossref
+    class: DOI-metadata
+    access: public
+  - id: arxiv
+    name: arXiv
+    class: preprint
+    access: public
+  - id: web_semantic
+    name: Exa, Tavily, Gemini deep research
+    class: web-discovery-and-synthesis
+    access: configured-service
+  - id: chinese_community
+    name: AMiner
+    class: author-and-community-discovery
+    access: configured-service
+
+evidence_rules:
+  - Keep discovery_source and full_text_source as separate fields.
+  - Mark records metadata-only until the read PDF or permitted full text is verified.
+  - Download authorized PDFs to /mnt/research-data/literature/pdfs/.
+  - Record DOI, stable URL, access date, local path, and SHA-256 for each read PDF.
+  - Never store portal passwords, cookies, OTPs, or session exports.
