@@ -32,8 +32,9 @@ credentials, cookies, and OTPs remain user-only inputs.
 
 - Inputs: Three PDFs in `/mnt/research-data/literature/pdfs/`, each with its
   CNKI/万方 identifier, official URL, access date, and SHA-256
-- Expected code/configuration/documentation artifacts: one structured note per
-  paper under `docs/literature/notes/`, plus a terminology and comparison-table
+- Expected code/configuration/documentation artifacts: a local handoff
+  manifest from `scripts/check-portal-pdfs.py`, one structured note per paper
+  under `docs/literature/notes/`, plus a terminology and comparison-table
   update in `docs/literature/related-work-taxonomy.md`
 - Expected experiment run IDs or figures: none; produce a proposed MuJoCo
   experiment record only after the notes identify a falsifiable gap
@@ -42,6 +43,8 @@ credentials, cookies, and OTPs remain user-only inputs.
 
 - [ ] `docs/PROJECT_VISION.md` was read immediately before branch work
 - [ ] Each paper has a verified full-text source and matching SHA-256
+- [ ] `scripts/check-portal-pdfs.py` accepts the three local PDFs and records a
+  manifest outside Git
 - [ ] Chinese abstract/method/experiment content is translated with key terms
   mapped consistently to the project vocabulary
 - [ ] Strengths, weaknesses, assumptions, baselines, metrics, and failure cases

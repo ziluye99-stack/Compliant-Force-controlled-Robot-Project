@@ -48,6 +48,21 @@ sim-to-real compliant contact force control
 sha256sum /mnt/research-data/literature/pdfs/<file>.pdf
 ```
 
+下载三篇论文后，也可以用项目预检器一次性检查 PDF 头、文件大小、重复
+路径并生成交接 manifest（manifest 放在论文目录之外，不会进入 Git）：
+
+```bash
+./.mamba-env/bin/python scripts/check-portal-pdfs.py \
+  --admittance cnki-admittance.pdf \
+  --impedance-hybrid cnki-impedance.pdf \
+  --humanoid-multicontact cnki-humanoid.pdf \
+  --output /mnt/research-data/literature/portal-manifest.json
+```
+
+相对路径默认相对于 `/mnt/research-data/literature/pdfs/`；也可以为每个
+参数传入绝对路径。命令返回非零状态时，先修复缺失、空文件、非 PDF 或
+重复路径，再交接 manifest。
+
 5. 将 DOI、正式出版链接、数据库标识（WoS/CNKI/万方）、下载日期、PDF 路径和 SHA-256 交给 Codex。Codex 用 `scripts/create-paper-note.py` 建立笔记，再填充翻译、方法、接口、基线、指标、优缺点、失败案例和 MuJoCo 后续实验。
 
 示例：
