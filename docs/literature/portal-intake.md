@@ -89,7 +89,7 @@ DOI/数据库标识: <DOI 或 CNKI/万方编号>
 SHA-256: <64 位哈希>
 ```
 
-收到这些信息后，Codex 可以在不接触门户凭据的前提下完成全文提取、中文翻译、术语表、实验设计审查、与当前 MuJoCo 方案的差距映射和结构化笔记验证。只有 `check-paper-notes.py --require-full-text --verify-files` 通过的论文，才能作为项目设计证据。
+收到这些信息后，Codex 可以在不接触门户凭据的前提下完成全文提取、中文翻译、术语表、实验设计审查、与当前 MuJoCo 方案的差距映射和结构化笔记验证。只有 `check-paper-notes.py --require-primary-evidence --verify-files` 通过的论文，才能作为正式项目设计证据；预印本和作者稿可供研读，但不能单独支撑正式结论。
 
 ## 当前队列
 

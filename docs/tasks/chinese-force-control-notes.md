@@ -61,7 +61,7 @@ literature gate remains open until the three portal PDFs are handed off.
 ```bash
 test -s docs/PROJECT_VISION.md
 ./.mamba-env/bin/python scripts/check-paper-notes.py \
-  --require-full-text --verify-files
+  --require-primary-evidence --verify-files
 ./.mamba-env/bin/python scripts/check-literature-sources.py
 ```
 

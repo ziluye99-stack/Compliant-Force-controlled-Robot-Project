@@ -197,6 +197,17 @@ The second command is the literature stage gate. It requires a non-empty
 technical note, a non-`metadata-only` evidence status, and a matching SHA-256
 for each referenced PDF. PDF files remain outside Git.
 
+For a proposal, paper claim, or design decision that relies on a formal source,
+run the stricter primary-evidence gate. It accepts only the `full-text` status,
+which is reserved for a publisher or authorized university-portal copy;
+preprints and accepted manuscripts remain useful reading material but cannot
+alone support that claim:
+
+```bash
+./.mamba-env/bin/python scripts/check-paper-notes.py \
+  --require-primary-evidence --verify-files
+```
+
 To start a note after an authorized PDF has been downloaded, use the helper to
 record its hash before asking Codex to fill the analytical sections:
 

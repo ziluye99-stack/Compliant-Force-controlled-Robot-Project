@@ -74,3 +74,46 @@ Follow-up complete.
     report = checker.validate_note(note)
     assert not report["valid"]
     assert any(issue.startswith("invalid evidence status:") for issue in report["issues"])
+
+
+def test_preprint_is_not_primary_design_evidence(tmp_path: Path) -> None:
+    note = tmp_path / "candidate.md"
+    note.write_text(
+        """# Candidate
+
+## Bibliographic record
+
+- Title: Candidate
+- Authors: A
+- Venue and year: Journal, 2024
+- DOI: 10.1/example
+- Discovery source and access date: OpenAlex, 2026-08-29
+- Full-text access route (publisher, school portal, repository, or preprint): public preprint
+- Full-text file and SHA-256: /tmp/candidate.pdf; `0000000000000000000000000000000000000000000000000000000000000000`
+- Evidence status (`full-text`, `accepted-manuscript`, `preprint`, or `metadata-only`): preprint
+
+## Translation and terminology
+
+Translation complete.
+
+## Technical digest
+
+Digest complete.
+
+## Experimental design analysis
+
+Analysis complete.
+
+## Assessment
+
+Assessment complete.
+
+## Follow-up experiment in MuJoCo
+
+Follow-up complete.
+""",
+        encoding="utf-8",
+    )
+    report = checker.validate_note(note, require_primary_evidence=True)
+    assert not report["valid"]
+    assert "primary publisher or authorized-portal full-text evidence is required for this gate" in report["issues"]

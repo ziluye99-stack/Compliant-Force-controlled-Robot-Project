@@ -71,7 +71,7 @@ safety metrics remain within tolerance.
 | --- | --- | --- | --- |
 | `codex/two-rate-residual-runner` | Reproducible MuJoCo runner and matrix | Current platform-neutral contract | `src.two_rate_matrix --dry-run` |
 | `codex/contact-survey-note` | Authorized survey PDF note | School portal download | `check-paper-notes.py --require-full-text --verify-files` |
-| `codex/chinese-force-control-notes` | Three CNKI/万方 notes and terminology map | School portal download | Same paper-note gate |
+| `codex/chinese-force-control-notes` | Three CNKI/万方 notes and terminology map | School portal download | `check-paper-notes.py --require-primary-evidence --verify-files` |
 | `codex/robot-interface-freeze` | Robot, sensor, limits, and frame contract | Selected hardware specifications | Interface validator plus review checklist |
 | `codex/mujoco-calibration` | Measured-to-MuJoCo parameter map | Robot interface and logs | Calibration report and parameter tests |
 | `codex/offline-replay-gate` | Real-trace replay and identical metrics | Contact-log schema and calibration | Replay safety gate |

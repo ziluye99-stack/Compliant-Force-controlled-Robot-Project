@@ -76,7 +76,12 @@ def _sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
-def validate_note(path: Path, require_full_text: bool = False, verify_files: bool = False) -> dict[str, Any]:
+def validate_note(
+    path: Path,
+    require_full_text: bool = False,
+    require_primary_evidence: bool = False,
+    verify_files: bool = False,
+) -> dict[str, Any]:
     text = path.read_text(encoding="utf-8")
     fields = _field_values(text)
     sections = _section_blocks(text)
@@ -96,6 +101,8 @@ def validate_note(path: Path, require_full_text: bool = False, verify_files: boo
         issues.append(f"invalid evidence status: {evidence_status}; expected one of {valid_statuses}")
     if require_full_text and (evidence_status == "metadata-only" or _is_placeholder(evidence_status)):
         issues.append("full-text evidence is required for this gate")
+    if require_primary_evidence and evidence_status != "full-text":
+        issues.append("primary publisher or authorized-portal full-text evidence is required for this gate")
 
     file_status = "not-checked"
     file_path = _full_text_path(fields.get("Full-text file and SHA-256", ""))
@@ -132,12 +139,25 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("paths", nargs="*", type=Path, help="Markdown notes; defaults to docs/literature/notes/*.md")
     parser.add_argument("--require-full-text", action="store_true", help="Fail metadata-only notes")
+    parser.add_argument(
+        "--require-primary-evidence",
+        action="store_true",
+        help="Require a publisher or authorized-portal full-text record, not a manuscript or preprint",
+    )
     parser.add_argument("--verify-files", action="store_true", help="Check referenced PDF files and SHA-256")
     args = parser.parse_args()
     paths = args.paths or sorted(Path("docs/literature/notes").glob("*.md"))
     if not paths:
         parser.error("no note files found")
-    reports = [validate_note(path, args.require_full_text, args.verify_files) for path in paths]
+    reports = [
+        validate_note(
+            path,
+            require_full_text=args.require_full_text,
+            require_primary_evidence=args.require_primary_evidence,
+            verify_files=args.verify_files,
+        )
+        for path in paths
+    ]
     print(json.dumps({"note_count": len(reports), "valid_count": sum(report["valid"] for report in reports), "notes": reports}, ensure_ascii=False, indent=2))
     return 0 if all(report["valid"] for report in reports) else 1
 
