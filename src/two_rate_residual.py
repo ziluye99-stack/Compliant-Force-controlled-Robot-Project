@@ -28,13 +28,20 @@ def _validate_variant(variant: str) -> None:
         raise ValueError(f"variant must be one of {VARIANTS}")
 
 
-def _make_system(damping_scale: float, actuator_gain: float, friction_scale: float) -> tuple[mujoco.MjModel, mujoco.MjData]:
-    if damping_scale <= 0 or actuator_gain <= 0 or friction_scale <= 0:
+def _make_system(
+    damping_scale: float,
+    actuator_gain: float,
+    friction_scale: float,
+    stiffness_scale: float = 1.0,
+) -> tuple[mujoco.MjModel, mujoco.MjData]:
+    if damping_scale <= 0 or actuator_gain <= 0 or friction_scale <= 0 or stiffness_scale <= 0:
         raise ValueError("dynamics scales must be positive")
     model = mujoco.MjModel.from_xml_string(MODEL_XML)
     model.dof_damping[0] *= damping_scale
     model.actuator_gear[0, 0] *= actuator_gain
     model.geom_friction[:, 0] *= friction_scale
+    # MuJoCo's contact stiffness is approximately inverse-square in solref[0].
+    model.geom_solref[:, 0] /= np.sqrt(stiffness_scale)
     data = mujoco.MjData(model)
     data.qpos[0] = -0.149
     mujoco.mj_forward(model, data)
@@ -176,6 +183,7 @@ def collect_dataset(
     damping_scale: float = 1.5,
     actuator_gain: float = 0.8,
     friction_scale: float = 1.0,
+    stiffness_scale: float = 1.0,
     kp: float = 0.5,
     ki: float = 5.0,
     kd: float = 0.3,
@@ -197,7 +205,7 @@ def collect_dataset(
     episode_ids: list[int] = []
     for episode_id in range(episodes):
         target_force_n = float(rng.uniform(low, high))
-        model, data = _make_system(damping_scale, actuator_gain, friction_scale)
+        model, data = _make_system(damping_scale, actuator_gain, friction_scale, stiffness_scale)
         dt = model.opt.timestep
         measured_integral = 0.0
         true_integral = 0.0
@@ -258,6 +266,7 @@ def run_two_rate(
     damping_scale: float = 1.5,
     actuator_gain: float = 0.8,
     friction_scale: float = 1.0,
+    stiffness_scale: float = 1.0,
     actuator_delay_steps: int = 0,
     kp: float = 0.5,
     ki: float = 5.0,
@@ -278,7 +287,7 @@ def run_two_rate(
         if policy is None or policy.output_limits.shape[0] != _output_dim(variant):
             raise ValueError("policy output dimension does not match variant")
     rng = np.random.default_rng(seed)
-    model, data = _make_system(damping_scale, actuator_gain, friction_scale)
+    model, data = _make_system(damping_scale, actuator_gain, friction_scale, stiffness_scale)
     dt = model.opt.timestep
     integral_error = 0.0
     delay_queue: deque[float] = deque([0.0] * actuator_delay_steps)
@@ -348,15 +357,45 @@ def train_and_evaluate(
     eval_steps: int,
     residual_period_fast_steps: int,
     seed: int,
+    target_force_range_n: tuple[float, float] = (3.0, 7.0),
+    train_damping_scale: float = 1.5,
+    train_actuator_gain: float = 0.8,
+    train_friction_scale: float = 1.0,
+    train_stiffness_scale: float = 1.0,
+    eval_target_force_n: float = 5.0,
+    eval_force_noise_std_n: float = 0.2,
+    eval_damping_scale: float = 1.5,
+    eval_actuator_gain: float = 0.8,
+    eval_friction_scale: float = 1.0,
+    eval_stiffness_scale: float = 1.0,
+    eval_actuator_delay_steps: int = 0,
 ) -> dict[str, object]:
-    baseline = run_two_rate("pi_only", steps=eval_steps, seed=seed)
+    baseline = run_two_rate(
+        "pi_only", steps=eval_steps, target_force_n=eval_target_force_n,
+        force_noise_std_n=eval_force_noise_std_n, damping_scale=eval_damping_scale,
+        actuator_gain=eval_actuator_gain, friction_scale=eval_friction_scale,
+        stiffness_scale=eval_stiffness_scale, actuator_delay_steps=eval_actuator_delay_steps,
+        residual_period_fast_steps=residual_period_fast_steps, seed=seed,
+    )
     result: dict[str, object] = {"baseline": asdict(baseline)}
     if variant != "pi_only":
-        dataset = collect_dataset(variant, episodes=episodes, steps=steps, seed=seed)
+        dataset = collect_dataset(
+            variant, episodes=episodes, steps=steps, target_force_range_n=target_force_range_n,
+            damping_scale=train_damping_scale, actuator_gain=train_actuator_gain,
+            friction_scale=train_friction_scale, stiffness_scale=train_stiffness_scale,
+            seed=seed,
+        )
         train, test = split_by_episode(dataset)
         policy = TwoRateLinearPolicy.fit(train.features, train.targets, output_limits=_output_limits(variant))
         prediction_rmse = float(np.sqrt(np.mean((policy.predict(test.features) - test.targets) ** 2)))
-        residual = run_two_rate(variant, policy, steps=eval_steps, residual_period_fast_steps=residual_period_fast_steps, seed=seed)
+        residual = run_two_rate(
+            variant, policy, steps=eval_steps, target_force_n=eval_target_force_n,
+            residual_period_fast_steps=residual_period_fast_steps,
+            force_noise_std_n=eval_force_noise_std_n, damping_scale=eval_damping_scale,
+            actuator_gain=eval_actuator_gain, friction_scale=eval_friction_scale,
+            stiffness_scale=eval_stiffness_scale, actuator_delay_steps=eval_actuator_delay_steps,
+            seed=seed,
+        )
         result.update({
             "dataset_rows": len(dataset.features),
             "train_rows": len(train.features),

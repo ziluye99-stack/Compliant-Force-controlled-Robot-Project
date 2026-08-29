@@ -223,4 +223,4 @@ the robot and sensor calibration gates in `docs/roadmap.md` are complete.
 - [x] Extract observations, actions, controller interface, safety gate, and experiments
 - [ ] Reproduce the smallest reported insertion result (requires Gazebo/assets or author code)
 - [x] Create a MuJoCo follow-up experiment specification
-- [ ] Link this note from a related-work taxonomy and a new experiment record
+- [x] Link this note from a related-work taxonomy and a new experiment record

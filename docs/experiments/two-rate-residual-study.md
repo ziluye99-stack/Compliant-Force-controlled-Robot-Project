@@ -72,7 +72,16 @@ tolerance. Otherwise the result is a negative or inconclusive result.
 
 ## Reproducibility and safety
 
-Use [`configs/two_rate_residual.yaml`](../../configs/two_rate_residual.yaml).
+Use [`configs/two_rate_residual.yaml`](../../configs/two_rate_residual.yaml) and
+expand the evaluation matrix with:
+
+```bash
+./.mamba-env/bin/python -m src.two_rate_matrix --config configs/two_rate_residual.yaml --dry-run
+```
+
+The matrix runner writes a manifest, config copy, and incremental results under
+the configured artifact root. Use `--max-cases 1` with short step overrides for
+a local smoke run before scaling.
 Every run must record the Git commit, config copy, Python dependency snapshot,
 seed, artifact path, and (when a scheduler exists) job ID. Store outputs under
 `artifacts/<run-id>` and keep large files outside Git. This design does not

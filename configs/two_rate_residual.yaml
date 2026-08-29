@@ -4,7 +4,7 @@ defaults:
 experiment:
   name: two-rate-residual-force-control
   artifact_root: artifacts/two-rate-residual
-  status: design
+  status: runner-implemented
 
 control:
   fast_dt_s: 0.002
@@ -27,7 +27,11 @@ training:
   seeds: [101, 202, 303]
   split: episode
   dynamics:
-    nominal: {}
+    nominal:
+      damping_scale: 1.5
+      actuator_gain: 0.8
+      friction_scale: 1.0
+      stiffness_scale: 1.0
     randomized:
       friction_scale: [0.8, 1.2]
       stiffness_scale: [0.8, 1.2]

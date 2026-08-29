@@ -19,6 +19,7 @@ MuJoCo PI loop, including held-out dynamics and explicit safety metrics.
 
 - `docs/experiments/two-rate-residual-study.md`
 - `configs/two_rate_residual.yaml`
+- `src/two_rate_matrix.py`
 - `docs/literature/related-work-taxonomy.md`
 - Later implementation: runner, tests, and ignored result matrix
 
@@ -52,12 +53,19 @@ PY
   --steps 20 \
   --eval-steps 40 \
   --residual-period-fast-steps 5
+./.mamba-env/bin/python -m src.two_rate_matrix \
+  --config configs/two_rate_residual.yaml \
+  --max-cases 1 \
+  --episodes 2 \
+  --steps 20 \
+  --eval-steps 40 \
+  --dry-run
 ```
 
 ## Completion note
 
 - Git commit: `ce44c5b` (`Implement two-rate residual runner`)
-- Test output: 29 tests passed; short `joint_residual` runner smoke completed
+- Test output: 32 tests passed; short `joint_residual` and one-case matrix smoke completed
 - Artifact path: `artifacts/two-rate-residual/` (ignored)
 - Known limitations: no complete three-seed matrix, no statistical result, no hardware evidence
-- Follow-up task: execute the complete held-out matrix only after a scheduler or explicit lab reservation is confirmed
+- Follow-up task: execute the complete 384-case held-out matrix only after a scheduler or explicit lab reservation is confirmed

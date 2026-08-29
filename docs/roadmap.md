@@ -22,7 +22,7 @@ earlier gate. Each item should become a focused branch using
 - [ ] Write a structured note for the contact-manipulation survey covering
   translation, equations, interfaces, baselines, metrics, ablations, failure
   cases, and reproducibility
-- [ ] Build a related-work taxonomy and identify a falsifiable project gap
+- [x] Build a related-work taxonomy and identify a falsifiable project gap
 
 ## Stage 1: Contact task baseline
 

@@ -16,6 +16,19 @@ receive a paper note before they support a design claim.
   remaining candidates are metadata-only or require the school portal
 - Limitation: Semantic Scholar returned HTTP 429 during this run; CNKI and subscription publishers require the school's portal session
 
+## Follow-up access check
+
+- Date: 2026-08-29 (Asia/Shanghai)
+- Metadata/provenance: OpenAlex and Unpaywall both report the survey as a
+  hybrid open-access article with a CC-BY license and list the Aalto repository
+  copy plus the ScienceDirect PDF endpoint.
+- Retrieval result: direct requests to both listed PDF endpoints returned HTTP
+  403 from this environment. No access control was bypassed and no PDF was
+  treated as obtained.
+- Next authorized action: open the Aalto/ScienceDirect record through the
+  university library portal, download the publisher or accepted-manuscript PDF,
+  and provide its local path for the structured note.
+
 ## Candidates for reading
 
 | Candidate | Venue/year | DOI | Why it enters the queue | Status |
