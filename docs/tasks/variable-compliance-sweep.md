@@ -29,13 +29,13 @@ instead of selecting only favorable seeds.
 
 ## Acceptance criteria
 
-- [ ] `docs/PROJECT_VISION.md` was read immediately before branch work
-- [ ] Both strategies run for every seed, offset, and friction combination
-- [ ] Each case retains success, force, intrusion, contact, and safety metrics
+- [x] `docs/PROJECT_VISION.md` was read immediately before branch work
+- [x] Both strategies run for every seed, offset, and friction combination
+- [x] Each case retains success, force, intrusion, contact, and safety metrics
 - [x] Failed cases remain in `results.json` and are included in the aggregate;
       execution errors and completed-but-unsuccessful outcomes are counted
       separately in the manifest
-- [ ] Any performance claim reports per-condition results and does not claim
+- [x] Any performance claim reports per-condition results and does not claim
       sim-to-real transfer
 
 ## Verification
@@ -50,9 +50,10 @@ test -s docs/PROJECT_VISION.md
 
 ## Completion note
 
-- Git commit:
-- Test output:
-- Artifact path:
+- Git commit: `a50b29e50755251ce0c1fcbdaa6700687a3b7b4b`
+- Test output: `79 passed`; final matrix `90/90` executed, `30` unsuccessful
+  outcomes, `0` execution errors
+- Artifact path: `artifacts/variable-compliance-peg-sweep/variable-peg-sweep-20260830/`
 - Known limitations: synthetic contact geometry and dynamics; no calibrated
   hardware or real-robot safety evidence
 - Follow-up task: compare the sweep with measured contact logs after platform
