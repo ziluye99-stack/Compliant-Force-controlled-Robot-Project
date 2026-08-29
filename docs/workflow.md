@@ -57,8 +57,10 @@ bash scripts/preflight.sh local
 .mamba-env/bin/python -m src.experiment --config configs/sim.yaml --dry-run
 ```
 
-The local stage should prove the config contract and observation/action shapes
-before consuming server GPU time.
+The local stage also checks that the current `codex/<task>` branch has a
+matching `docs/tasks/<task>.md` brief and that the literature-source policy is
+valid. It should prove the config contract and observation/action shapes before
+consuming server GPU time.
 
 ## 4. Run simulation on the server
 
