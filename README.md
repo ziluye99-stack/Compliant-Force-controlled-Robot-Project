@@ -64,6 +64,10 @@ Git、GitHub、分支和 Codex 终端的操作步骤见
 已安装科研技能、用途、典型调用和暂缓项见
 [`docs/codex-skills.md`](docs/codex-skills.md)。
 
+Mechanical and sensor parameter records, including the MuJoCo parameter map
+and hardware safety gate, are documented in
+[`docs/mechanics/README.md`](docs/mechanics/README.md).
+
 The staged research backlog is in [`docs/roadmap.md`](docs/roadmap.md); use
 [`docs/tasks/task-template.md`](docs/tasks/task-template.md) for each focused
 branch and [`docs/literature/search-log-template.md`](docs/literature/search-log-template.md)
