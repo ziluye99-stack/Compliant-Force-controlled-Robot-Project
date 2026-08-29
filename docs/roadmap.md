@@ -89,7 +89,8 @@ earlier gate. Each item should become a focused branch using
 - [ ] Freeze configs, environment lock, seeds, and evaluation scripts
 - [ ] Archive checkpoints, videos, metrics, and manifests on the research drive
 - [x] Generate a reproducible SVG figure from logged matrix metrics
-- [ ] Tie equation derivations and notation to the logged interfaces
+- [x] Tie equation derivations and notation to the logged interfaces for the
+  current MuJoCo two-rate study
 - [ ] Write limitations, reproducibility notes, and release checklist
 
 ## Current next decision

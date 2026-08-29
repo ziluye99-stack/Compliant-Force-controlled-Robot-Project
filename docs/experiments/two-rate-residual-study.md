@@ -163,6 +163,10 @@ Render the dependency-free SVG figure from that summary with:
 The generated figure stays alongside the ignored run artifacts and is not
 tracked by Git.
 
+The exact controller equations, residual decoding, target construction, metric
+definitions, and config/interface traceability are recorded in
+[`two-rate-residual-equations.md`](two-rate-residual-equations.md).
+
 ## Follow-up gates
 
 1. [x] Implement the two-rate runner and unit tests on the existing MuJoCo scene.
