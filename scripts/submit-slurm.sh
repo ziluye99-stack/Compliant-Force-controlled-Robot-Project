@@ -7,6 +7,11 @@ if [[ "$target" != "train" && "$target" != "eval" ]]; then
   exit 2
 fi
 
+if ! command -v sbatch >/dev/null; then
+  echo "Slurm is unavailable on this host (sbatch not found); refusing to run a direct job." >&2
+  exit 2
+fi
+
 for required in SLURM_ACCOUNT SLURM_PARTITION SLURM_GPUS SLURM_CPUS SLURM_MEM SLURM_TIME; do
   if [[ -z "${!required:-}" ]]; then
     echo "Set $required before submitting; shared-server jobs require explicit resources." >&2

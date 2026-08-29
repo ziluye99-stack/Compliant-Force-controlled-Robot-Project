@@ -36,6 +36,11 @@ procedure.
 
 Each run has a unique `run_id`, a YAML configuration, and a server-side artifact directory. The run manifest records a random seed, Git revision, dependency snapshot, Slurm job ID, and result path. Generated artifacts never enter Git.
 
+The end-to-end design, simulation, evaluation, archive, and supervised hardware
+gates are documented in [`docs/workflow.md`](docs/workflow.md). The baseline
+server dependency snapshot is kept in `environment.lock.txt`; regenerate it
+with `scripts/setup-server-env.sh` after an intentional environment change.
+
 ## Server policy
 
 The project uses only the `gbu` user space on the shared server. Jobs must request their resources through Slurm. The scripts refuse to submit without explicit account, partition, GPU, CPU, memory, and time settings.

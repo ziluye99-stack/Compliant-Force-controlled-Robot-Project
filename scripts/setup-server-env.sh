@@ -25,5 +25,5 @@ else
 fi
 
 "$env_tool" env create -f "$project_root/environment.yml" -n compliant-force-robot || "$env_tool" env update -f "$project_root/environment.yml" -n compliant-force-robot
-"$env_tool" run -n compliant-force-robot python -m pip freeze > "$project_root/environment.lock.txt"
+"$env_tool" run -n compliant-force-robot python -m pip list --format=freeze > "$project_root/environment.lock.txt"
 echo "Server environment prepared under $HOME only."
