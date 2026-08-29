@@ -1,6 +1,8 @@
 import importlib.util
 from pathlib import Path
 
+import pytest
+
 
 MODULE_PATH = Path(__file__).parents[1] / "scripts" / "check-paper-notes.py"
 SPEC = importlib.util.spec_from_file_location("check_paper_notes", MODULE_PATH)
@@ -10,6 +12,9 @@ SPEC.loader.exec_module(checker)
 
 
 def test_existing_full_text_notes_have_required_evidence() -> None:
+    archive = Path("/mnt/research-data")
+    if not archive.is_mount():
+        pytest.skip("research archive is not mounted; PDF verification runs where the archive is available")
     notes = sorted((Path(__file__).parents[1] / "docs/literature/notes").glob("*.md"))
     reports = [checker.validate_note(path, require_full_text=True, verify_files=True) for path in notes]
     assert reports
