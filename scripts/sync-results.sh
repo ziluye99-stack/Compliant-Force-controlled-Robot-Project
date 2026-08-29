@@ -14,7 +14,8 @@ fi
 
 drive="/mnt/research-data"
 project="Compliant-Force-controlled-Robot-Project"
-source_path="research-gpu:~/research/$project/artifacts/$run_id/"
+remote_artifact_root="${REMOTE_ARTIFACT_ROOT:-~/research/$project/artifacts}"
+source_path="research-gpu:${remote_artifact_root%/}/$run_id/"
 destination="$drive/$project/$run_id/"
 
 if ! mountpoint -q "$drive"; then

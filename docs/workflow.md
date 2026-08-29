@@ -138,8 +138,19 @@ bash scripts/sync-results.sh <run-id>
 ```
 
 The script copies from the server with resumable, checksum-verified `rsync` to
-`/mnt/research-data`. Source code is synchronized with GitHub; the mechanical
-drive is for large artifacts and data only.
+`/mnt/research-data`. Its default source is the server's main checkout; when a
+branch worktree produced the run, point it at that worktree explicitly:
+
+```bash
+REMOTE_ARTIFACT_ROOT=/home/gbu/research/worktrees/codex-<task-name>/artifacts \
+  bash scripts/sync-results.sh --dry-run <run-id>
+REMOTE_ARTIFACT_ROOT=/home/gbu/research/worktrees/codex-<task-name>/artifacts \
+  bash scripts/sync-results.sh <run-id>
+```
+
+The script refuses to run unless `/mnt/research-data` is mounted and writable,
+then writes `SHA256SUMS` after a successful copy. Source code is synchronized
+with GitHub; the mechanical drive is for large artifacts and data only.
 
 ## 7. Prepare supervised hardware validation
 
