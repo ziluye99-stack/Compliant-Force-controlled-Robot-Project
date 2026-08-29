@@ -152,6 +152,17 @@ summary with:
   --replicates 2000 --seed 0
 ```
 
+Render the dependency-free SVG figure from that summary with:
+
+```bash
+./.mamba-env/bin/python -m src.plot_matrix_summary \
+  artifacts/two-rate-residual/matrix-full-20260829-r3/summary.json \
+  --output artifacts/two-rate-residual/matrix-full-20260829-r3/matrix-summary.svg
+```
+
+The generated figure stays alongside the ignored run artifacts and is not
+tracked by Git.
+
 ## Follow-up gates
 
 1. [x] Implement the two-rate runner and unit tests on the existing MuJoCo scene.
