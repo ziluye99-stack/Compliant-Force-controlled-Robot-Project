@@ -172,6 +172,12 @@ into a dated search log. This tool does not query CNKI or Web of Science
 accounts and does not download restricted PDFs; use the school portal for
 those steps and record the authorized full-text route in the paper note.
 
+If OpenAlex or Crossref returns HTTP 429, the tool retries once by default and
+caps the `Retry-After` delay at five seconds. The retry is deliberately bounded
+so a rate-limited source remains visible in `source_errors` instead of causing
+an unbounded request loop. For a strict no-retry run, pass
+`--rate-limit-retries 0`; adjust the cap with `--max-retry-delay <seconds>`.
+
 Before using notes to justify a new experiment, check the structured fields and
 the evidence boundary:
 

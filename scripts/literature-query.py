@@ -13,11 +13,16 @@ import datetime as dt
 import json
 import re
 import sys
+import time
 import urllib.parse
 import urllib.request
 from collections import defaultdict
 from pathlib import Path
 from typing import Any
+
+
+DEFAULT_RATE_LIMIT_RETRIES = 1
+DEFAULT_MAX_RETRY_DELAY = 5.0
 
 
 VENUE_PRIORITY = (
@@ -172,33 +177,88 @@ def merge_records(records: list[dict[str, Any]], limit: int) -> list[dict[str, A
     return ranked[:limit]
 
 
-def request_json(base_url: str, params: dict[str, str], timeout: float) -> dict[str, Any]:
+def _retry_delay(error: urllib.error.HTTPError, max_delay: float) -> float:
+    """Return a bounded delay for a rate-limited response."""
+
+    header = error.headers.get("Retry-After") if error.headers else None
+    try:
+        requested = float(header) if header is not None else 1.0
+    except (TypeError, ValueError):
+        requested = 1.0
+    return min(max(requested, 0.0), max_delay)
+
+
+def request_json(
+    base_url: str,
+    params: dict[str, str],
+    timeout: float,
+    *,
+    rate_limit_retries: int = DEFAULT_RATE_LIMIT_RETRIES,
+    max_retry_delay: float = DEFAULT_MAX_RETRY_DELAY,
+) -> dict[str, Any]:
     query = urllib.parse.urlencode(params)
     request = urllib.request.Request(
         f"{base_url}?{query}",
         headers={"Accept": "application/json", "User-Agent": "compliant-force-robot-literature/0.1"},
     )
-    with urllib.request.urlopen(request, timeout=timeout) as response:
-        payload = response.read().decode("utf-8")
+    attempts = 0
+    while True:
+        try:
+            with urllib.request.urlopen(request, timeout=timeout) as response:
+                payload = response.read().decode("utf-8")
+            break
+        except urllib.error.HTTPError as error:
+            if error.code != 429 or attempts >= rate_limit_retries:
+                raise
+            time.sleep(_retry_delay(error, max_retry_delay))
+            attempts += 1
     parsed = json.loads(payload)
     if not isinstance(parsed, dict):
         raise ValueError(f"Unexpected response from {base_url}")
     return parsed
 
 
-def query_openalex(query: str, limit: int, year_from: int | None, timeout: float) -> list[dict[str, Any]]:
+def query_openalex(
+    query: str,
+    limit: int,
+    year_from: int | None,
+    timeout: float,
+    *,
+    rate_limit_retries: int = DEFAULT_RATE_LIMIT_RETRIES,
+    max_retry_delay: float = DEFAULT_MAX_RETRY_DELAY,
+) -> list[dict[str, Any]]:
     params = {"search": query, "per-page": str(limit), "mailto": ""}
     if year_from is not None:
         params["filter"] = f"from_publication_date:{year_from}-01-01"
-    payload = request_json("https://api.openalex.org/works", params, timeout)
+    payload = request_json(
+        "https://api.openalex.org/works",
+        params,
+        timeout,
+        rate_limit_retries=rate_limit_retries,
+        max_retry_delay=max_retry_delay,
+    )
     return [from_openalex(item) for item in (payload.get("results") or []) if isinstance(item, dict)]
 
 
-def query_crossref(query: str, limit: int, year_from: int | None, timeout: float) -> list[dict[str, Any]]:
+def query_crossref(
+    query: str,
+    limit: int,
+    year_from: int | None,
+    timeout: float,
+    *,
+    rate_limit_retries: int = DEFAULT_RATE_LIMIT_RETRIES,
+    max_retry_delay: float = DEFAULT_MAX_RETRY_DELAY,
+) -> list[dict[str, Any]]:
     params = {"query.bibliographic": query, "rows": str(limit), "select": "DOI,title,author,container-title,published-print,published-online,issued,URL,is-referenced-by-count"}
     if year_from is not None:
         params["filter"] = f"from-pub-date:{year_from}-01-01"
-    payload = request_json("https://api.crossref.org/works", params, timeout)
+    payload = request_json(
+        "https://api.crossref.org/works",
+        params,
+        timeout,
+        rate_limit_retries=rate_limit_retries,
+        max_retry_delay=max_retry_delay,
+    )
     message = payload.get("message") or {}
     return [from_crossref(item) for item in (message.get("items") or []) if isinstance(item, dict)]
 
@@ -210,16 +270,41 @@ def main() -> int:
     parser.add_argument("--year-from", type=int)
     parser.add_argument("--venue", help="Keep records whose venue contains this text")
     parser.add_argument("--timeout", type=float, default=20.0)
+    parser.add_argument(
+        "--rate-limit-retries",
+        type=int,
+        default=DEFAULT_RATE_LIMIT_RETRIES,
+        help="Retry HTTP 429 responses this many times (default: 1)",
+    )
+    parser.add_argument(
+        "--max-retry-delay",
+        type=float,
+        default=DEFAULT_MAX_RETRY_DELAY,
+        help="Cap each HTTP 429 retry delay in seconds (default: 5)",
+    )
     parser.add_argument("--output", type=Path, help="Write JSON here instead of stdout")
     args = parser.parse_args()
     if args.limit < 1:
         parser.error("--limit must be positive")
+    if args.rate_limit_retries < 0:
+        parser.error("--rate-limit-retries must be non-negative")
+    if args.max_retry_delay < 0:
+        parser.error("--max-retry-delay must be non-negative")
 
     records: list[dict[str, Any]] = []
     errors: dict[str, str] = {}
     for source, function in (("OpenAlex", query_openalex), ("Crossref", query_crossref)):
         try:
-            records.extend(function(args.query, args.limit, args.year_from, args.timeout))
+            records.extend(
+                function(
+                    args.query,
+                    args.limit,
+                    args.year_from,
+                    args.timeout,
+                    rate_limit_retries=args.rate_limit_retries,
+                    max_retry_delay=args.max_retry_delay,
+                )
+            )
         except Exception as exc:  # Network failures should not erase the other source.
             errors[source] = f"{type(exc).__name__}: {exc}"
     if args.venue:

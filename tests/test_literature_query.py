@@ -1,5 +1,8 @@
 import importlib.util
+import io
+import json
 from pathlib import Path
+from urllib.error import HTTPError
 
 
 MODULE_PATH = Path(__file__).parents[1] / "scripts" / "literature-query.py"
@@ -27,3 +30,111 @@ def test_merge_records_deduplicates_doi_and_preserves_sources() -> None:
 
 def test_venue_priority_ranks_robotics_top_venues() -> None:
     assert literature_query.venue_score("IEEE Transactions on Robotics") > literature_query.venue_score("Unknown Journal")
+
+
+class _Response:
+    def __init__(self, payload: dict) -> None:
+        self._payload = json.dumps(payload).encode("utf-8")
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *args):
+        return False
+
+    def read(self) -> bytes:
+        return self._payload
+
+
+def test_request_json_retries_rate_limit_once(monkeypatch) -> None:
+    calls = []
+    sleeps = []
+    error = HTTPError(
+        "https://example.test",
+        429,
+        "Too Many Requests",
+        {"Retry-After": "12"},
+        io.BytesIO(),
+    )
+
+    def fake_urlopen(request, timeout):
+        calls.append((request.full_url, timeout))
+        if len(calls) == 1:
+            raise error
+        return _Response({"ok": True})
+
+    monkeypatch.setattr(literature_query.urllib.request, "urlopen", fake_urlopen)
+    monkeypatch.setattr(literature_query.time, "sleep", sleeps.append)
+
+    result = literature_query.request_json(
+        "https://example.test/works",
+        {"query": "force control"},
+        2.0,
+        rate_limit_retries=1,
+        max_retry_delay=5.0,
+    )
+
+    assert result == {"ok": True}
+    assert len(calls) == 2
+    assert sleeps == [5.0]
+
+
+def test_request_json_preserves_rate_limit_after_retry_budget(monkeypatch) -> None:
+    error = HTTPError(
+        "https://example.test",
+        429,
+        "Too Many Requests",
+        {"Retry-After": "1"},
+        io.BytesIO(),
+    )
+    calls = []
+
+    def fake_urlopen(request, timeout):
+        calls.append(1)
+        raise error
+
+    monkeypatch.setattr(literature_query.urllib.request, "urlopen", fake_urlopen)
+    monkeypatch.setattr(literature_query.time, "sleep", lambda _: None)
+
+    try:
+        literature_query.request_json(
+            "https://example.test/works",
+            {},
+            2.0,
+            rate_limit_retries=1,
+        )
+    except HTTPError as raised:
+        assert raised.code == 429
+    else:
+        raise AssertionError("rate-limit error should remain visible")
+    assert len(calls) == 2
+
+
+def test_request_json_can_disable_rate_limit_retry(monkeypatch) -> None:
+    error = HTTPError(
+        "https://example.test",
+        429,
+        "Too Many Requests",
+        {},
+        io.BytesIO(),
+    )
+    calls = []
+
+    def fake_urlopen(request, timeout):
+        calls.append(1)
+        raise error
+
+    monkeypatch.setattr(literature_query.urllib.request, "urlopen", fake_urlopen)
+
+    try:
+        literature_query.request_json(
+            "https://example.test/works",
+            {},
+            2.0,
+            rate_limit_retries=0,
+        )
+    except HTTPError as raised:
+        assert raised.code == 429
+    else:
+        raise AssertionError("rate-limit error should remain visible")
+    assert len(calls) == 1
