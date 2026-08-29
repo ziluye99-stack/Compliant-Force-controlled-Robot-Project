@@ -138,3 +138,37 @@ The focused pass confirms the source boundary: use public indexes to build a
 candidate queue and DOI map, then verify venue and read the publisher or
 authorized portal full text. The Chinese queue is intentionally not promoted
 until the university portal supplies database identifiers and full text.
+
+## Public metadata refresh (executed 2026-08-29)
+
+A second three-axis pass queried OpenAlex and Crossref through
+`scripts/literature-query.py`. The JSON outputs were transient files under
+`/tmp/refresh-*-20260829.json`; no PDF was treated as obtained. Every result
+below remains `metadata-only` until the DOI is opened at the publisher or
+through the authorized school portal.
+
+| Axis | Exact query | Selected candidates for portal verification |
+| --- | --- | --- |
+| Arm force/contact learning | `robot manipulator force control contact-rich learning` | *Unified Method for Task-Space Motion/Force/Impedance Control of Manipulator With Unknown Contact Reaction Strategy* (RA-L 2022, DOI `10.1109/LRA.2021.3139675`); *A review on reinforcement learning for contact-rich robotic manipulation tasks* (RCIM 2022, DOI `10.1016/j.rcim.2022.102517`); *Dynamic movement primitives in robotics: A tutorial survey* (IJRR 2023, DOI `10.1177/02783649231201196`) |
+| Humanoid multi-contact | `humanoid whole-body compliant multi-contact control` | *Dynamic Complementarity Conditions and Whole-Body Trajectory Optimization for Humanoid Robot Locomotion* (T-RO 2022, DOI `10.1109/TRO.2022.3183785`); *ADHERENT: Learning Human-like Trajectory Generators for Whole-body Control of Humanoid Robots* (RA-L 2022, DOI `10.1109/LRA.2022.3141658`); *Whole-Body Multi-Contact Motion Control for Humanoid Robots Based on Distributed Tactile Sensors* (RA-L 2024, DOI `10.1109/LRA.2024.3475052`) |
+| Transfer and sensing | `sim-to-real force control contact manipulation robot` | *Real-Time Deformable-Contact-Aware Model Predictive Control for Force-Modulated Manipulation* (T-RO 2023, DOI `10.1109/TRO.2023.3286070`); *A soft thumb-sized vision-based sensor with accurate all-round force perception* (Nature Machine Intelligence 2022, DOI `10.1038/s42256-021-00439-3`); *Automatic Real-to-Sim-to-Real System through Iterative Interactions for Robust Robot Manipulation Policy Learning with Unseen Objects* (IROS 2025, DOI `10.1109/IROS60139.2025.11247488`) |
+
+Reproduction commands:
+
+```bash
+./.mamba-env/bin/python scripts/literature-query.py \
+  "robot manipulator force control contact-rich learning" \
+  --year-from 2022 --limit 12 --output /tmp/refresh-arm-20260829.json
+./.mamba-env/bin/python scripts/literature-query.py \
+  "humanoid whole-body compliant multi-contact control" \
+  --year-from 2022 --limit 12 --output /tmp/refresh-humanoid-20260829.json
+./.mamba-env/bin/python scripts/literature-query.py \
+  "sim-to-real force control contact manipulation robot" \
+  --year-from 2022 --limit 12 --output /tmp/refresh-transfer-20260829.json
+```
+
+The refresh improves candidate coverage but does not close the evidence gate:
+the contact-manipulation survey and at least three Chinese CNKI/万方 full texts
+still require the school portal. Search results with a public PDF URL are not
+automatically promoted, because the PDF version, provenance, and hash must be
+verified in `docs/literature/portal-intake.md`.
