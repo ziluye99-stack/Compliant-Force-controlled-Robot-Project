@@ -22,15 +22,16 @@
   hardware command path.
 - Dataset: rows are labelled with episode IDs; train/test splits are by whole
   episode to prevent adjacent-timestep leakage.
-- Disturbance: 0.2 N measurement noise, 1.5x damping, and 0.8x actuator gain.
+- Disturbance: 0.2 N measurement noise, 1.5x damping, 0.8x actuator gain, and
+  10 simulator-step command delay. Training additionally samples damping and
+  actuator gain from the ranges in `configs/residual_policy.yaml`.
 
 ## Reproduction
 
 ```bash
 ./.mamba-env/bin/python -m src.residual_policy \
-  --episodes 8 --steps 500 \
-  --dataset artifacts/residual-baseline/dataset.npz \
-  --policy artifacts/residual-baseline/policy.npz
+  --config configs/residual_policy.yaml \
+  --run-id residual-baseline-$(date -u +%Y%m%dT%H%M%SZ)
 ```
 
 The command also evaluates PI and PI-plus-residual under the same disturbance
@@ -39,12 +40,13 @@ contact presence, and per-seed results against `src.contact_force_baseline.run`.
 
 ## Short result
 
-With 8 training episodes, 500 steps per episode, and evaluation seed 123:
+With the YAML configuration, 8 training episodes, 500 steps per episode, and
+evaluation seed 123:
 
 | Controller | True force RMSE | Measured force RMSE | Max penetration |
 | --- | ---: | ---: | ---: |
-| PI baseline | 0.07917 N | 0.19776 N | 0.458 mm |
-| PI + residual | 0.07091 N | 0.19581 N | 0.437 mm |
+| PI baseline | 0.08557 N | 0.21884 N | 0.480 mm |
+| PI + residual | 0.08084 N | 0.21653 N | 0.478 mm |
 
 Both controllers remained in contact and below the 30 N action limit. This is
 one deterministic engineering run, not a generalization or sim-to-real claim.
@@ -54,17 +56,25 @@ one deterministic engineering run, not a generalization or sim-to-real claim.
 `src/heldout_study.py` trains on target forces sampled from 3--7 N, then tests
 target forces 4 and 6 N under two unseen damping/actuator settings and seeds
 101, 202, and 303 (12 evaluations total). Aggregate results from the fixed
-study command are:
+configuration-driven study are:
 
 | Controller | Mean true-force RMSE | Mean measured-force RMSE | Worst penetration |
 | --- | ---: | ---: | ---: |
-| PI baseline | 0.08640 N | 0.22204 N | 0.546 mm |
-| PI + residual | 0.07674 N | 0.21861 N | 0.533 mm |
+| PI baseline | 0.08499 N | 0.22181 N | 0.573 mm |
+| PI + residual | 0.08045 N | 0.22012 N | 0.570 mm |
 
 The residual improved both aggregate error measures in this study and stayed
 within the contact/action limits. The effect is modest and comes from an
 oracle-generated target in a one-dimensional scene; it is not evidence for
 real-robot transfer or statistical significance.
+
+## Reproducibility artifacts
+
+The complete configuration-driven runs used for these tables were
+`artifacts/residual-baseline/config-baseline-20260830/` and
+`artifacts/residual-baseline/config-heldout-20260830/` (ignored by Git).
+Each directory contains the resolved YAML, provenance manifest, and metrics;
+the baseline run also contains the dataset and fitted policy.
 
 ## Limitations and next step
 
@@ -74,3 +84,8 @@ study varies target force and dynamics with three evaluation seeds; tangential
 friction remains out of scope because the current scene has no tangential
 degree of freedom. A later contact-task branch should add that degree of
 freedom and a held-out scene split before any hardware consideration.
+The same resolved configuration drives data collection, training, and the
+held-out matrix. Each run stores `config.yaml`, `manifest.json`,
+`dataset.npz`, `policy.npz`, and `metrics.json` under the configured artifact
+root. Use `--episodes`, `--steps`, and `--eval-steps` only for short smoke
+overrides; the YAML remains the source of truth for the experiment contract.

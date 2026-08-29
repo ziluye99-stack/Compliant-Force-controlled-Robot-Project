@@ -1,10 +1,13 @@
 import numpy as np
+from pathlib import Path
 
+from src.experiment import load_config
 from src.residual_policy import (
     ResidualLinearPolicy,
     collect_dataset,
     evaluate_residual,
     split_by_episode,
+    run_from_config,
 )
 
 
@@ -37,3 +40,15 @@ def test_residual_evaluation_preserves_contact_safety() -> None:
     assert metrics.contacts_seen
     assert metrics.max_penetration_m < 0.001
     assert metrics.max_abs_control_n <= 30.0
+
+
+def test_config_driven_run_writes_provenance_and_artifacts(tmp_path: Path) -> None:
+    config = load_config(Path("configs/residual_policy.yaml"))
+    result = run_from_config(config, tmp_path / "run", episodes=3, steps=30, eval_steps=40)
+    run_dir = tmp_path / "run"
+    assert result["manifest"]["dataset_rows"] == 90
+    assert (run_dir / "config.yaml").is_file()
+    assert (run_dir / "manifest.json").is_file()
+    assert (run_dir / "dataset.npz").is_file()
+    assert (run_dir / "policy.npz").is_file()
+    assert (run_dir / "metrics.json").is_file()

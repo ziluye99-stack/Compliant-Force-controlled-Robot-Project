@@ -3,6 +3,7 @@ defaults:
 
 experiment:
   name: normal-force-residual-policy
+  artifact_root: artifacts/residual-baseline
 
 learning:
   method: linear_residual_ridge
@@ -12,6 +13,9 @@ learning:
   train_fraction_by_episode: 0.8
   residual_limit_n: 10.0
   train_target_force_range_n: [3.0, 7.0]
+  dynamics_randomization:
+    damping_scale: [1.2, 1.8]
+    actuator_gain: [0.7, 0.9]
 
 heldout:
   target_force_n: [4.0, 6.0]

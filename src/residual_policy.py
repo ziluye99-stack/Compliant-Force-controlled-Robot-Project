@@ -9,14 +9,23 @@ first learning comparison interpretable and avoids direct hardware commands.
 from __future__ import annotations
 
 import argparse
+import datetime as dt
 import json
+import os
+import shutil
+import subprocess
+import sys
 from dataclasses import asdict, dataclass
 from pathlib import Path
+from collections import deque
+from typing import Any
 
 import mujoco
 import numpy as np
+import yaml
 
 from .contact_force_baseline import MODEL_XML, ForceTrackingMetrics, _normal_force, run
+from .experiment import REPOSITORY_ROOT, load_config, package_snapshot
 
 
 @dataclass(frozen=True)
@@ -139,6 +148,7 @@ def collect_dataset(
     integral_limit: float = 10.0,
     control_limit_n: float = 30.0,
     dynamics_randomization: tuple[tuple[float, float], tuple[float, float]] | None = None,
+    actuator_delay_steps: int = 0,
     seed: int = 42,
 ) -> ResidualDataset:
     """Collect noisy-baseline states and oracle-minus-baseline actions."""
@@ -146,6 +156,8 @@ def collect_dataset(
         raise ValueError("episodes must be positive and steps must be at least 10")
     if force_noise_std_n < 0:
         raise ValueError("force_noise_std_n must be non-negative")
+    if actuator_delay_steps < 0:
+        raise ValueError("actuator_delay_steps must be non-negative")
     if dynamics_randomization is not None:
         for low, high in dynamics_randomization:
             if low <= 0 or high < low:
@@ -170,6 +182,7 @@ def collect_dataset(
         dt = model.opt.timestep
         baseline_integral = 0.0
         oracle_integral = 0.0
+        command_queue: deque[float] = deque([0.0] * actuator_delay_steps)
         for _ in range(steps):
             true_force_n = _normal_force(model, data)
             measured_force_n = max(0.0, true_force_n + float(rng.normal(0.0, force_noise_std_n)))
@@ -186,7 +199,8 @@ def collect_dataset(
             feature_rows.append(_features(episode_target_force_n, measured_force_n, float(data.qvel[0]), baseline_integral, base_control))
             target_rows.append(oracle_control - base_control)
             episode_rows.append(episode_id)
-            data.ctrl[0] = base_control
+            command_queue.append(base_control)
+            data.ctrl[0] = command_queue.popleft()
             mujoco.mj_step(model, data)
     return ResidualDataset(
         features=np.asarray(feature_rows, dtype=np.float64),
@@ -225,11 +239,12 @@ def evaluate_residual(
     kd: float = 0.3,
     integral_limit: float = 10.0,
     control_limit_n: float = 30.0,
+    actuator_delay_steps: int = 0,
     feature_indices: tuple[int, ...] | None = None,
     seed: int = 123,
 ) -> ForceTrackingMetrics:
     """Evaluate PI plus a bounded residual under the same disturbance contract."""
-    if steps < 10 or force_noise_std_n < 0:
+    if steps < 10 or force_noise_std_n < 0 or actuator_delay_steps < 0:
         raise ValueError("steps must be at least 10 and force noise must be non-negative")
     rng = np.random.default_rng(seed)
     model, data = _make_system(damping_scale, actuator_gain, friction_scale)
@@ -239,6 +254,7 @@ def evaluate_residual(
     measured_forces: list[float] = []
     controls: list[float] = []
     penetrations: list[float] = []
+    command_queue: deque[float] = deque([0.0] * actuator_delay_steps)
     for _ in range(steps):
         true_force_n = _normal_force(model, data)
         measured_force_n = max(0.0, true_force_n + float(rng.normal(0.0, force_noise_std_n)))
@@ -254,7 +270,8 @@ def evaluate_residual(
             feature = feature[list(feature_indices)]
         residual = float(policy.predict(feature[None, :])[0])
         applied_control = float(np.clip(base_control + residual, -control_limit_n, control_limit_n))
-        data.ctrl[0] = applied_control
+        command_queue.append(applied_control)
+        data.ctrl[0] = command_queue.popleft()
         mujoco.mj_step(model, data)
         forces.append(true_force_n)
         measured_forces.append(measured_force_n)
@@ -276,45 +293,145 @@ def evaluate_residual(
     )
 
 
+def _mapping(config: dict[str, Any], key: str) -> dict[str, Any]:
+    value = config.get(key, {})
+    if not isinstance(value, dict):
+        raise ValueError(f"{key} must be a mapping")
+    return value
+
+
+def _pair(value: Any, name: str) -> tuple[float, float]:
+    if not isinstance(value, (list, tuple)) or len(value) != 2:
+        raise ValueError(f"{name} must contain two values")
+    return float(value[0]), float(value[1])
+
+
+def _config_values(config: dict[str, Any]) -> dict[str, Any]:
+    """Extract and validate all experiment values from the resolved YAML."""
+    task = _mapping(config, "task")
+    controller = _mapping(config, "controller")
+    disturbance = _mapping(config, "disturbance")
+    learning = _mapping(config, "learning")
+    evaluation = _mapping(config, "evaluation")
+    target_range = _pair(learning.get("train_target_force_range_n", [3.0, 7.0]), "learning.train_target_force_range_n")
+    values: dict[str, Any] = {
+        "target_force_n": float(task.get("target_force_n", 5.0)),
+        "force_noise_std_n": float(disturbance.get("force_noise_std_n", 0.0)),
+        "damping_scale": float(disturbance.get("damping_scale", 1.0)),
+        "actuator_gain": float(disturbance.get("actuator_gain", 1.0)),
+        "friction_scale": float(disturbance.get("friction_scale", 1.0)),
+        "actuator_delay_steps": int(disturbance.get("actuator_delay_steps", 0)),
+        "kp": float(controller.get("kp", 0.5)),
+        "ki": float(controller.get("ki", 5.0)),
+        "kd": float(controller.get("kd", 0.3)),
+        "integral_limit": float(controller.get("integral_limit", 10.0)),
+        "control_limit_n": float(controller.get("control_limit_n", 30.0)),
+        "episodes": int(learning.get("episodes", 8)),
+        "steps": int(learning.get("steps_per_episode", 500)),
+        "ridge": float(learning.get("ridge", 1e-3)),
+        "train_fraction": float(learning.get("train_fraction_by_episode", 0.8)),
+        "residual_limit_n": float(learning.get("residual_limit_n", 10.0)),
+        "target_range": target_range,
+        "eval_steps": int(evaluation.get("steps", 1000)),
+        "eval_seed": int(evaluation.get("seed", 123)),
+    }
+    randomization = learning.get("dynamics_randomization")
+    if randomization is not None:
+        if not isinstance(randomization, dict):
+            raise ValueError("learning.dynamics_randomization must be a mapping")
+        values["dynamics_randomization"] = (
+            _pair(randomization.get("damping_scale"), "learning.dynamics_randomization.damping_scale"),
+            _pair(randomization.get("actuator_gain"), "learning.dynamics_randomization.actuator_gain"),
+        )
+    else:
+        values["dynamics_randomization"] = None
+    if values["target_force_n"] <= 0 or values["force_noise_std_n"] < 0:
+        raise ValueError("target force must be positive and noise must be non-negative")
+    return values
+
+
+def run_from_config(config: dict[str, Any], artifact_dir: Path, *, seed: int | None = None, episodes: int | None = None,
+                    steps: int | None = None, eval_steps: int | None = None,
+                    force_noise_std_n: float | None = None) -> dict[str, Any]:
+    """Run the complete dataset/training/evaluation loop from resolved YAML."""
+    values = _config_values(config)
+    if force_noise_std_n is not None:
+        if force_noise_std_n < 0:
+            raise ValueError("force_noise_std_n must be non-negative")
+        values["force_noise_std_n"] = float(force_noise_std_n)
+    actual_seed = int(seed if seed is not None else config.get("experiment", {}).get("seed", 42))
+    dataset = collect_dataset(
+        episodes=int(episodes if episodes is not None else values["episodes"]),
+        steps=int(steps if steps is not None else values["steps"]),
+        target_force_n=values["target_force_n"],
+        force_noise_std_n=values["force_noise_std_n"],
+        damping_scale=values["damping_scale"], actuator_gain=values["actuator_gain"],
+        friction_scale=values["friction_scale"],
+        target_force_range_n=values["target_range"],
+        kp=values["kp"], ki=values["ki"], kd=values["kd"],
+        integral_limit=values["integral_limit"], control_limit_n=values["control_limit_n"],
+        dynamics_randomization=values["dynamics_randomization"],
+        actuator_delay_steps=values["actuator_delay_steps"], seed=actual_seed,
+    )
+    train, test = split_by_episode(dataset, values["train_fraction"])
+    policy = ResidualLinearPolicy.fit(train.features, train.targets, ridge=values["ridge"], residual_limit_n=values["residual_limit_n"])
+    eval_count = int(eval_steps if eval_steps is not None else values["eval_steps"])
+    baseline = run(steps=eval_count, target_force_n=values["target_force_n"], force_noise_std_n=values["force_noise_std_n"],
+                   damping_scale=values["damping_scale"], actuator_gain=values["actuator_gain"], friction_scale=values["friction_scale"],
+                   actuator_delay_steps=values["actuator_delay_steps"], kp=values["kp"], ki=values["ki"], kd=values["kd"],
+                   integral_limit=values["integral_limit"], control_limit_n=values["control_limit_n"], seed=values["eval_seed"])
+    residual = evaluate_residual(policy, steps=eval_count, target_force_n=values["target_force_n"], force_noise_std_n=values["force_noise_std_n"],
+                                 damping_scale=values["damping_scale"], actuator_gain=values["actuator_gain"], friction_scale=values["friction_scale"],
+                                 actuator_delay_steps=values["actuator_delay_steps"], kp=values["kp"], ki=values["ki"], kd=values["kd"],
+                                 integral_limit=values["integral_limit"], control_limit_n=values["control_limit_n"], seed=values["eval_seed"])
+    artifact_dir.mkdir(parents=True, exist_ok=False)
+    dataset.save(artifact_dir / "dataset.npz")
+    policy.save(artifact_dir / "policy.npz")
+    manifest = {
+        "run_id": artifact_dir.name, "created_at_utc": dt.datetime.now(dt.timezone.utc).isoformat(),
+        "config_name": config.get("experiment", {}).get("name"), "config_path": "configs/residual_policy.yaml",
+        "git_commit": _git_revision(), "python": sys.version, "slurm_job_id": os.environ.get("SLURM_JOB_ID"),
+        "artifact_dir": str(artifact_dir), "seed": actual_seed, "package_snapshot": package_snapshot(),
+        "dataset_rows": len(dataset.features), "train_rows": len(train.features), "test_rows": len(test.features),
+    }
+    (artifact_dir / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+    (artifact_dir / "config.yaml").write_text(yaml.safe_dump(config, sort_keys=False), encoding="utf-8")
+    metrics = {"test_residual_rmse_n": float(np.sqrt(np.mean((policy.predict(test.features) - test.targets) ** 2))),
+               "baseline": asdict(baseline), "residual": asdict(residual)}
+    (artifact_dir / "metrics.json").write_text(json.dumps(metrics, indent=2) + "\n", encoding="utf-8")
+    return {"manifest": manifest, "metrics": metrics}
+
+
+def _git_revision() -> str:
+    result = subprocess.run(["git", "rev-parse", "HEAD"], cwd=REPOSITORY_ROOT, check=False, capture_output=True, text=True)
+    return result.stdout.strip() if result.returncode == 0 else "unavailable"
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--episodes", type=int, default=8)
-    parser.add_argument("--steps", type=int, default=500)
-    parser.add_argument("--noise-std", type=float, default=0.2)
-    parser.add_argument("--eval-steps", type=int, default=1000)
-    parser.add_argument("--dataset", type=Path, default=Path("artifacts/residual-baseline/dataset.npz"))
-    parser.add_argument("--policy", type=Path, default=Path("artifacts/residual-baseline/policy.npz"))
+    parser.add_argument("--config", type=Path, default=Path("configs/residual_policy.yaml"))
+    parser.add_argument("--run-id", default=None)
+    parser.add_argument("--episodes", type=int)
+    parser.add_argument("--steps", type=int)
+    parser.add_argument("--eval-steps", type=int)
+    parser.add_argument("--seed", type=int)
+    parser.add_argument("--noise-std", type=float, help="override disturbance.force_noise_std_n")
+    parser.add_argument("--dataset", type=Path, help="deprecated: use the config run artifact")
+    parser.add_argument("--policy", type=Path, help="deprecated: use the config run artifact")
     args = parser.parse_args()
-    dataset = collect_dataset(episodes=args.episodes, steps=args.steps, force_noise_std_n=args.noise_std)
-    train, test = split_by_episode(dataset)
-    policy = ResidualLinearPolicy.fit(train.features, train.targets)
-    dataset.save(args.dataset)
-    policy.save(args.policy)
-    predictions = policy.predict(test.features)
-    baseline_metrics = run(
-        steps=args.eval_steps,
-        force_noise_std_n=args.noise_std,
-        damping_scale=1.5,
-        actuator_gain=0.8,
-        seed=123,
-    )
-    residual_metrics = evaluate_residual(
-        policy,
-        steps=args.eval_steps,
-        force_noise_std_n=args.noise_std,
-        damping_scale=1.5,
-        actuator_gain=0.8,
-        seed=123,
-    )
-    print(json.dumps({
-        "dataset_rows": len(dataset.features),
-        "train_rows": len(train.features),
-        "test_rows": len(test.features),
-        "test_residual_rmse_n": float(np.sqrt(np.mean((predictions - test.targets) ** 2))),
-        "baseline": asdict(baseline_metrics),
-        "residual": asdict(residual_metrics),
-        "policy": str(args.policy),
-    }, indent=2))
+    config = load_config(args.config)
+    experiment = config.setdefault("experiment", {})
+    run_id = args.run_id or experiment.get("run_id") or dt.datetime.now(dt.timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    artifact_root = REPOSITORY_ROOT / str(experiment.get("artifact_root", "artifacts/residual-baseline"))
+    output = run_from_config(config, artifact_root / str(run_id), seed=args.seed, episodes=args.episodes, steps=args.steps,
+                             eval_steps=args.eval_steps, force_noise_std_n=args.noise_std)
+    if args.dataset:
+        args.dataset.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(artifact_root / str(run_id) / "dataset.npz", args.dataset)
+    if args.policy:
+        args.policy.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(artifact_root / str(run_id) / "policy.npz", args.policy)
+    print(json.dumps(output, indent=2))
 
 
 if __name__ == "__main__":
