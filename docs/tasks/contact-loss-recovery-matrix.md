@@ -44,3 +44,12 @@ bash scripts/preflight.sh local
 
 The scene is a one-dimensional synthetic contact. Noise, damping, and delay
 axes are measured-parameter placeholders, not evidence about a real robot.
+
+## Completion evidence
+
+- Git commit: `55173bc` (`Add contact-loss recovery robustness matrix`)
+- Local verification: `69 passed`; `bash scripts/preflight.sh local` passed
+- Server verification: MuJoCo smoke test completed for 100 steps; config-driven
+  matrix returned 36 cases, 12 safe recoveries, and 24 retained failures in
+  `/tmp/codex-contact-loss-recovery-matrix.json`
+- Server worktree: `/home/gbu/research/worktrees/codex-contact-loss-recovery-matrix`
