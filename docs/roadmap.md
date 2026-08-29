@@ -61,6 +61,7 @@ earlier gate. Each item should become a focused branch using
 - [x] Connect contact force control to a platform-neutral two-link arm model
 - [x] Add a platform-neutral simultaneous dual-contact force-control fixture
 - [x] Freeze a platform-neutral system, sensing, timing, and safety interface
+- [x] Add a variable-compliance peg-in-hole matrix with manifest and failure retention
 
 ## Stage 2: Data and learning
 
