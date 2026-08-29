@@ -1,0 +1,44 @@
+# Secrets and machine-specific configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+secrets/
+server.env
+
+# Python and editor state
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+.mamba-env/
+*.egg-info/
+.idea/
+.vscode/*.local.json
+
+# Generated data and experiment artifacts
+artifacts/*
+!artifacts/.gitkeep
+data/*
+!data/.gitkeep
+runs/
+checkpoints/
+videos/
+wandb/
+mlruns/
+tb/
+*.pt
+*.pth
+*.ckpt
+*.onnx
+
+# Simulator and OS caches
+.mujoco/
+.cache/
+*.log
+.DS_Store

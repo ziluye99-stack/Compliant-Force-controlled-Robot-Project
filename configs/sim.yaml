@@ -1,0 +1,9 @@
+defaults:
+  - base
+
+experiment:
+  name: mujoco-smoke
+
+runtime:
+  mode: sim
+  device: cpu

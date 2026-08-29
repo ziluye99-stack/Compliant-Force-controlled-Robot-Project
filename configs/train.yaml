@@ -1,0 +1,13 @@
+defaults:
+  - base
+
+experiment:
+  name: training-template
+
+runtime:
+  mode: train
+  device: cuda
+
+training:
+  epochs: 1
+  batch_size: 1

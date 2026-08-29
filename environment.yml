@@ -1,0 +1,11 @@
+name: compliant-force-robot
+channels:
+  - conda-forge
+dependencies:
+  - python>=3.10,<3.12
+  - pip
+  - numpy
+  - pyyaml
+  - pytest
+  - pip:
+      - mujoco>=3.2,<4
