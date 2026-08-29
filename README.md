@@ -63,6 +63,10 @@ The concrete school-portal download and Codex handoff checklist is in
 Git、GitHub、分支和 Codex 终端的操作步骤见
 [`docs/git-codex.md`](docs/git-codex.md)。
 
+论文、图表、公式、失败结果和归档的发布门禁见
+[`docs/release-checklist.md`](docs/release-checklist.md)；本地 preflight 会
+检查该清单及其依赖文件是否存在。
+
 已安装科研技能、用途、典型调用和暂缓项见
 [`docs/codex-skills.md`](docs/codex-skills.md)。
 

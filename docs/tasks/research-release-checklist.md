@@ -41,7 +41,7 @@ validation remain separate stage gates.
 
 ## Completion note
 
-- Git commit:
-- Test output:
+- Git commit: `c02349c` (`Add reproducible research release checklist`)
+- Test output: local preflight passed; `91 passed`
 - Artifact path: checklist and checker are versioned; run artifacts remain outside Git
 - Follow-up task: fill the checklist for a selected multi-seed result after literature and hardware gates
