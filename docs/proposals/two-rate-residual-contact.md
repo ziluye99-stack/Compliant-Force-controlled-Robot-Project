@@ -2,11 +2,11 @@
 
 ## Status and scope
 
-- Status: `draft`
+- Status: `simulation-ready`
 - Project priorities: compliant interaction, embodied learning, simulation-to-real transfer, and reproducibility
 - Stage gate advanced: literature evidence to simulation-ready experiment design
 - Review date: 2026-08-29 (Asia/Shanghai)
-- Related records: [`PROJECT_VISION.md`](../PROJECT_VISION.md), [`learning-force-control-2003.00628.md`](../literature/notes/learning-force-control-2003.00628.md), [`residual-learning-dmp-2008.07682.md`](../literature/notes/residual-learning-dmp-2008.07682.md), [`multi-contact-whole-body-force-control-2024.md`](../literature/notes/multi-contact-whole-body-force-control-2024.md), [`two-rate-residual-study.md`](../experiments/two-rate-residual-study.md)
+- Related records: [`PROJECT_VISION.md`](../PROJECT_VISION.md), [`learning-force-control-2003.00628.md`](../literature/notes/learning-force-control-2003.00628.md), [`residual-learning-dmp-2008.07682.md`](../literature/notes/residual-learning-dmp-2008.07682.md), [`multi-contact-whole-body-force-control-2024.md`](../literature/notes/multi-contact-whole-body-force-control-2024.md), [`contact-survey-104224.md`](../literature/notes/contact-survey-104224.md), [`two-rate-residual-study.md`](../experiments/two-rate-residual-study.md)
 
 ## Research question and hypothesis
 
@@ -29,7 +29,7 @@ The related-work taxonomy identifies a missing controlled comparison of what a
 slow residual should modify under held-out contact dynamics.
 
 The contact-manipulation survey has a verified legal arXiv preprint and a
-structured note, so it can inform taxonomy and a bounded follow-up experiment;
+structured note, so it informs taxonomy and the bounded follow-up experiment;
 the publisher/portal version remains unverified and cannot be represented as
 the final version. Chinese CNKI/万方 papers remain discovery-only until
 downloaded through the university portal, so they cannot yet justify a design
@@ -76,7 +76,9 @@ safety metrics remain within tolerance.
 
 The branches are intentionally ordered: literature and platform selection can
 proceed in parallel, but calibration depends on the selected platform, and
-hardware depends on calibration and replay.
+hardware depends on calibration and replay. This proposal is simulation-ready
+only; promotion to `transfer-ready` still requires measured parameters and
+offline replay.
 
 ## Transfer and hardware gates
 
@@ -90,7 +92,10 @@ model are documented.
 ## Decision record
 
 - Current decision: proceed with the platform-neutral MuJoCo falsifying test and
-  authorized literature intake; keep hardware stages pending.
-- Evidence reviewed: two verified full-text notes and the dated discovery log.
-- Next review: after the survey PDF, three Chinese full texts, and a concrete
-  robot/sensor specification are available.
+  authorized literature intake; keep transfer and hardware stages pending.
+- Evidence reviewed: four verified paper notes (including the contact survey
+  preprint), the dated discovery log, the platform-neutral interface, and the
+  completed local matrix.
+- Next review: after three Chinese full texts and a concrete robot/sensor
+  specification are available; the publisher survey version remains optional
+  provenance refinement rather than a prerequisite for this simulation gate.

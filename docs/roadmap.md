@@ -96,10 +96,10 @@ earlier gate. Each item should become a focused branch using
 
 ## Current next decision
 
-The immediate next decision is literature-backed: complete the contact-
-manipulation survey note and use both notes to define one falsifiable MuJoCo
-experiment. In parallel, collect the selected robot and sensor specifications
-needed for later transfer.
+The immediate next decision is literature-backed: obtain and read the three
+selected Chinese CNKI/万方 papers, then review the simulation-ready proposal
+against that evidence. In parallel, collect the selected robot and sensor
+specifications needed for later transfer.
 Hardware commands remain blocked until calibration, limits, watchdog, E-stop,
 operator, and replay evidence are documented.
 

@@ -5,7 +5,7 @@
 - Branch: `codex/two-rate-residual-runner`
 - Project priorities: compliant interaction, embodied learning, and evidence/reproducibility
 - Stage gate: Simulation implementation and contract validation
-- Related literature: [`learning-force-control-2003.00628.md`](../literature/notes/learning-force-control-2003.00628.md), [`residual-learning-dmp-2008.07682.md`](../literature/notes/residual-learning-dmp-2008.07682.md), and [`related-work-taxonomy.md`](../literature/related-work-taxonomy.md)
+- Related literature: [`learning-force-control-2003.00628.md`](../literature/notes/learning-force-control-2003.00628.md), [`residual-learning-dmp-2008.07682.md`](../literature/notes/residual-learning-dmp-2008.07682.md), [`contact-survey-104224.md`](../literature/notes/contact-survey-104224.md), and [`related-work-taxonomy.md`](../literature/related-work-taxonomy.md)
 - Expected artifact: a reproducible MuJoCo experiment comparing a fast PI loop with bounded lower-rate residual policies
 - Current status: runner, contract tests, and the complete local CPU matrix are
   implemented and reviewed; server-side GPU execution remains scheduler-gated
