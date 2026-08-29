@@ -41,8 +41,8 @@ bash scripts/sync-results.sh --dry-run \
 
 ## Completion note
 
-- Git commit:
-- Test output:
+- Git commit: `635062a Make archive artifact root explicit`
+- Test output: `bash scripts/preflight.sh local`; `83 passed`; archive dry-run exit 0
 - Artifact path: `/mnt/research-data/Compliant-Force-controlled-Robot-Project/two-rate-server-smoke-20260830/`
 - Known limitations: The command still requires the research drive to be mounted and an accessible SSH source.
 - Follow-up task: Add scheduler-specific archive metadata once the lab provides an approved scheduler.
