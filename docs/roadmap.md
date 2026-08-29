@@ -33,6 +33,8 @@ earlier gate. Each item should become a focused branch using
 
 ## Stage 3: Transfer analysis
 
+- [x] Define versioned contact-log schema and offline replay safety gate
+- [x] Validate bias/noise/friction identification on a synthetic fixture
 - [ ] Measure model mismatch and sensor noise from the selected hardware
 - [ ] Calibrate the corresponding MuJoCo parameters
 - [ ] Replay recorded trajectories offline before issuing commands

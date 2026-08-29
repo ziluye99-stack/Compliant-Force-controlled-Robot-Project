@@ -1,0 +1,15 @@
+defaults:
+  - base
+
+experiment:
+  name: contact-parameter-identification
+
+data:
+  schema_version: contact-log/v1
+  sampling_period_s: 0.002
+  fields: [timestamp_s, episode_id, qpos_0_rad, qpos_1_rad, qvel_0_rad_s, qvel_1_rad_s, commanded_normal_force_n, commanded_tangential_force_n, measured_normal_force_n, measured_tangential_force_n, slip_speed_m_s, contact]
+  archive_root: /mnt/research-data/contact-logs
+
+identification:
+  slip_threshold_m_s: 0.01
+  min_sliding_samples: 5
