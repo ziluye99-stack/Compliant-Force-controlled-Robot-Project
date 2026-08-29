@@ -38,8 +38,8 @@ bash scripts/server-status.sh
 
 ## Completion note
 
-- Git commit: pending
-- Test output: pending
+- Git commit: `fcc7e94` (`Add read-only shared server status workflow`)
+- Test output: `bash -n scripts/server-status.sh`; `bash scripts/server-status.sh`; `bash scripts/preflight.sh local`; `87 passed`
 - Artifact path: terminal inventory only
-- Known limitations: no scheduler or long-running training is enabled
+- Known limitations: the workstation has no scheduler; no long-running training is enabled
 - Follow-up task: obtain an approved scheduler or explicit reservation procedure
