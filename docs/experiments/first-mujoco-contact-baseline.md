@@ -22,6 +22,24 @@ The run directory records the resolved config, Git commit, package snapshot,
 seed, Slurm job ID (or null for local execution), and metrics. Generated files
 stay under ignored `artifacts/contact-force-baseline/`.
 
+## Recorded smoke runs
+
+The following runs were generated from commit `4d2487e1ebd6595c963eb87dd80b275fad5f3647`:
+
+| Run | Tail mean force | True-force RMSE | Measured-force RMSE | Max penetration | Contact |
+| --- | ---: | ---: | ---: | ---: | --- |
+| `first-baseline-20260830` | 4.999973 N | 0.000033 N | 0.000033 N | 0.612 mm | yes |
+| `first-robust-20260830` | 5.025145 N | 0.082893 N | 0.215802 N | 0.482 mm | yes |
+
+Artifacts:
+
+- `artifacts/contact-force-baseline/first-baseline-20260830/`
+- `artifacts/contact-force-baseline/first-robust-20260830/`
+
+The robust result is a diagnostic comparison, not a claim of transfer: noise
+and command-path mismatch visibly degrade tracking while the geometric safety
+proxy remains below the 1 mm contract limit.
+
 ## Baseline and comparison
 
 The baseline is the transparent PI plus velocity-damping controller in

@@ -44,8 +44,8 @@ test -s artifacts/contact-force-baseline/first-baseline-smoke/metrics.json
 
 ## Completion note
 
-- Git commit: pending
-- Test output: pending
+- Git commit: `4d2487e` (`Add config-driven MuJoCo contact baseline`)
+- Test output: `84 passed`; config-driven baseline and robust comparison completed with fixed seed 42
 - Artifact path: `artifacts/contact-force-baseline/` (ignored by Git)
 - Known limitations: Idealized one-dimensional fixture; no measured robot dynamics, sensor calibration, or hardware evidence
 - Follow-up task: Compare one bounded residual policy against this baseline on held-out contact and dynamics conditions
