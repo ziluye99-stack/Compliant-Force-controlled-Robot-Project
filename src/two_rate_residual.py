@@ -103,6 +103,16 @@ class TwoRateDataset:
         path.parent.mkdir(parents=True, exist_ok=True)
         np.savez_compressed(path, features=self.features, targets=self.targets, episode_ids=self.episode_ids)
 
+    @classmethod
+    def load(cls, path: Path) -> "TwoRateDataset":
+        """Load a dataset without changing its numeric dtypes or episode split."""
+        with np.load(path) as archive:
+            return cls(
+                features=np.asarray(archive["features"], dtype=np.float64),
+                targets=np.asarray(archive["targets"], dtype=np.float64),
+                episode_ids=np.asarray(archive["episode_ids"], dtype=np.int64),
+            )
+
 
 @dataclass(frozen=True)
 class TwoRateLinearPolicy:
@@ -139,6 +149,18 @@ class TwoRateLinearPolicy:
             raise ValueError("feature shape does not match policy")
         design = np.column_stack([values, np.ones(len(values))])
         return np.clip(design @ self.weights, -self.output_limits, self.output_limits)
+
+    def save(self, path: Path) -> None:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        np.savez_compressed(path, weights=self.weights, output_limits=self.output_limits)
+
+    @classmethod
+    def load(cls, path: Path) -> "TwoRateLinearPolicy":
+        with np.load(path) as archive:
+            return cls(
+                weights=np.asarray(archive["weights"], dtype=np.float64),
+                output_limits=np.asarray(archive["output_limits"], dtype=np.float64),
+            )
 
 
 def _gain_targets(command_delta: float, error: float, integral_error: float) -> np.ndarray:
@@ -401,6 +423,7 @@ def train_and_evaluate(
     eval_friction_scale: float = 1.0,
     eval_stiffness_scale: float = 1.0,
     eval_actuator_delay_steps: int = 0,
+    artifact_dir: Path | None = None,
 ) -> dict[str, object]:
     baseline = run_two_rate(
         "pi_only", steps=eval_steps, target_force_n=eval_target_force_n,
@@ -420,6 +443,12 @@ def train_and_evaluate(
         )
         train, test = split_by_episode(dataset)
         policy = TwoRateLinearPolicy.fit(train.features, train.targets, output_limits=_output_limits(variant))
+        if artifact_dir is not None:
+            artifact_dir.mkdir(parents=True, exist_ok=False)
+            dataset.save(artifact_dir / "dataset.npz")
+            train.save(artifact_dir / "train.npz")
+            test.save(artifact_dir / "test.npz")
+            policy.save(artifact_dir / "policy.npz")
         prediction_rmse = float(np.sqrt(np.mean((policy.predict(test.features) - test.targets) ** 2)))
         residual = run_two_rate(
             variant, policy, steps=eval_steps, target_force_n=eval_target_force_n,
@@ -436,6 +465,13 @@ def train_and_evaluate(
             "test_target_rmse": prediction_rmse,
             "residual": asdict(residual),
         })
+        if artifact_dir is not None:
+            result["training_artifacts"] = {
+                "dataset": "dataset.npz",
+                "train": "train.npz",
+                "test": "test.npz",
+                "policy": "policy.npz",
+            }
     return result
 
 

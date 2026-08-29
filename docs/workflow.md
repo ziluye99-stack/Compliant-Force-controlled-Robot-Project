@@ -109,8 +109,14 @@ GPU directly. Once Slurm is available, submit only through
 `bash scripts/submit-slurm.sh train` or `eval`, with all resource variables set.
 
 Simulation jobs should write only to `artifacts/<run-id>` and record the config,
-metrics, simulator version, seed, and job ID. Keep large videos and checkpoints
-on the server until evaluation is complete.
+metrics, simulator version, seed, and job ID. Matrix runs additionally create
+`cases/<index>-<variant>/` directories for learned variants. Each such directory
+contains the complete dataset, episode-safe train/test split, and bounded policy
+checkpoint (`dataset.npz`, `train.npz`, `test.npz`, and `policy.npz`), while
+`results.json` references those files with paths relative to the run directory.
+This makes an independent checkpoint reload or archive verification possible
+after copying the run directory. Keep large videos and checkpoints on the server
+until evaluation is complete.
 
 ## 5. Collect data, train, and evaluate
 

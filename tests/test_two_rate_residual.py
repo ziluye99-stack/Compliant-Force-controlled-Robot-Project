@@ -36,6 +36,22 @@ def test_two_rate_policy_prediction_is_bounded_and_deterministic() -> None:
     assert np.all(np.abs(prediction) <= limits)
 
 
+def test_dataset_and_policy_round_trip(tmp_path) -> None:
+    dataset = collect_dataset("joint_residual", episodes=3, steps=20, seed=13)
+    train, _ = split_by_episode(dataset)
+    policy = TwoRateLinearPolicy.fit(train.features, train.targets, output_limits=np.asarray([10.0, 0.5, 5.0]))
+    dataset_path = tmp_path / "dataset.npz"
+    policy_path = tmp_path / "policy.npz"
+    dataset.save(dataset_path)
+    policy.save(policy_path)
+    restored_dataset = type(dataset).load(dataset_path)
+    restored_policy = TwoRateLinearPolicy.load(policy_path)
+    assert np.array_equal(restored_dataset.features, dataset.features)
+    assert np.array_equal(restored_dataset.targets, dataset.targets)
+    assert np.array_equal(restored_policy.weights, policy.weights)
+    assert np.array_equal(restored_policy.predict(train.features), policy.predict(train.features))
+
+
 def test_period_holds_behavior_without_breaking_safety() -> None:
     dataset = collect_dataset("trajectory_residual", episodes=4, steps=40, seed=7)
     train, _ = split_by_episode(dataset)

@@ -176,7 +176,9 @@ def run_matrix(
     (artifact_dir / "config.yaml").write_text(yaml.safe_dump(config, sort_keys=False), encoding="utf-8")
     results: list[dict[str, Any]] = []
     results_path = artifact_dir / "results.json"
+    case_root = artifact_dir / "cases"
     for index, case in enumerate(cases):
+        case_artifact_dir = case_root / f"{index:04d}-{case['variant']}"
         result = train_and_evaluate(
             case["variant"],
             episodes=train_episodes,
@@ -197,8 +199,15 @@ def run_matrix(
             eval_friction_scale=case["friction_scale"],
             eval_stiffness_scale=case["stiffness_scale"],
             eval_actuator_delay_steps=case["actuator_delay_steps"],
+            artifact_dir=case_artifact_dir if case["variant"] != "pi_only" else None,
         )
-        results.append({"index": index, "case": case, "result": result})
+        results.append({
+            "index": index,
+            "case": case,
+            "result": result,
+            "training_artifact_dir": str(case_artifact_dir.relative_to(artifact_dir))
+            if case["variant"] != "pi_only" else None,
+        })
         results_path.write_text(json.dumps(results, indent=2) + "\n", encoding="utf-8")
     return {"manifest": manifest, "results": results}
 

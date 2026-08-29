@@ -63,6 +63,13 @@ def test_matrix_smoke_writes_provenance_and_results(tmp_path) -> None:
     assert results[0]["case"]["variant"] == "joint_residual"
     assert results[0]["result"]["residual"]["contacts_seen"]
     assert results[0]["result"]["baseline"]["contacts_seen"]
+    artifact_dir = artifact_dir / "cases" / "0000-joint_residual"
+    assert (artifact_dir / "dataset.npz").is_file()
+    assert (artifact_dir / "train.npz").is_file()
+    assert (artifact_dir / "test.npz").is_file()
+    assert (artifact_dir / "policy.npz").is_file()
+    assert results[0]["training_artifact_dir"] == "cases/0000-joint_residual"
+    assert results[0]["result"]["training_artifacts"]["policy"] == "policy.npz"
 
 
 def test_summary_reports_paired_delta_and_deterministic_ci() -> None:
