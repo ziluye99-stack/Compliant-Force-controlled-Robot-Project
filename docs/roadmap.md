@@ -12,6 +12,17 @@ earlier gate. Each item should become a focused branch using
 - [x] Select the first MuJoCo task and define observation/action contracts
 - [x] Select a non-learning baseline controller
 
+## Stage 0.5: Literature evidence
+
+- [x] Define source priority across robotics venues, Nature/Science, SCI, CNKI,
+  and public metadata indexes
+- [x] Record a dated, deduplicated discovery session with access status
+- [ ] Obtain authorized full text for the contact-manipulation survey and the
+  force-learning paper
+- [ ] Write structured notes covering translation, equations, interfaces,
+  baselines, metrics, ablations, failure cases, and reproducibility
+- [ ] Build a related-work taxonomy and identify a falsifiable project gap
+
 ## Stage 1: Contact task baseline
 
 - [x] Author a minimal MuJoCo contact scene with deterministic reset
@@ -58,7 +69,8 @@ earlier gate. Each item should become a focused branch using
 
 ## Current next decision
 
-The next research decision is to identify contact and actuator parameters from
-measured force/torque data, then replay those measurements through the planar
-arm contract. Robot-specific implementation remains blocked until the robot and
-sensor specifications are supplied.
+The immediate next decision is literature-backed: complete the first two paper
+notes and use them to define one falsifiable MuJoCo experiment. In parallel,
+collect the selected robot and sensor specifications needed for later transfer.
+Hardware commands remain blocked until calibration, limits, watchdog, E-stop,
+operator, and replay evidence are documented.
