@@ -37,8 +37,8 @@ to held-out target forces and dynamics settings across three fixed seeds.
 
 ## Completion note
 
-- Git commit: pending
-- Test output: pending
+- Git commit: `43d3cf2` (`Evaluate residual policy on held-out dynamics`)
+- Test output: `9 passed`; 12 held-out evaluations completed with seeds 101, 202, and 303
 - Artifact path: `artifacts/residual-heldout/results.json` (ignored by Git)
 - Known limitations: Single one-dimensional contact scene; no friction claim or hardware commands
 - Follow-up task: Add a tangential contact task and perform a scene-level held-out evaluation
