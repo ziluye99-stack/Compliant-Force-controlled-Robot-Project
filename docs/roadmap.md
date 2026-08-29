@@ -25,6 +25,15 @@ earlier gate. Each item should become a focused branch using
   cases, and reproducibility
 - [x] Build a related-work taxonomy and identify a falsifiable project gap
 
+## Stage 0.6: Proposal and task decomposition
+
+- [x] Add a reviewable proposal layer between literature and experiment records
+- [x] Define a platform-neutral two-rate residual force-control proposal
+- [x] Decompose literature intake, platform freeze, calibration, replay, and
+  supervised hardware into dependency-aware branches
+- [ ] Review the proposal after the contact survey, Chinese full texts, and
+  concrete robot/sensor selection are available
+
 ## Stage 0.75: System and mechanical interface
 
 - [ ] Select the first robot embodiment and document why it fits the gap

@@ -15,12 +15,16 @@ not start implementation from an uncited idea: the literature log and paper
 notes must state what is known, what is missing, and which claim the experiment
 can falsify.
 
-## 1. Design the experiment
+## 1. Form the proposal and design the experiment
 
-Start with `docs/experiments/template.md`. State one question, one hypothesis,
-the baseline, independent variables, controlled variables, success metrics, and
-hardware safety constraints. Create or update a YAML file under `configs/` and
-review it before running code.
+Start with `docs/proposals/template.md` when the work changes the research
+direction or combines multiple experiments. The proposal must connect verified
+literature to one falsifiable question, record missing evidence, and split the
+work into focused branches with dependencies and smallest verification commands.
+For a single experiment, continue with `docs/experiments/template.md` and state
+one question, one hypothesis, the baseline, independent variables, controlled
+variables, success metrics, and hardware safety constraints. Create or update a
+YAML file under `configs/` and review it before running code.
 
 Every run must have a unique `run_id`, fixed seed, committed Git revision, and
 an artifact directory. Do not put raw data, checkpoints, videos, or credentials
