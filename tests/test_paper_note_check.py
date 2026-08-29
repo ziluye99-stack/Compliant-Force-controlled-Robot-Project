@@ -31,3 +31,46 @@ def test_metadata_only_note_is_rejected_at_full_text_gate(tmp_path: Path) -> Non
     report = checker.validate_note(note, require_full_text=True)
     assert not report["valid"]
     assert "full-text evidence is required for this gate" in report["issues"]
+
+
+def test_unknown_evidence_status_is_rejected(tmp_path: Path) -> None:
+    note = tmp_path / "candidate.md"
+    note.write_text(
+        """# Candidate
+
+## Bibliographic record
+
+- Title: Candidate
+- Authors: A
+- Venue and year: Journal, 2024
+- DOI: 10.1/example
+- Discovery source and access date: OpenAlex, 2026-08-29
+- Full-text access route (publisher, school portal, repository, or preprint): public archive
+- Full-text file and SHA-256: /tmp/candidate.pdf; `0000000000000000000000000000000000000000000000000000000000000000`
+- Evidence status (`full-text`, `accepted-manuscript`, `preprint`, or `metadata-only`): informal copy
+
+## Translation and terminology
+
+Translation complete.
+
+## Technical digest
+
+Digest complete.
+
+## Experimental design analysis
+
+Analysis complete.
+
+## Assessment
+
+Assessment complete.
+
+## Follow-up experiment in MuJoCo
+
+Follow-up complete.
+""",
+        encoding="utf-8",
+    )
+    report = checker.validate_note(note)
+    assert not report["valid"]
+    assert any(issue.startswith("invalid evidence status:") for issue in report["issues"])

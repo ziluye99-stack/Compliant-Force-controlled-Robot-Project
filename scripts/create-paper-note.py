@@ -9,6 +9,9 @@ import hashlib
 from pathlib import Path
 
 
+EVIDENCE_STATUSES = ("full-text", "accepted-manuscript", "preprint", "metadata-only")
+
+
 def sha256(path: Path) -> str:
     digest = hashlib.sha256()
     with path.open("rb") as handle:
@@ -90,7 +93,7 @@ def main() -> int:
     parser.add_argument("--publisher-url")
     parser.add_argument("--preprint-url")
     parser.add_argument("--access-date", default=dt.date.today().isoformat())
-    parser.add_argument("--evidence-status", default="full-text")
+    parser.add_argument("--evidence-status", choices=EVIDENCE_STATUSES, default="full-text")
     parser.add_argument("--output", required=True, type=Path)
     args = parser.parse_args()
     args.pdf = args.pdf.expanduser().resolve()

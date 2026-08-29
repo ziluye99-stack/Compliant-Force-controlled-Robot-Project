@@ -69,7 +69,10 @@ humanoid whole-body questions:
    arXiv, and official author/project pages. These verify metadata and citation
    links; they do not replace the publisher or portal record.
 
-Record the discovery source and full-text source separately. For example, a
+Record the discovery source and full-text source separately. The structured
+evidence status is exactly one of `full-text` (publisher or authorized portal
+copy), `accepted-manuscript`, `preprint`, or `metadata-only`; keep the route
+and any version caveat in the separate access-route field. For example, a
 paper found through OpenAlex but read from IEEE Xplore or CNKI must list both
 sources in the search log and paper note.
 

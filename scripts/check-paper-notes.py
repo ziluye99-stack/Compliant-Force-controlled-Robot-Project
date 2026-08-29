@@ -29,6 +29,9 @@ REQUIRED_SECTIONS = (
     "Assessment",
     "Follow-up experiment in MuJoCo",
 )
+EVIDENCE_STATUSES = frozenset(
+    {"full-text", "accepted-manuscript", "preprint", "metadata-only"}
+)
 
 
 def _section_blocks(text: str) -> dict[str, str]:
@@ -88,7 +91,10 @@ def validate_note(path: Path, require_full_text: bool = False, verify_files: boo
             issues.append(f"missing section content: {section}")
 
     evidence_status = _value_for_prefix(fields, "Evidence status").lower()
-    if require_full_text and ("metadata-only" in evidence_status or _is_placeholder(evidence_status)):
+    if not _is_placeholder(evidence_status) and evidence_status not in EVIDENCE_STATUSES:
+        valid_statuses = ", ".join(sorted(EVIDENCE_STATUSES))
+        issues.append(f"invalid evidence status: {evidence_status}; expected one of {valid_statuses}")
+    if require_full_text and (evidence_status == "metadata-only" or _is_placeholder(evidence_status)):
         issues.append("full-text evidence is required for this gate")
 
     file_status = "not-checked"
