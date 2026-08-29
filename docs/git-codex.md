@@ -42,6 +42,11 @@ bash scripts/preflight.sh local
 .mamba-env/bin/python -m pytest -q
 ```
 
+Pull Requests also run the repository's GitHub Actions reproducibility check.
+It validates the branch task card, literature-source policy, structured note
+format, unit tests, and a headless MuJoCo smoke test. It does not access the
+school portal, the shared server, or real hardware.
+
 只添加本次任务的文件，确认没有密钥、数据、checkpoint、视频或日志：
 
 ```bash

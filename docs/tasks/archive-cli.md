@@ -14,12 +14,13 @@ Read `docs/PROJECT_VISION.md` before filling this task.
 
 Make result archiving reproducible for runs produced in branch-specific server
 worktrees by allowing the remote artifact root to be supplied on the command
-line, with the CLI value taking precedence over `REMOTE_ARTIFACT_ROOT`.
+line, with the CLI value taking precedence over `REMOTE_ARTIFACT_ROOT`, and
+run the same branch/evidence/MuJoCo checks automatically in Pull Requests.
 
 ## Inputs and outputs
 
 - Inputs: A run ID and a server artifact root.
-- Expected artifact: Updated `scripts/sync-results.sh`, workflow usage, and focused test.
+- Expected artifact: Updated `scripts/sync-results.sh`, workflow usage, focused test, and `.github/workflows/ci.yml`.
 - Expected experiment run IDs or figures: Dry-run preview for the archived two-rate server smoke.
 
 ## Acceptance criteria
