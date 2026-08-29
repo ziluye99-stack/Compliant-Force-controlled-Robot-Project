@@ -1,0 +1,26 @@
+defaults:
+  - base
+
+experiment:
+  name: normal-force-baseline
+
+runtime:
+  mode: sim
+  device: cpu
+
+task:
+  name: normal-contact-force-tracking
+  target_force_n: 5.0
+  steps: 2000
+  seed: 42
+
+controller:
+  kp: 0.5
+  ki: 5.0
+  kd: 0.3
+  integral_limit: 10.0
+  control_limit_n: 30.0
+
+evaluation:
+  tail_fraction: 0.2
+  force_rmse_tolerance_n: 0.05

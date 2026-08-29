@@ -9,18 +9,19 @@ earlier gate. Each item should become a focused branch using
 - [x] MuJoCo-first repository and reproducible environment
 - [x] Laptop/server split, artifact archive, and shared-server safety policy
 - [x] Project vision, literature source map, and paper-note workflow
-- [ ] Select the first MuJoCo task and define observation/action contracts
-- [ ] Select baseline controller and baseline learning method
+- [x] Select the first MuJoCo task and define observation/action contracts
+- [x] Select a non-learning baseline controller
 
 ## Stage 1: Contact task baseline
 
-- [ ] Author a minimal MuJoCo contact scene with deterministic reset
-- [ ] Implement a non-learning impedance/force baseline
-- [ ] Define force tracking, pose error, contact stability, and safety metrics
-- [ ] Add fixed-seed unit tests and short evaluation runs
+- [x] Author a minimal MuJoCo contact scene with deterministic reset
+- [x] Implement a non-learning force baseline
+- [x] Define force tracking, penetration, contact, and safety metrics
+- [x] Add fixed-seed unit tests and short evaluation runs
 
 ## Stage 2: Data and learning
 
+- [ ] Select the first learning method and its reproducible baseline
 - [ ] Define demonstrations or interaction-data collection protocol
 - [ ] Specify train/validation/test splits and leakage checks
 - [ ] Train one transparent baseline before adding a new model component
