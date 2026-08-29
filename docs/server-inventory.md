@@ -38,11 +38,19 @@ environments were inspected but not modified.
 On 2026-08-29, the GitHub branch `codex/research-proposal-contract` was fetched
 into `/home/gbu/research/worktrees/codex-research-proposal-contract` without
 changing the main checkout. The worktree is currently clean at commit
-`5bf3e8e`. With
+`d6172bd`. With
 `/home/gbu/miniforge3/envs/compliant-force-robot/bin/python`, the current
 commit passed `src.experiment --config configs/sim.yaml --dry-run` and a
 100-step `src.mujoco_smoke` run. The dry-run recorded MuJoCo 3.12.0, Python
 3.11.16, the platform-neutral interface, and no Slurm job ID.
+
+The project environment intentionally remains lightweight and has no PyTorch.
+Two pre-existing user environments provide CUDA-enabled PyTorch for short,
+coordinated checks: `/home/gbu/miniconda3/envs/pytorch` (`2.11.0+cu130`) and
+`/home/gbu/miniforge3/envs/lerobot_rm65` (`2.13.0+cu130`). Neither environment
+was modified by this project. A CUDA-enabled PyTorch import and device count
+are not a reservation; long simulation or training still requires an approved
+scheduler or explicit lab reservation.
 
 ## Other software found
 
@@ -76,3 +84,10 @@ ssh research-gpu 'CUDA_VISIBLE_DEVICES=1 /home/gbu/miniconda3/envs/pytorch/bin/p
 
 Always inspect `nvidia-smi` first and never terminate processes owned by other
 users. GPU visibility is not a resource reservation.
+
+Verification on 2026-08-29 used GPU 1 only after `nvidia-smi` showed 0% load and
+18 MiB in use. The existing PyTorch environment reported
+`NVIDIA GeForce RTX 5090`, CUDA runtime `13.0`, and checksum `357389824.0` for a
+1024-element tensor operation; the process exited immediately. This is a
+connectivity smoke test, not a training run or a claim that GPU 1 is generally
+available.
