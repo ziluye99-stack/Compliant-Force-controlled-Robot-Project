@@ -205,3 +205,33 @@ claim, use the university portal or an authorized open-access publisher copy,
 record the DOI and SHA-256, and create a structured note with
 `scripts/create-paper-note.py`. The Chinese axis still must be searched directly
 in CNKI/万方 using title, keyword, and abstract fields.
+
+## Public metadata probe (executed 2026-08-29, current session)
+
+The following focused probe used the same repository query tool with
+`--year-from 2020 --limit 10`. OpenAlex and Crossref both returned successfully;
+all records remain `metadata-only`.
+
+| Axis | Exact query | Representative candidates |
+| --- | --- | --- |
+| Arm contact force | `contact force control robotic manipulation` | *Learning Force Control for Contact-Rich Manipulation Tasks With Rigid Position-Controlled Robots* (RA-L 2020, DOI `10.1109/LRA.2020.3010739`); *A review on reinforcement learning for contact-rich robotic manipulation tasks* (RCIM 2022, DOI `10.1016/j.rcim.2022.102517`); *A survey of robot manipulation in contact* (RAS 2022, DOI `10.1016/j.robot.2022.104224`) |
+| Humanoid multi-contact | `humanoid whole body multi contact force control` | *Dynamic Complementarity Conditions and Whole-Body Trajectory Optimization for Humanoid Robot Locomotion* (T-RO 2022, DOI `10.1109/TRO.2022.3183785`); *Constraint-consistent task-oriented whole-body robot formulation* (IJRR 2022, DOI `10.1177/02783649221120029`); *Whole-Body Multi-Contact Motion Control for Humanoid Robots Based on Distributed Tactile Sensors* (RA-L 2024, DOI `10.1109/LRA.2024.3475052`) |
+| Chinese terminology probe | `机械臂 导纳控制 力传感器` | Public ranking was low precision and included unrelated sensing papers; repeat in CNKI/万方 with title/keyword/abstract fields and the required terms `导纳控制`, `阻抗控制`, `混合位置力控制` |
+
+Reproduction commands:
+
+```bash
+./.mamba-env/bin/python scripts/literature-query.py \
+  "contact force control robotic manipulation" --year-from 2020 --limit 10 \
+  --output /tmp/contact-force-candidates.json
+./.mamba-env/bin/python scripts/literature-query.py \
+  "humanoid whole body multi contact force control" --year-from 2020 --limit 10 \
+  --output /tmp/humanoid-force-candidates.json
+./.mamba-env/bin/python scripts/literature-query.py \
+  "机械臂 导纳控制 力传感器" --year-from 2020 --limit 10 \
+  --output /tmp/chinese-admittance-candidates.json
+```
+
+This probe changes the candidate queue only. Formal evidence still requires the
+publisher or authorized university-portal PDF, a local SHA-256, and a completed
+structured note.
