@@ -30,7 +30,7 @@ MuJoCo PI loop, including held-out dynamics and explicit safety metrics.
 - [x] Observation/action and safety contracts are explicit
 - [x] Fixed seeds, held-out settings, and artifact rules are defined
 - [x] Runner implementation and CPU smoke test exist
-- [ ] Three-seed matrix is executed and reviewed
+- [x] Three-seed matrix is executed and reviewed locally; server GPU rerun remains scheduler-gated
 
 ## Verification
 
@@ -67,5 +67,8 @@ PY
 - Git commit: `ce44c5b` (`Implement two-rate residual runner`)
 - Test output: 32 tests passed; short `joint_residual` and one-case matrix smoke completed
 - Artifact path: `artifacts/two-rate-residual/` (ignored)
-- Known limitations: no complete three-seed matrix, no statistical result, no hardware evidence
-- Follow-up task: execute the complete 384-case held-out matrix only after a scheduler or explicit lab reservation is confirmed
+- Formal matrix commit: `501e0f7` (`Add randomized two-rate matrix analysis`)
+- Formal matrix artifact: `artifacts/two-rate-residual/matrix-full-20260829-r2/` (384/384 cases)
+- Statistical result: joint residual paired delta `-0.00130 N`, bootstrap 95% CI `[-0.00188, -0.00077] N`; all variants had zero safety-gate activations
+- Known limitations: local one-dimensional synthetic MuJoCo scene, no calibrated hardware parameters, no server GPU/Slurm evidence, and no hardware evidence
+- Follow-up task: extend to the planar/tangential contact scene, then repeat with measured parameters before any real-robot command path

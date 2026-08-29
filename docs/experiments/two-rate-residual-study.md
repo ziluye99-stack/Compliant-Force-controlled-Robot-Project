@@ -7,7 +7,8 @@
 - Stage gate: Simulation implementation and contract validation
 - Related literature: [`learning-force-control-2003.00628.md`](../literature/notes/learning-force-control-2003.00628.md) and [`related-work-taxonomy.md`](../literature/related-work-taxonomy.md)
 - Expected artifact: a reproducible MuJoCo experiment comparing a fast PI loop with bounded lower-rate residual policies
-- Current status: runner and contract tests implemented; full matrix not run
+- Current status: runner, contract tests, and the complete local CPU matrix are
+  implemented and reviewed; server-side GPU execution remains scheduler-gated
 
 ## Question and hypothesis
 
@@ -105,11 +106,36 @@ PI-only true-force RMSE about 2.946 N versus residual RMSE about 2.978 N; this
 is an under-trained interface check and must not be interpreted as evidence
 against the hypothesis.
 
+## Formal matrix result
+
+The complete Cartesian matrix was rerun after the implementation commit and
+completed 384/384 cases locally on 2026-08-29. The artifact directory is
+`artifacts/two-rate-residual/matrix-full-20260829-r2/`; its manifest records Git
+commit `501e0f76350af54e03f149878b56c469b695b74e` and the locked package
+snapshot. Each variant has 96 cases (two target forces, three seeds, two
+friction values, two stiffness values, two noise levels, and two delays).
+
+| Variant | True-force RMSE (N) | Paired delta vs PI (N) | Bootstrap 95% CI for delta (N) | Mean max penetration (m) | Safety gates |
+| --- | ---: | ---: | --- | ---: | ---: |
+| PI-only | 1.26684 | -- | -- | 0.0005303 | 0 |
+| trajectory residual | 1.26965 | +0.00281 | [+0.00088, +0.00475] | 0.0005167 | 0 |
+| gain residual | 1.27229 | +0.00545 | [+0.00304, +0.00796] | 0.0005278 | 0 |
+| joint residual | 1.26554 | -0.00130 | [-0.00188, -0.00077] | 0.0005247 | 0 |
+
+The joint residual is slightly better than PI-only on this task-local matrix,
+while the other residual interfaces are slightly worse. All variants stayed
+below the 0.001 m penetration limit and had zero safety-gate activations. The
+effect is small, so this is evidence for a narrow follow-up rather than a
+general force-control or sim-to-real claim. The summary was generated with
+`src/analyze_two_rate_matrix.py` using 2,000 bootstrap replicates; per-case
+results and checksums remain in the ignored artifact directory.
+
 ## Follow-up gates
 
 1. [x] Implement the two-rate runner and unit tests on the existing MuJoCo scene.
 2. [x] Run the smallest falsifying CPU smoke test locally.
-3. Run the complete matrix only after the local contract passes and a server
-   resource-allocation policy is confirmed.
+3. [x] Run and review the complete three-seed matrix locally as a CPU
+   reproducibility/statistics check. A server GPU rerun is still blocked until
+   the lab provides Slurm or an explicit reservation policy.
 4. Compare with the contact-log schema and replay safety gate before any hardware
    discussion.
