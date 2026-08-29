@@ -6,7 +6,7 @@ Read `docs/PROJECT_VISION.md` before filling this template.
 
 - Branch: `codex/two-rate-residual-study`
 - Project priority: Compliant interaction, embodied learning, and reproducibility
-- Stage gate: Question and simulation design
+- Stage gate: Simulation implementation and contract validation
 - Related literature notes: `docs/literature/related-work-taxonomy.md`
 - Dependencies or blockers: complete matrix and scheduler/reservation remain pending; no hardware command path
 
@@ -56,7 +56,7 @@ PY
 
 ## Completion note
 
-- Git commit: pending
+- Git commit: `ce44c5b` (`Implement two-rate residual runner`)
 - Test output: 29 tests passed; short `joint_residual` runner smoke completed
 - Artifact path: `artifacts/two-rate-residual/` (ignored)
 - Known limitations: no complete three-seed matrix, no statistical result, no hardware evidence
