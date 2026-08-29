@@ -20,6 +20,11 @@ Reproducible research scaffold for compliant force-control experiments. The firs
 5. Set the required Slurm variables and submit with `bash scripts/submit-slurm.sh train`.
 6. Archive finished results with `bash scripts/sync-results.sh --dry-run <run-id>` before an actual sync.
 
+If `bash scripts/preflight.sh server` reports `slurm=unavailable`, the host has
+visible GPUs but no Slurm client or scheduler configuration. Do not start
+training directly on that shared host; obtain the lab's scheduler node or an
+explicit resource-sharing policy first.
+
 ## Experiment contract
 
 Each run has a unique `run_id`, a YAML configuration, and a server-side artifact directory. The run manifest records a random seed, Git revision, dependency snapshot, Slurm job ID, and result path. Generated artifacts never enter Git.

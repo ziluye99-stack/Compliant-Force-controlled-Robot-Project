@@ -18,3 +18,7 @@
 - `bash scripts/preflight.sh local` checks the laptop environment.
 - `bash scripts/preflight.sh server` runs read-only checks through the `research-gpu` SSH alias after server access is configured.
 - `bash scripts/submit-slurm.sh train` submits the training template only when the required Slurm environment variables are explicitly set.
+
+If server preflight reports `slurm=unavailable`, GPU visibility alone is not an
+allocation policy. Do not train directly on the shared host until the lab
+provides a scheduler node or an explicit reservation procedure.
