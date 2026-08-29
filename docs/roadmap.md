@@ -20,6 +20,7 @@ earlier gate. Each item should become a focused branch using
 - [x] Add fixed-seed unit tests and short evaluation runs
 - [x] Add a controlled sensor-noise and dynamics-mismatch evaluation
 - [x] Add a controlled actuator-delay evaluation
+- [x] Add a normal/tangential contact scene with a friction-regime test
 
 ## Stage 2: Data and learning
 
@@ -52,10 +53,7 @@ earlier gate. Each item should become a focused branch using
 
 ## Current next decision
 
-The next research decision is a held-out robustness study for the residual
-policy: vary target force and dynamics conditions, use at least three seeds,
-and compare against PI with identical metrics. The current one-dimensional
-normal-contact scene cannot expose tangential friction effects yet; friction
-must be evaluated only after a tangential contact task is added. Robot-specific
-implementation remains blocked until the robot and sensor specifications are
-supplied.
+The next research decision is to connect the tangential contact contract to a
+multi-DOF end-effector or arm model, then collect calibrated force/torque data
+for sim-to-real parameter identification. Robot-specific implementation
+remains blocked until the robot and sensor specifications are supplied.
