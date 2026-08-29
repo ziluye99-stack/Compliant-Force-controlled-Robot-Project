@@ -96,7 +96,9 @@ earlier gate. Each item should become a focused branch using
 - [x] Generate a reproducible SVG figure from logged matrix metrics
 - [x] Tie equation derivations and notation to the logged interfaces for the
   current MuJoCo two-rate study
-- [ ] Write limitations, reproducibility notes, and release checklist
+- [x] Add a versioned release checklist and structural readiness checker
+- [ ] Fill the release checklist with a selected multi-seed result, archived
+  artifacts, formal literature evidence, and explicit limitations
 
 ## Current next decision
 
