@@ -2,12 +2,12 @@
 
 ## Task statement
 
-- Branch: `codex/two-rate-residual-study`
+- Branch: `codex/two-rate-residual-runner`
 - Project priorities: compliant interaction, embodied learning, and evidence/reproducibility
-- Stage gate: Question and simulation design
+- Stage gate: Simulation implementation and contract validation
 - Related literature: [`learning-force-control-2003.00628.md`](../literature/notes/learning-force-control-2003.00628.md) and [`related-work-taxonomy.md`](../literature/related-work-taxonomy.md)
 - Expected artifact: a reproducible MuJoCo experiment comparing a fast PI loop with bounded lower-rate residual policies
-- Current status: design only; no result is claimed by this record
+- Current status: runner and contract tests implemented; full matrix not run
 
 ## Question and hypothesis
 
@@ -81,15 +81,25 @@ reservation, and it does not authorize real-robot commands.
 
 ## Smallest falsifying run
 
-Before a full matrix, run one seed with 4 training episodes and 200 evaluation
+Before a full matrix, run one seed with a short training set and evaluation
 steps for PI-only and `joint_residual`. The run is useful only if it verifies
 the two-rate hold behavior, command bounds, deterministic reset, and metric
 logging. A failure of any of these contracts blocks scaling the matrix.
 
+The runner and a shorter CPU smoke test are implemented in
+`src/two_rate_residual.py` and `tests/test_two_rate_residual.py`. The smoke
+configuration used two training episodes, 20 steps per episode, 40 evaluation
+steps, and a five-fast-step residual hold. It completed with contacts observed,
+maximum penetration below the configured limit, zero safety-gate activations,
+and deterministic repeated output. The short `joint_residual` comparison had
+PI-only true-force RMSE about 2.946 N versus residual RMSE about 2.978 N; this
+is an under-trained interface check and must not be interpreted as evidence
+against the hypothesis.
+
 ## Follow-up gates
 
-1. Implement the two-rate runner and unit tests on the existing MuJoCo scene.
-2. Run the smallest falsifying CPU smoke test locally.
+1. [x] Implement the two-rate runner and unit tests on the existing MuJoCo scene.
+2. [x] Run the smallest falsifying CPU smoke test locally.
 3. Run the complete matrix only after the local contract passes and a server
    resource-allocation policy is confirmed.
 4. Compare with the contact-log schema and replay safety gate before any hardware

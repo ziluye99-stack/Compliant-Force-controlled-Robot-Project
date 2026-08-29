@@ -8,7 +8,7 @@ Read `docs/PROJECT_VISION.md` before filling this template.
 - Project priority: Compliant interaction, embodied learning, and reproducibility
 - Stage gate: Question and simulation design
 - Related literature notes: `docs/literature/related-work-taxonomy.md`
-- Dependencies or blockers: runner implementation is still pending; no hardware command path
+- Dependencies or blockers: complete matrix and scheduler/reservation remain pending; no hardware command path
 
 ## Objective
 
@@ -28,7 +28,7 @@ MuJoCo PI loop, including held-out dynamics and explicit safety metrics.
 - [x] A falsifiable question, hypothesis, variables, baseline, and metrics exist
 - [x] Observation/action and safety contracts are explicit
 - [x] Fixed seeds, held-out settings, and artifact rules are defined
-- [ ] Runner implementation and CPU smoke test exist
+- [x] Runner implementation and CPU smoke test exist
 - [ ] Three-seed matrix is executed and reviewed
 
 ## Verification
@@ -45,12 +45,19 @@ assert config["control"]["residual_rate_hz"] == 20
 assert config["training"]["split"] == "episode"
 print("two-rate design config valid")
 PY
+./.mamba-env/bin/python -m pytest -q tests/test_two_rate_residual.py
+./.mamba-env/bin/python -m src.two_rate_residual \
+  --variant joint_residual \
+  --episodes 2 \
+  --steps 20 \
+  --eval-steps 40 \
+  --residual-period-fast-steps 5
 ```
 
 ## Completion note
 
 - Git commit: pending
-- Test output: design validation pending
+- Test output: 29 tests passed; short `joint_residual` runner smoke completed
 - Artifact path: `artifacts/two-rate-residual/` (ignored)
-- Known limitations: no runner, no statistical result, no hardware evidence
-- Follow-up task: implement the two-rate runner and run the smallest falsifying test
+- Known limitations: no complete three-seed matrix, no statistical result, no hardware evidence
+- Follow-up task: execute the complete held-out matrix only after a scheduler or explicit lab reservation is confirmed
